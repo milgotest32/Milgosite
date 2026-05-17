@@ -2,184 +2,190 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
-import { useSepet } from '@/lib/sepet'
 import type { Urun } from '@/lib/types'
-import { Check, ShoppingBag, Heart, Star, ArrowRight, RefreshCw, ShieldCheck, Truck, Award } from 'lucide-react'
+import { Check, ArrowRight, RefreshCw, Star } from 'lucide-react'
 import ProductCard from '@/components/product/ProductCard'
-import toast from 'react-hot-toast'
 
 export const dynamic = 'force-dynamic'
 
 export default function AnaSayfa() {
   const [urunler, setUrunler] = useState<Urun[]>([])
-
   useEffect(() => {
-    supabase.from('site_products')
-      .select('*, site_product_images(*), site_kategoriler(name,slug)')
-      .eq('durum', 'active')
-      .order('created_at', { ascending: false })
-      .limit(8)
+    supabase.from('site_products').select('*, site_product_images(*), site_kategoriler(name,slug)')
+      .eq('durum', 'active').order('created_at', { ascending: false }).limit(8)
       .then(({ data }: any) => setUrunler(data || []))
   }, [])
 
-  const featured = urunler.filter(u => u.featured)
-  const goster = featured.length > 0 ? featured : urunler.slice(0, 4)
-  const hero_gorsel = urunler[0]?.site_product_images?.[0]?.url
+  const featured = urunler.filter(u => u.featured).slice(0, 4)
+  const goster = featured.length ? featured : urunler.slice(0, 4)
 
   return (
-    <div style={{ background: '#F0EEF8', overflowX: 'hidden' }}>
+    <div style={{ background: '#FDFBF9', overflowX: 'hidden' }}>
 
-      {/* HERO */}
-      <section style={{ maxWidth: '1280px', margin: '0 auto', padding: '32px 16px 24px' }}>
-        <div className="hero-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px', alignItems: 'center' }}>
+      {/* ===== HERO ===== */}
+      <section style={{ position: 'relative', overflow: 'hidden', minHeight: '90vh', display: 'grid', gridTemplateColumns: '1fr 1fr' }} className="hero-grid">
+        {/* Bloblar */}
+        <div className="blob blob-p" style={{ width: '500px', height: '500px', top: '-100px', left: '-80px' }} />
+        <div className="blob blob-b" style={{ width: '400px', height: '400px', bottom: '-80px', right: '-60px' }} />
 
-          {/* Sol */}
-          <div>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#EBF7FC', color: '#3B9FCC', fontSize: '11px', fontWeight: 700, padding: '6px 14px', borderRadius: '50px', marginBottom: '20px' }}>
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#3B9FCC', display: 'inline-block' }} />
-              Çiftliğimizden Sofranıza
-            </span>
-
-            <h1 style={{ fontFamily: '"Playfair Display", serif', fontSize: 'clamp(36px, 5vw, 64px)', lineHeight: '1.1', color: '#1C1B2E', marginBottom: '16px', letterSpacing: '-0.02em' }}>
-              Mutluluğun<br />
-              <span style={{ fontStyle: 'italic', color: '#E07090' }}>Tadını</span><br />
-              Hissedin
-            </h1>
-
-            <p style={{ fontSize: '14px', lineHeight: '1.8', color: '#6B7280', maxWidth: '380px', marginBottom: '28px' }}>
-              ATASANCAK Çiftliği'nden günlük toplanan çiğ süt, geleneksel yöntemlerle hazırlanan peynir ve tereyağı. %100 doğal, katkısız.
-            </p>
-
-            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '32px' }}>
-              <Link href="/urunler" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg,#E07090,#3B9FCC)', color: '#fff', fontSize: '13px', fontWeight: 700, padding: '12px 24px', borderRadius: '50px', textDecoration: 'none', boxShadow: '0 6px 20px rgba(224,112,144,0.35)' }}>
-                <ShoppingBag size={15} />Alışverişe Başla
-              </Link>
-              <Link href="/abonelik" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#fff', color: '#E07090', fontSize: '13px', fontWeight: 600, padding: '12px 22px', borderRadius: '50px', textDecoration: 'none', border: '2px solid #F4A7B9' }}>
-                <RefreshCw size={14} />Abonelik
-              </Link>
-            </div>
-
-            {/* İstatistikler */}
-            <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', paddingTop: '20px', borderTop: '1px solid rgba(26,10,18,0.08)' }}>
-              {[['10.5K', 'Büyükbaş'], ['%100', 'Doğal'], ['AB', 'Onaylı'], ['0', 'Katkı']].map(([s, a]) => (
-                <div key={a} style={{ textAlign: 'center' }}>
-                  <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '20px', background: 'linear-gradient(135deg,#E07090,#3B9FCC)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{s}</div>
-                  <div style={{ fontSize: '10px', color: '#9CA3AF', marginTop: '2px' }}>{a}</div>
-                </div>
-              ))}
-            </div>
+        {/* Sol */}
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 'clamp(40px,6vw,80px)', position: 'relative', zIndex: 2 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#FEE8EF', color: '#E8567A', fontSize: '10px', fontWeight: 800, letterSpacing: '.15em', textTransform: 'uppercase', padding: '8px 16px', borderRadius: '50px', marginBottom: '32px', width: 'fit-content' }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#E8567A', animation: 'pulse 2s ease infinite', display: 'inline-block' }} />
+            Çiftliğimizden Sofranıza
           </div>
 
-          {/* Sağ — masaüstünde görünür */}
-          <div className="hidden lg:block" style={{ position: 'relative' }}>
-            <div style={{ borderRadius: '28px', overflow: 'hidden', aspectRatio: '4/5', background: 'linear-gradient(135deg,#F5C4D0,#C8E8F5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-              {hero_gorsel
-                ? <img src={hero_gorsel} alt="Milgo Ürün" style={{ width: '100%', height: '100%', objectFit: 'contain' }} loading="eager" />
-                : <img src="https://market.milgo.com.tr/cdn/shop/files/Milgo_UrunGorselleri_CigSut_1260x1600px_1.jpg" alt="Milgo Çiğ Süt" style={{ width: '100%', height: '100%', objectFit: 'contain' }} loading="eager" />
-              }
-            </div>
-            {/* Floating kartlar */}
-            <div style={{ position: 'absolute', left: '-14px', top: '12%', background: '#fff', borderRadius: '14px', padding: '10px 14px', boxShadow: '0 8px 24px rgba(0,0,0,0.10)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ width: '32px', height: '32px', background: '#FEF0F4', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}>🥛</div>
-                <div>
-                  <div style={{ fontSize: '11px', fontWeight: 700, color: '#1C1B2E' }}>Çiğ Süt 2L</div>
-                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#E07090' }}>₺130</div>
-                </div>
+          <h1 style={{ fontFamily: '"Instrument Serif", serif', fontSize: 'clamp(52px, 7vw, 92px)', lineHeight: .95, color: '#1A0A12', marginBottom: '24px', letterSpacing: '-.02em' }}>
+            Mutlu&shy;luğun<br />
+            <em style={{ fontStyle: 'italic', color: '#E8567A' }}>Tadını</em><br />
+            <span style={{ fontSize: '1.05em' }}>Hissedin</span>
+          </h1>
+
+          <p style={{ fontSize: '15px', lineHeight: 1.8, color: '#7A6070', maxWidth: '380px', marginBottom: '40px', fontWeight: 400 }}>
+            ATASANCAK Çiftliği'nden günlük toplanan çiğ süt, geleneksel yöntemlerle hazırlanan peynir ve tereyağı. %100 doğal, katkısız.
+          </p>
+
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '48px' }}>
+            <Link href="/urunler" className="btn-dark">Hemen Sipariş Ver</Link>
+            <Link href="/abonelik" className="btn-outline"><RefreshCw size={14} />Abonelik</Link>
+          </div>
+
+          <div style={{ display: 'flex', gap: '32px', paddingTop: '28px', borderTop: '1px solid rgba(26,10,18,.08)', flexWrap: 'wrap' }}>
+            {[['10.5K', 'Büyükbaş'], ['%100', 'Katkısız'], ['AB', 'Onaylı']].map(([n, l]) => (
+              <div key={l}>
+                <div style={{ fontFamily: '"Instrument Serif", serif', fontSize: '36px', color: '#E8567A', lineHeight: 1 }}>{n}</div>
+                <div style={{ fontSize: '11px', color: '#7A6070', marginTop: '4px', fontWeight: 500 }}>{l}</div>
               </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Sağ */}
+        <div style={{ position: 'relative', overflow: 'hidden' }} className="hidden lg:block">
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px' }}>
+            <div style={{ width: '100%', height: '100%', borderRadius: '0 0 0 80px', overflow: 'hidden', background: 'linear-gradient(135deg,#FEE8EF,#EBF5FC)', position: 'relative' }}>
+              <img
+                src="https://market.milgo.com.tr/cdn/shop/files/Milgo_UrunGorselleri_CigSut_1260x1600px_1.jpg"
+                alt="Milgo Çiğ Süt"
+                style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '32px', animation: 'float 6s ease-in-out infinite', mixBlendMode: 'multiply' }}
+              />
             </div>
-            <div style={{ position: 'absolute', right: '-14px', bottom: '14%', background: '#fff', borderRadius: '14px', padding: '10px 14px', boxShadow: '0 8px 24px rgba(0,0,0,0.10)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ width: '32px', height: '32px', background: '#EBF7FC', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}>⭐</div>
-                <div>
-                  <div style={{ fontSize: '11px', fontWeight: 700, color: '#1C1B2E' }}>4.9/5 Puan</div>
-                  <div style={{ fontSize: '10px', color: '#9CA3AF' }}>500+ Yorum</div>
-                </div>
+          </div>
+          {/* Float kartlar */}
+          <div style={{ position: 'absolute', top: '15%', left: '-16px', background: '#fff', borderRadius: '20px', padding: '14px 18px', boxShadow: '0 8px 32px rgba(26,10,18,.12)', zIndex: 3, animation: 'float 4s ease-in-out infinite' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: '#FEE8EF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>🥛</div>
+              <div>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: '#1A0A12' }}>Çiğ Süt 2L</div>
+                <div style={{ fontSize: '11px', color: '#E8567A', fontWeight: 700 }}>₺130</div>
               </div>
             </div>
           </div>
-
-          {/* Mobil görsel */}
-          <div className="lg:hidden" style={{ borderRadius: '24px', overflow: 'hidden', aspectRatio: '1', background: 'linear-gradient(135deg,#F5C4D0,#C8E8F5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-            <img src="https://market.milgo.com.tr/cdn/shop/files/Milgo_UrunGorselleri_CigSut_1260x1600px_1.jpg" alt="Milgo Çiğ Süt" style={{ width: '100%', height: '100%', objectFit: 'contain' }} loading="eager" />
+          <div style={{ position: 'absolute', bottom: '20%', right: '-10px', background: '#fff', borderRadius: '20px', padding: '14px 18px', boxShadow: '0 8px 32px rgba(26,10,18,.12)', zIndex: 3, animation: 'float 4s ease-in-out infinite', animationDelay: '1.5s' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: '#EBF5FC', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>⭐</div>
+              <div>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: '#1A0A12' }}>4.9 / 5 Puan</div>
+                <div style={{ fontSize: '11px', color: '#7A6070' }}>500+ Yorum</div>
+              </div>
+            </div>
           </div>
+        </div>
+
+        {/* Mobil görsel */}
+        <div className="lg:hidden" style={{ background: 'linear-gradient(135deg,#FEE8EF,#EBF5FC)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <img src="https://market.milgo.com.tr/cdn/shop/files/Milgo_UrunGorselleri_CigSut_1260x1600px_1.jpg" alt="Milgo" style={{ width: '70%', objectFit: 'contain', mixBlendMode: 'multiply' }} />
         </div>
       </section>
 
-      {/* ÖZELLİKLER */}
-      <section style={{ background: '#fff', borderTop: '1px solid #F0ECF5', borderBottom: '1px solid #F0ECF5', padding: '16px' }}>
-        <div className="features-grid" style={{ maxWidth: '1280px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+      {/* ===== TICKER ===== */}
+      <div className="ticker">
+        <div className="tick-inner">
+          {[['Çiğ Süt','Günlük Taze'],['Peynir','5 Çeşit'],['Tereyağı','Katkısız'],['Abonelik','Her Cuma Kapına'],['AB Onaylı','Sertifikalı'],['İstanbul','Aynı Gün'],['Çiğ Süt','Günlük Taze'],['Peynir','5 Çeşit'],['Tereyağı','Katkısız'],['Abonelik','Her Cuma Kapına'],['AB Onaylı','Sertifikalı'],['İstanbul','Aynı Gün']].map(([a,b],i) => (
+            <div key={i} className="tick-item"><strong>{a}</strong><span className="tick-dot">✦</span>{b}</div>
+          ))}
+        </div>
+      </div>
+
+      {/* ===== KATEGORİLER ===== */}
+      <section style={{ padding: 'clamp(48px,6vw,80px) clamp(16px,5vw,80px) clamp(24px,3vw,40px)', maxWidth: '1400px', margin: '0 auto' }}>
+        <span className="sec-tag">Kategoriler</span>
+        <h2 className="sec-h">Doğallığı <em>Keşfedin</em></h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }} className="cat-grid">
           {[
-            { icon: <Truck size={16} />, renk: '#3B9FCC', bg: '#EBF7FC', t: 'Hızlı Teslimat', a: 'Aynı gün İstanbul' },
-            { icon: <ShieldCheck size={16} />, renk: '#E07090', bg: '#FEF0F4', t: 'Güvenli Ödeme', a: 'SSL korumalı' },
-            { icon: <RefreshCw size={16} />, renk: '#3B9FCC', bg: '#EBF7FC', t: 'Abonelik', a: 'Her hafta kapına' },
-            { icon: <Award size={16} />, renk: '#E07090', bg: '#FEF0F4', t: 'AB Onaylı', a: 'Sertifikalı üretim' },
-          ].map(item => (
-            <div key={item.t} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div style={{ width: '34px', height: '34px', background: item.bg, borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: item.renk, flexShrink: 0 }}>{item.icon}</div>
-              <div>
-                <div style={{ fontSize: '12px', fontWeight: 700, color: '#1C1B2E' }}>{item.t}</div>
-                <div style={{ fontSize: '10px', color: '#9CA3AF' }}>{item.a}</div>
+            { bg: 'linear-gradient(135deg,#FEE8EF,#FBCFE8)', emoji: '🥛', lbl: 'En Çok Satan', ad: 'Çiğ İnek Sütü', href: '/kategoriler/cig-sut', big: true },
+            { bg: 'linear-gradient(135deg,#EBF5FC,#BFDBFE)', emoji: '🧀', lbl: 'Peynir', ad: 'Sürülebilir Peynir', href: '/kategoriler/peynir', big: false },
+            { bg: 'linear-gradient(135deg,#F0FDF4,#BBF7D0)', emoji: '🧈', lbl: 'Tereyağı', ad: 'Doğal Tereyağı', href: '/kategoriler/tereyagi', big: false },
+            { bg: 'linear-gradient(135deg,#FFF7ED,#FED7AA)', emoji: '🔄', lbl: 'Özel', ad: 'Haftalık Abonelik', href: '/abonelik', big: false },
+            { bg: 'linear-gradient(135deg,#FAF5FF,#E9D5FF)', emoji: '🎁', lbl: 'Hediye', ad: 'Hediye Seti', href: '/kampanyalar', big: false },
+          ].map((k, i) => (
+            <Link key={k.href} href={k.href} style={{ borderRadius: '40px', overflow: 'hidden', cursor: 'none', textDecoration: 'none', display: 'block', gridRow: i === 0 ? 'span 2' : undefined, transition: 'transform .4s cubic-bezier(.34,1.56,.64,1)' }} className="card-2026">
+              <div style={{ background: k.bg, minHeight: i === 0 ? '480px' : '200px', height: '100%', display: 'flex', alignItems: 'flex-end', padding: '28px', position: 'relative' }}>
+                <div style={{ position: 'absolute', top: '24px', right: '24px', fontSize: i === 0 ? '56px' : '44px', animation: 'float 5s ease-in-out infinite' }}>{k.emoji}</div>
+                <div>
+                  <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.2em', textTransform: 'uppercase', color: '#7A6070', marginBottom: '6px' }}>{k.lbl}</div>
+                  <div style={{ fontFamily: '"Instrument Serif", serif', fontSize: i === 0 ? '28px' : '22px', color: '#1A0A12' }}>{k.ad}</div>
+                  <div style={{ marginTop: '14px', display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#1A0A12', color: '#fff', padding: '8px 18px', borderRadius: '50px', fontSize: '12px', fontWeight: 700 }}>
+                    İncele →
+                  </div>
+                </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
 
-      {/* ÜRÜNLER */}
-      <section style={{ maxWidth: '1280px', margin: '0 auto', padding: '48px 16px 32px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
+      {/* ===== ÜRÜNLER ===== */}
+      <section style={{ padding: 'clamp(32px,4vw,60px) clamp(16px,5vw,80px)', maxWidth: '1400px', margin: '0 auto' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '36px', flexWrap: 'wrap', gap: '12px' }}>
           <div>
-            <span style={{ display: 'inline-block', background: '#FEF0F4', color: '#E07090', fontSize: '10px', fontWeight: 700, padding: '4px 12px', borderRadius: '50px', marginBottom: '6px' }}>En Çok Satanlar</span>
-            <h2 style={{ fontFamily: '"Playfair Display", serif', fontSize: 'clamp(24px, 3vw, 34px)', color: '#1C1B2E', margin: 0 }}>
-              Çok <span style={{ fontStyle: 'italic', color: '#E07090' }}>Sevilenler</span>
-            </h2>
+            <span className="sec-tag">En Çok Satanlar</span>
+            <h2 className="sec-h" style={{ marginBottom: 0 }}>Çok <em>Sevilenler</em></h2>
           </div>
-          <Link href="/urunler" style={{ fontSize: '13px', fontWeight: 600, color: '#E07090', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
-            Tümünü Gör <ArrowRight size={13} />
+          <Link href="/urunler" style={{ fontSize: '13px', fontWeight: 700, color: '#E8567A', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }}>
+            Tümünü Gör <ArrowRight size={14} />
           </Link>
         </div>
-
-        <div className="products-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
-          {goster.slice(0, 4).map(urun => <ProductCard key={urun.id} urun={urun} />)}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '14px' }}>
+          {goster.map(u => <ProductCard key={u.id} urun={u} />)}
         </div>
       </section>
 
-      {/* ABONELİK */}
-      <section style={{ margin: '0 16px 40px', borderRadius: '28px', overflow: 'hidden', background: 'linear-gradient(135deg,#F5C4D0,#C8E8F5)' }}>
-        <div className="banner-grid" style={{ maxWidth: '1280px', margin: '0 auto', padding: '40px 28px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '36px', alignItems: 'center' }}>
+      {/* ===== ABONELİK ===== */}
+      <section style={{ margin: '0 clamp(16px,4vw,80px) 60px', borderRadius: '40px', overflow: 'hidden', background: 'linear-gradient(135deg,#FEE8EF,#EBF5FC)', position: 'relative' }}>
+        <div className="blob blob-p" style={{ width: '350px', height: '350px', top: '-100px', right: '-60px', opacity: .4 }} />
+        <div className="blob blob-b" style={{ width: '280px', height: '280px', bottom: '-80px', left: '-40px', opacity: .35 }} />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px', padding: 'clamp(40px,5vw,72px)', alignItems: 'center', position: 'relative', zIndex: 2 }} className="banner-grid">
           <div>
-            <span style={{ display: 'inline-block', background: 'rgba(224,112,144,0.15)', color: '#E07090', fontSize: '10px', fontWeight: 700, padding: '4px 12px', borderRadius: '50px', marginBottom: '14px' }}>⟳ Haftalık Abonelik</span>
-            <h2 style={{ fontFamily: '"Playfair Display", serif', fontSize: 'clamp(22px, 3vw, 34px)', color: '#1C1B2E', marginBottom: '14px' }}>
-              Her Hafta Taze,<br /><span style={{ fontStyle: 'italic', color: '#E07090' }}>Hiç Düşünmeden</span>
+            <span className="sec-tag">⟳ Haftalık Abonelik</span>
+            <h2 style={{ fontFamily: '"Instrument Serif", serif', fontSize: 'clamp(28px,4vw,48px)', color: '#1A0A12', lineHeight: 1.1, marginBottom: '20px' }}>
+              Her Hafta Taze,<br /><em style={{ fontStyle: 'italic', color: '#E8567A' }}>Hiç Düşünmeden</em>
             </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '24px' }}>
-              {['İstediğiniz zaman iptal', 'Miktar değiştirme', 'Her Cuma teslimat', 'Abonelere %10 indirim'].map(oz => (
-                <div key={oz} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#1C1B2E' }}>
-                  <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'linear-gradient(135deg,#E07090,#3B9FCC)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <Check size={9} color="#fff" />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '32px' }}>
+              {['İstediğiniz zaman iptal', 'Miktarı değiştirme', 'Her Cuma teslimat', 'Abonelere özel %10 indirim'].map(o => (
+                <div key={o} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px', color: '#1A0A12', fontWeight: 500 }}>
+                  <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#E8567A', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Check size={10} color="#fff" />
                   </div>
-                  {oz}
+                  {o}
                 </div>
               ))}
             </div>
-            <Link href="/abonelik" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#1C1B2E', color: '#fff', padding: '12px 24px', borderRadius: '50px', textDecoration: 'none', fontSize: '13px', fontWeight: 700 }}>
-              Abonelik Başlat <ArrowRight size={13} />
-            </Link>
+            <Link href="/abonelik" className="btn-dark">Abonelik Başlat <ArrowRight size={14} /></Link>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {[{ ad: 'Başlangıç', det: '2L · Haftada Bir', fiyat: '520', hot: false }, { ad: 'Aile', det: '4L · Haftada Bir', fiyat: '980', hot: true }, { ad: 'Premium', det: '6L · Haftada Bir', fiyat: '1.380', hot: false }].map(plan => (
-              <div key={plan.ad} style={{ background: 'rgba(255,255,255,0.88)', borderRadius: '18px', padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: plan.hot ? '2px solid #E07090' : '2px solid transparent' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {[{ a: 'Başlangıç', d: '2L · Haftada Bir', f: '520', hot: false }, { a: 'Aile', d: '4L · Haftada Bir', f: '980', hot: true }, { a: 'Premium', d: '6L · Haftada Bir', f: '1.380', hot: false }].map(p => (
+              <div key={p.a} style={{ background: 'rgba(255,255,255,.8)', backdropFilter: 'blur(8px)', borderRadius: '22px', padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: p.hot ? '2px solid #E8567A' : '2px solid transparent', transition: 'transform .25s', cursor: 'none' }}
+                onMouseEnter={e => (e.currentTarget.style.transform = 'translateX(6px)')} onMouseLeave={e => (e.currentTarget.style.transform = 'none')}>
                 <div>
-                  <div style={{ fontSize: '15px', fontWeight: 700, color: '#1C1B2E', fontFamily: '"Playfair Display", serif' }}>
-                    {plan.ad}
-                    {plan.hot && <span style={{ fontSize: '9px', fontWeight: 700, background: '#E07090', color: '#fff', padding: '2px 8px', borderRadius: '50px', marginLeft: '8px' }}>Popüler</span>}
+                  <div style={{ fontFamily: '"Instrument Serif", serif', fontSize: '18px', color: '#1A0A12' }}>
+                    {p.a}{p.hot && <span style={{ fontSize: '9px', fontWeight: 800, background: '#E8567A', color: '#fff', padding: '2px 10px', borderRadius: '50px', marginLeft: '10px', fontFamily: 'Syne, sans-serif', letterSpacing: '.1em' }}>POPÜLER</span>}
                   </div>
-                  <div style={{ fontSize: '11px', color: '#9CA3AF' }}>{plan.det}</div>
+                  <div style={{ fontSize: '12px', color: '#7A6070', marginTop: '2px' }}>{p.d}</div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '22px', color: '#E07090' }}>₺{plan.fiyat}</div>
-                  <div style={{ fontSize: '10px', color: '#9CA3AF' }}>/ ay</div>
+                  <div style={{ fontFamily: '"Instrument Serif", serif', fontSize: '28px', color: '#E8567A' }}>₺{p.f}</div>
+                  <div style={{ fontSize: '10px', color: '#7A6070' }}>/ ay</div>
                 </div>
               </div>
             ))}
@@ -187,31 +193,31 @@ export default function AnaSayfa() {
         </div>
       </section>
 
-      {/* YORUMLAR */}
-      <section style={{ padding: '40px 16px', background: '#fff', borderTop: '1px solid #F0ECF5', borderBottom: '1px solid #F0ECF5' }}>
-        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-            <span style={{ display: 'inline-block', background: '#FEF0F4', color: '#E07090', fontSize: '10px', fontWeight: 700, padding: '4px 12px', borderRadius: '50px', marginBottom: '8px' }}>500+ Mutlu Müşteri</span>
-            <h2 style={{ fontFamily: '"Playfair Display", serif', fontSize: 'clamp(22px, 3vw, 34px)', color: '#1C1B2E' }}>
-              Sizden <span style={{ fontStyle: 'italic', color: '#E07090' }}>Gelenler</span>
-            </h2>
+      {/* ===== YORUMLAR ===== */}
+      <section style={{ padding: 'clamp(48px,6vw,72px) clamp(16px,5vw,80px)', background: '#1A0A12' }}>
+        <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+            <span style={{ display: 'inline-block', background: 'rgba(244,167,185,.15)', color: '#F4A7B9', fontSize: '10px', fontWeight: 800, letterSpacing: '.25em', textTransform: 'uppercase', padding: '6px 14px', borderRadius: '50px', marginBottom: '16px' }}>Müşterilerimiz</span>
+            <h2 style={{ fontFamily: '"Instrument Serif", serif', fontSize: 'clamp(28px,4vw,48px)', color: '#fff' }}>Sizden <em style={{ fontStyle: 'italic', color: '#E8567A' }}>Gelenler</em></h2>
           </div>
-          <div className="reviews-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }} className="reviews-grid">
             {[
-              { h: 'E', ad: 'Ebru G.', lok: 'Beşiktaş', metin: '"Sütün tadı gerçekten çok farklı. Marketten alışkanlığım gitti, artık sadece Milgo!"' },
-              { h: 'H', ad: 'Hatice B.', lok: 'Kadıköy · Abone', metin: '"3 aydır aboneyim. Her Cuma taptaze geliyor. Peynirler de muhteşem!"' },
-              { h: 'M', ad: 'Mehmet K.', lok: 'Şişli', metin: '"Çocuklar için doğal süt arıyordum. AB onaylı olması güven veriyor."' },
+              { h: 'E', a: 'Ebru G.', l: 'Beşiktaş, İstanbul', t: '"Sütün tadı gerçekten çok farklı. Marketten alışkanlığım gitti, artık sadece Milgo."' },
+              { h: 'H', a: 'Hatice B.', l: 'Kadıköy · Abonelik', t: '"3 aydır aboneyim. Her Cuma taptaze geliyor. Peynirler de muhteşem!"' },
+              { h: 'M', a: 'Mehmet K.', l: 'Şişli, İstanbul', t: '"Çocuklar için doğal süt arıyordum. AB onaylı olması güven veriyor."' },
             ].map(y => (
-              <div key={y.ad} style={{ background: '#F0EEF8', borderRadius: '18px', padding: '20px', border: '1px solid #F0ECF5' }}>
-                <div style={{ display: 'flex', gap: '2px', marginBottom: '10px' }}>
-                  {[1, 2, 3, 4, 5].map(s => <Star key={s} size={13} style={{ color: '#FBBF24' }} fill="#FBBF24" />)}
+              <div key={y.a} style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.1)', borderRadius: '32px', padding: '32px', backdropFilter: 'blur(12px)', transition: 'all .3s', cursor: 'none' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,.1)'; e.currentTarget.style.transform = 'translateY(-4px)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,.06)'; e.currentTarget.style.transform = 'none' }}>
+                <div style={{ display: 'flex', gap: '2px', marginBottom: '16px' }}>
+                  {[1,2,3,4,5].map(s => <Star key={s} size={16} fill="#FBBF24" style={{ color: '#FBBF24' }} />)}
                 </div>
-                <p style={{ fontFamily: '"Playfair Display", serif', fontStyle: 'italic', fontSize: '14px', color: '#1C1B2E', lineHeight: '1.7', marginBottom: '14px' }}>{y.metin}</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: 'linear-gradient(135deg,#F4A7B9,#7EC8E3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700, color: '#fff' }}>{y.h}</div>
+                <p style={{ fontFamily: '"Instrument Serif", serif', fontStyle: 'italic', fontSize: '17px', lineHeight: 1.65, color: 'rgba(255,255,255,.85)', marginBottom: '24px' }}>{y.t}</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'linear-gradient(135deg,#E8567A,#5BA4CF)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#fff', fontSize: '14px' }}>{y.h}</div>
                   <div>
-                    <div style={{ fontSize: '13px', fontWeight: 700, color: '#1C1B2E' }}>{y.ad}</div>
-                    <div style={{ fontSize: '11px', color: '#9CA3AF' }}>{y.lok}</div>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: '#fff' }}>{y.a}</div>
+                    <div style={{ fontSize: '11px', color: 'rgba(255,255,255,.5)' }}>{y.l}</div>
                   </div>
                 </div>
               </div>
@@ -220,15 +226,15 @@ export default function AnaSayfa() {
         </div>
       </section>
 
-      {/* BÜLTEN */}
-      <section style={{ padding: '48px 16px', textAlign: 'center' }}>
-        <h2 style={{ fontFamily: '"Playfair Display", serif', fontSize: 'clamp(22px, 3.5vw, 36px)', color: '#1C1B2E', marginBottom: '8px' }}>
-          İlk Siparişte <span style={{ fontStyle: 'italic', color: '#E07090' }}>%10 İndirim</span>
+      {/* ===== BÜLTEN ===== */}
+      <section style={{ padding: 'clamp(56px,7vw,96px) 24px', textAlign: 'center', background: '#FDFBF9' }}>
+        <h2 style={{ fontFamily: '"Instrument Serif", serif', fontSize: 'clamp(28px,4vw,52px)', color: '#1A0A12', marginBottom: '12px' }}>
+          İlk Siparişte <em style={{ fontStyle: 'italic', color: '#E8567A' }}>%10 İndirim</em>
         </h2>
-        <p style={{ fontSize: '13px', color: '#9CA3AF', marginBottom: '20px' }}>Bültene katılın, özel tekliflerden ilk siz haberdar olun.</p>
-        <form style={{ display: 'flex', maxWidth: '400px', margin: '0 auto', background: '#fff', borderRadius: '18px', border: '1px solid #F0ECF5', padding: '5px' }} onSubmit={e => { e.preventDefault(); toast.success('Teşekkürler! Hoş geldiniz 🎉') }}>
-          <input type="email" placeholder="E-posta adresiniz" style={{ flex: 1, background: 'transparent', border: 'none', padding: '10px 14px', fontSize: '13px', color: '#1C1B2E', outline: 'none', fontFamily: 'inherit', minWidth: 0 }} />
-          <button type="submit" style={{ background: 'linear-gradient(135deg,#E07090,#3B9FCC)', color: '#fff', border: 'none', borderRadius: '13px', padding: '10px 18px', fontSize: '12px', fontWeight: 700, cursor: 'none', fontFamily: 'inherit', flexShrink: 0 }}>Katıl</button>
+        <p style={{ fontSize: '14px', color: '#7A6070', marginBottom: '28px', fontWeight: 400 }}>Bültene katılın, özel tekliflerden ilk siz haberdar olun.</p>
+        <form onSubmit={e => e.preventDefault()} style={{ display: 'flex', maxWidth: '440px', margin: '0 auto', background: 'rgba(26,10,18,.04)', borderRadius: '16px', border: '1.5px solid rgba(26,10,18,.1)', padding: '5px' }}>
+          <input type="email" placeholder="E-posta adresiniz" style={{ flex: 1, background: 'transparent', border: 'none', padding: '12px 16px', fontSize: '14px', color: '#1A0A12', outline: 'none', fontFamily: 'inherit', minWidth: 0 }} />
+          <button type="submit" className="btn-primary" style={{ borderRadius: '12px', padding: '10px 20px', flexShrink: 0 }}>Katıl</button>
         </form>
       </section>
     </div>

@@ -3,17 +3,16 @@ const config: Config = {
   content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
   theme: {
     extend: {
-      colors: {
-        pembe: { DEFAULT: '#F4A7B9', koy: '#E07090', acik: '#FEF0F4' },
-        mavi: { DEFAULT: '#7EC8E3', koy: '#3B9FCC', acik: '#EBF7FC' },
-        lav: '#F0EEF8',
-        metin: { DEFAULT: '#1C1B2E', '2': '#6B7280' },
-        sinir: '#F0ECF5',
-      },
       fontFamily: {
-        display: ['"Playfair Display"', 'serif'],
-        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+        serif: ['"Instrument Serif"', 'serif'],
+        sans: ['Syne', 'sans-serif'],
       },
+      colors: {
+        p: '#E8567A', p2: '#F4A7B9', p3: '#FEE8EF',
+        b: '#5BA4CF', b2: '#A8D4F0', b3: '#EBF5FC',
+        w: '#FDFBF9', d: '#1A0A12', g: '#7A6070',
+      },
+      borderRadius: { '2026': '40px' },
     },
   },
   plugins: [],
