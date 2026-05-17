@@ -4,122 +4,90 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useSepet } from '@/lib/sepet'
 import { supabase } from '@/lib/supabase'
-import { ShoppingBag, User, Menu, X, Search, Heart, ChevronDown, LogOut, Package, MapPin, Settings } from 'lucide-react'
-
-const KATEGORILER = [
-  { slug: 'sut', ad: 'Çiğ Süt', emoji: '🥛' },
-  { slug: 'peynir', ad: 'Peynir', emoji: '🧀' },
-  { slug: 'tereyag', ad: 'Tereyağı', emoji: '🧈' },
-]
+import { ShoppingBag, User, Menu, X, Search, Heart, ChevronDown } from 'lucide-react'
 
 export default function Navbar() {
   const [menuAcik, setMenuAcik] = useState(false)
-  const [urunDropdown, setUrunDropdown] = useState(false)
-  const [userDropdown, setUserDropdown] = useState(false)
+  const [userMenu, setUserMenu] = useState(false)
+  const [urunMenu, setUrunMenu] = useState(false)
   const [user, setUser] = useState<any>(null)
-  const [aramaAcik, setAramaAcik] = useState(false)
-  const [aramaMetni, setAramaMetni] = useState('')
   const adet = useSepet(s => s.adetToplam())
   const router = useRouter()
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setUser(data.session?.user || null))
-    supabase.auth.onAuthStateChange((_, session) => setUser(session?.user || null))
+    supabase.auth.onAuthStateChange((_, s) => setUser(s?.user || null))
   }, [])
 
-  const cikisYap = async () => {
-    await supabase.auth.signOut()
-    router.push('/')
-    setUserDropdown(false)
+  const cikis = async () => { await supabase.auth.signOut(); router.push('/'); setUserMenu(false) }
+
+  const s = {
+    band: { background:'linear-gradient(90deg, #E07090, #3B9FCC)', color:'#fff', textAlign:'center' as const, padding:'8px', fontSize:'12px', fontWeight:'500', letterSpacing:'0.02em' },
+    nav: { background:'rgba(255,255,255,0.97)', backdropFilter:'blur(20px)', borderBottom:'1px solid #F0ECF5', position:'sticky' as const, top:0, zIndex:50, boxShadow:'0 1px 12px rgba(224,112,144,0.06)' },
+    inner: { maxWidth:'1280px', margin:'0 auto', padding:'0 16px', height:'64px', display:'flex', alignItems:'center', gap:'8px' },
+    logo: { fontFamily:'"Playfair Display", serif', fontSize:'24px', color:'#1C1B2E', textDecoration:'none', marginRight:'16px', flexShrink:0 },
+    link: { padding:'8px 14px', fontSize:'13px', fontWeight:'500', color:'#6B7280', textDecoration:'none', borderRadius:'10px', transition:'all 0.2s', whiteSpace:'nowrap' as const },
+    iconBtn: { width:'38px', height:'38px', display:'flex', alignItems:'center', justifyContent:'center', borderRadius:'10px', color:'#6B7280', textDecoration:'none', background:'transparent', border:'none', cursor:'none', flexShrink:0 },
+    cartBtn: { display:'flex', alignItems:'center', gap:'6px', background:'#F0EEF8', padding:'8px 14px', borderRadius:'12px', textDecoration:'none', flexShrink:0 },
+    dropdown: { position:'absolute' as const, top:'calc(100% + 8px)', background:'#fff', borderRadius:'16px', boxShadow:'0 8px 32px rgba(0,0,0,0.12)', border:'1px solid #F0ECF5', padding:'8px', minWidth:'180px', zIndex:100 },
+    dropItem: { display:'flex', alignItems:'center', gap:'10px', padding:'10px 12px', borderRadius:'10px', fontSize:'13px', fontWeight:'500', color:'#1C1B2E', textDecoration:'none' },
   }
 
   return (
     <>
-      {/* Top band */}
-      <div className="gradient-bg text-white text-center py-2 text-[11px] font-medium tracking-wide">
-        🚚 İstanbul içi aynı gün teslimat · İlk siparişte <strong>%10 indirim: MILGO10</strong>
-      </div>
+      <div style={s.band}>🚚 İstanbul içi aynı gün teslimat · İlk siparişte <strong>%10 indirim: MILGO10</strong></div>
+      <nav style={s.nav}>
+        <div style={s.inner}>
+          <Link href="/" style={s.logo}>milgo<span style={{color:'#E07090'}}>.</span></Link>
 
-      <nav className="sticky top-0 z-50 bg-white border-b border-sinir shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 lg:px-8 h-16 flex items-center gap-4">
-          
-          {/* Logo */}
-          <Link href="/" className="font-display text-2xl font-normal text-metin mr-4 flex-shrink-0">
-            milgo<span className="text-pembe-koy">.</span>
-          </Link>
-
-          {/* Menü - masaüstü */}
-          <div className="hidden lg:flex items-center gap-1 flex-1">
-            {/* Ürünler dropdown */}
-            <div className="relative" onMouseEnter={() => setUrunDropdown(true)} onMouseLeave={() => setUrunDropdown(false)}>
-              <button className="flex items-center gap-1 px-4 py-2 text-[13px] font-medium text-metin-2 hover:text-pembe-koy rounded-xl hover:bg-pembe-acik transition-all">
-                Ürünler <ChevronDown size={14} className={`transition-transform ${urunDropdown ? 'rotate-180' : ''}`} />
+          {/* Masaüstü linkler */}
+          <div style={{display:'flex', alignItems:'center', gap:'2px', flex:1}} className="hidden lg:flex">
+            <div style={{position:'relative'}} onMouseEnter={() => setUrunMenu(true)} onMouseLeave={() => setUrunMenu(false)}>
+              <button style={{...s.link, display:'flex', alignItems:'center', gap:'4px', background:'none', border:'none', cursor:'none'}}>
+                Ürünler <ChevronDown size={13} style={{transition:'transform 0.2s', transform: urunMenu ? 'rotate(180deg)' : 'none'}} />
               </button>
-              {urunDropdown && (
-                <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-2xl shadow-xl border border-sinir p-2">
-                  {KATEGORILER.map(k => (
-                    <Link key={k.slug} href={`/urunler?kategori=${k.slug}`}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-lav text-[13px] font-medium text-metin transition-colors">
-                      <span className="text-lg">{k.emoji}</span> {k.ad}
-                    </Link>
+              {urunMenu && (
+                <div style={s.dropdown}>
+                  {[{emoji:'🥛', ad:'Çiğ Süt', href:'/urunler?kategori=sut'},{emoji:'🧀', ad:'Peynir', href:'/urunler?kategori=peynir'},{emoji:'🧈', ad:'Tereyağı', href:'/urunler?kategori=tereyag'}].map(k => (
+                    <Link key={k.href} href={k.href} style={s.dropItem}>{k.emoji} {k.ad}</Link>
                   ))}
-                  <div className="border-t border-sinir mt-2 pt-2">
-                    <Link href="/urunler" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-lav text-[13px] font-semibold text-pembe-koy transition-colors">
-                      Tüm Ürünler →
-                    </Link>
+                  <div style={{borderTop:'1px solid #F0ECF5', marginTop:'6px', paddingTop:'6px'}}>
+                    <Link href="/urunler" style={{...s.dropItem, color:'#E07090', fontWeight:'700'}}>Tüm Ürünler →</Link>
                   </div>
                 </div>
               )}
             </div>
-            {[['Abonelik', '/abonelik'], ['Çiftliğimiz', '/ciftligimiz'], ['Tarifler', '/tarifler'], ['Blog', '/blog']].map(([ad, href]) => (
-              <Link key={href} href={href} className="px-4 py-2 text-[13px] font-medium text-metin-2 hover:text-pembe-koy rounded-xl hover:bg-pembe-acik transition-all">
-                {ad}
-              </Link>
+            {[['Abonelik','/abonelik'],['Çiftliğimiz','/ciftligimiz'],['Tarifler','/tarifler']].map(([ad,href]) => (
+              <Link key={href} href={href} style={s.link}>{ad}</Link>
             ))}
           </div>
 
-          {/* Sağ taraf */}
-          <div className="flex items-center gap-1 ml-auto">
-            {/* Arama */}
-            <button onClick={() => setAramaAcik(!aramaAcik)} className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-lav text-metin-2 hover:text-pembe-koy transition-all">
-              <Search size={18} strokeWidth={2} />
-            </button>
-
-            {/* Favoriler */}
-            <Link href="/favoriler" className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-lav text-metin-2 hover:text-pembe-koy transition-all">
-              <Heart size={18} strokeWidth={2} />
-            </Link>
+          {/* Sağ ikonlar */}
+          <div style={{display:'flex', alignItems:'center', gap:'4px', marginLeft:'auto'}}>
+            <Link href="/favoriler" style={s.iconBtn as any}><Heart size={18} strokeWidth={1.75} /></Link>
 
             {/* Kullanıcı */}
-            <div className="relative">
-              <button onClick={() => setUserDropdown(!userDropdown)}
-                className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-lav text-metin-2 hover:text-pembe-koy transition-all">
-                <User size={18} strokeWidth={2} />
-              </button>
-              {userDropdown && (
-                <div className="absolute top-full right-0 mt-1 w-52 bg-white rounded-2xl shadow-xl border border-sinir p-2 z-50">
+            <div style={{position:'relative'}}>
+              <button onClick={() => setUserMenu(!userMenu)} style={s.iconBtn}><User size={18} strokeWidth={1.75} /></button>
+              {userMenu && (
+                <div style={{...s.dropdown, right:0, left:'auto'}}>
                   {user ? (
                     <>
-                      <div className="px-3 py-2 mb-1">
-                        <div className="text-[12px] text-metin-2">Hoş geldin</div>
-                        <div className="text-[13px] font-semibold text-metin truncate">{user.email}</div>
+                      <div style={{padding:'8px 12px 12px', borderBottom:'1px solid #F0ECF5', marginBottom:'6px'}}>
+                        <div style={{fontSize:'11px', color:'#9CA3AF'}}>Hoş geldin</div>
+                        <div style={{fontSize:'13px', fontWeight:'600', color:'#1C1B2E', maxWidth:'160px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>{user.email}</div>
                       </div>
-                      <div className="border-t border-sinir my-1" />
-                      {[{icon:<Package size={14}/>, ad:'Siparişlerim', href:'/hesabim/siparisler'},{icon:<Heart size={14}/>, ad:'Favorilerim', href:'/favoriler'},{icon:<MapPin size={14}/>, ad:'Adreslerim', href:'/hesabim/adresler'},{icon:<Settings size={14}/>, ad:'Hesap Ayarları', href:'/hesabim'}].map(item => (
-                        <Link key={item.href} href={item.href} onClick={() => setUserDropdown(false)}
-                          className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-lav text-[13px] font-medium text-metin transition-colors">
-                          <span className="text-metin-2">{item.icon}</span>{item.ad}
-                        </Link>
+                      {[['📦','Siparişlerim','/hesabim/siparisler'],['❤️','Favorilerim','/favoriler'],['⚙️','Hesap Ayarları','/hesabim']].map(([i,ad,href]) => (
+                        <Link key={href} href={href} onClick={() => setUserMenu(false)} style={s.dropItem}>{i} {ad}</Link>
                       ))}
-                      <div className="border-t border-sinir my-1" />
-                      <button onClick={cikisYap} className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-red-50 text-[13px] font-medium text-red-500 transition-colors w-full">
-                        <LogOut size={14} />Çıkış Yap
-                      </button>
+                      <div style={{borderTop:'1px solid #F0ECF5', marginTop:'6px', paddingTop:'6px'}}>
+                        <button onClick={cikis} style={{...s.dropItem, color:'#ef4444', background:'none', border:'none', width:'100%', cursor:'none'}}>🚪 Çıkış Yap</button>
+                      </div>
                     </>
                   ) : (
                     <>
-                      <Link href="/giris" onClick={() => setUserDropdown(false)} className="block px-3 py-2.5 rounded-xl hover:bg-lav text-[13px] font-semibold text-pembe-koy transition-colors">Giriş Yap</Link>
-                      <Link href="/kayit" onClick={() => setUserDropdown(false)} className="block px-3 py-2.5 rounded-xl hover:bg-lav text-[13px] font-medium text-metin transition-colors">Üye Ol</Link>
+                      <Link href="/giris" onClick={() => setUserMenu(false)} style={{...s.dropItem, color:'#E07090', fontWeight:'700'}}>Giriş Yap</Link>
+                      <Link href="/kayit" onClick={() => setUserMenu(false)} style={s.dropItem}>Üye Ol</Link>
                     </>
                   )}
                 </div>
@@ -127,57 +95,39 @@ export default function Navbar() {
             </div>
 
             {/* Sepet */}
-            <Link href="/sepet" className="relative flex items-center gap-2 bg-lav hover:bg-pembe-acik px-4 py-2 rounded-xl transition-all">
-              <ShoppingBag size={18} strokeWidth={2} className="text-pembe-koy" />
-              <span className="text-[13px] font-semibold text-metin hidden sm:block">Sepet</span>
+            <Link href="/sepet" style={s.cartBtn as any}>
+              <ShoppingBag size={18} strokeWidth={1.75} style={{color:'#E07090'}} />
+              <span style={{fontSize:'13px', fontWeight:'600', color:'#1C1B2E'}} className="hidden sm:block">Sepet</span>
               {adet > 0 && (
-                <span className="w-5 h-5 gradient-bg rounded-full text-[10px] text-white flex items-center justify-center font-bold">
-                  {adet}
-                </span>
+                <span style={{width:'18px', height:'18px', background:'linear-gradient(135deg, #E07090, #3B9FCC)', borderRadius:'50%', fontSize:'10px', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontWeight:'700'}}>{adet}</span>
               )}
             </Link>
 
-            {/* Mobil menü butonu */}
-            <button onClick={() => setMenuAcik(!menuAcik)} className="lg:hidden w-9 h-9 flex items-center justify-center rounded-xl hover:bg-lav text-metin transition-all ml-1">
+            <button onClick={() => setMenuAcik(!menuAcik)} style={{...s.iconBtn, display:'flex'}} className="lg:hidden">
               {menuAcik ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </div>
-
-        {/* Arama barı */}
-        {aramaAcik && (
-          <div className="border-t border-sinir px-4 py-3 bg-white">
-            <div className="max-w-xl mx-auto flex items-center gap-3 bg-lav rounded-xl px-4 py-2.5">
-              <Search size={16} className="text-metin-2 flex-shrink-0" />
-              <input autoFocus value={aramaMetni} onChange={e => setAramaMetni(e.target.value)}
-                onKeyDown={e => { if(e.key==='Enter') { router.push(`/urunler?ara=${aramaMetni}`); setAramaAcik(false); }}}
-                placeholder="Ürün, kategori ara..." className="flex-1 bg-transparent text-[14px] text-metin placeholder-metin-2 outline-none" />
-              <button onClick={() => setAramaAcik(false)} className="text-metin-2 hover:text-metin">
-                <X size={16} />
-              </button>
-            </div>
-          </div>
-        )}
       </nav>
 
       {/* Mobil menü */}
       {menuAcik && (
-        <div className="fixed inset-0 z-40 bg-white lg:hidden flex flex-col pt-20 px-6 overflow-y-auto">
-          <div className="space-y-1">
-            {[['🥛 Çiğ Süt', '/urunler?kategori=sut'],['🧀 Peynir', '/urunler?kategori=peynir'],['🧈 Tereyağı', '/urunler?kategori=tereyag'],['Tüm Ürünler', '/urunler'],['Abonelik', '/abonelik'],['Çiftliğimiz', '/ciftligimiz'],['Tarifler', '/tarifler']].map(([ad, href]) => (
+        <div style={{position:'fixed', inset:0, zIndex:40, background:'#fff', paddingTop:'80px', paddingLeft:'24px', paddingRight:'24px', overflowY:'auto'}} className="lg:hidden">
+          <div style={{display:'flex', flexDirection:'column', gap:'4px'}}>
+            {[['🥛 Çiğ Süt','/urunler?kategori=sut'],['🧀 Peynir','/urunler?kategori=peynir'],['🧈 Tereyağı','/urunler?kategori=tereyag'],['Tüm Ürünler','/urunler'],['Abonelik','/abonelik'],['Çiftliğimiz','/ciftligimiz'],['Tarifler','/tarifler'],['İletişim','/iletisim']].map(([ad,href]) => (
               <Link key={href} href={href} onClick={() => setMenuAcik(false)}
-                className="block px-4 py-3.5 text-[15px] font-medium text-metin hover:text-pembe-koy hover:bg-lav rounded-xl transition-all">
+                style={{display:'block', padding:'14px 16px', fontSize:'16px', fontWeight:'500', color:'#1C1B2E', textDecoration:'none', borderRadius:'12px'}}>
                 {ad}
               </Link>
             ))}
           </div>
-          <div className="border-t border-sinir mt-6 pt-6 space-y-2">
+          <div style={{borderTop:'1px solid #F0ECF5', marginTop:'24px', paddingTop:'24px', display:'flex', flexDirection:'column', gap:'10px'}}>
             {user ? (
-              <button onClick={cikisYap} className="w-full btn-secondary px-6 py-3">Çıkış Yap</button>
+              <button onClick={cikis} style={{background:'#fff', border:'2px solid #F4A7B9', color:'#E07090', fontWeight:'600', fontSize:'14px', padding:'14px', borderRadius:'50px', cursor:'none'}}>Çıkış Yap</button>
             ) : (
               <>
-                <Link href="/giris" onClick={() => setMenuAcik(false)} className="block w-full btn-primary px-6 py-3 text-center">Giriş Yap</Link>
-                <Link href="/kayit" onClick={() => setMenuAcik(false)} className="block w-full btn-secondary px-6 py-3 text-center">Üye Ol</Link>
+                <Link href="/giris" onClick={() => setMenuAcik(false)} style={{background:'linear-gradient(135deg,#E07090,#3B9FCC)', color:'#fff', fontWeight:'600', fontSize:'14px', padding:'14px', borderRadius:'50px', textAlign:'center', textDecoration:'none', display:'block'}}>Giriş Yap</Link>
+                <Link href="/kayit" onClick={() => setMenuAcik(false)} style={{background:'#fff', border:'2px solid #F4A7B9', color:'#E07090', fontWeight:'600', fontSize:'14px', padding:'14px', borderRadius:'50px', textAlign:'center', textDecoration:'none', display:'block'}}>Üye Ol</Link>
               </>
             )}
           </div>
