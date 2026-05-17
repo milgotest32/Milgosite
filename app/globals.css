@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*, *::before, *::after { cursor: none !important; }
+
+@layer base {
+  body {
+    background: #080f22;
+    color: #f8f4ff;
+    font-family: 'DM Sans', sans-serif;
+  }
+  * { box-sizing: border-box; }
+}
+
+@layer utilities {
+  .font-display { font-family: 'Fraunces', serif; }
+  .gradient-text {
+    background: linear-gradient(135deg, #f5c8d8, #d4c8f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .gradient-bg {
+    background: linear-gradient(135deg, #c4768e, #2d5299);
+  }
+  .glass {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(232,164,184,0.12);
+  }
+  .glass-hover:hover {
+    background: rgba(255,255,255,0.09);
+    border-color: rgba(232,164,184,0.25);
+  }
+}
+
+::selection { background: rgba(196,118,142,0.3); }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #080f22; }
+::-webkit-scrollbar-thumb { background: rgba(232,164,184,0.3); border-radius: 3px; }
