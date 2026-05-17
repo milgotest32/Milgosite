@@ -1,10 +1,12 @@
 'use client'
-export const dynamic = 'force-dynamic'
+import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { CheckCircle } from 'lucide-react'
 
-export default function SiparisOnay() {
+export const dynamic = 'force-dynamic'
+
+function SiparisOnayIcerik() {
   const params = useSearchParams()
   const id = params.get('id')
 
@@ -30,5 +32,13 @@ export default function SiparisOnay() {
         </Link>
       </div>
     </div>
+  )
+}
+
+export default function SiparisOnay() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="w-10 h-10 rounded-full border-2 border-[#e8a4b8] border-t-transparent animate-spin" /></div>}>
+      <SiparisOnayIcerik />
+    </Suspense>
   )
 }
