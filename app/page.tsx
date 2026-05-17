@@ -1,4 +1,5 @@
 'use client'
+export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
@@ -12,7 +13,7 @@ export default function AnaSayfa() {
   const [eklendi, setEklendi] = useState<string | null>(null)
 
   useEffect(() => {
-    supabase.from('site_urunler').select('*').eq('aktif', true).order('sira').then(({ data }) => setUrunler(data || []))
+    supabase.from('site_urunler').select('*').eq('aktif', true).order('sira').then(({ data }: { data: any }) => setUrunler(data || []))
   }, [])
 
   const sepeteEkle = (urun: Urun) => {

@@ -1,4 +1,5 @@
 'use client'
+export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
@@ -26,7 +27,7 @@ export default function UrunlerPage() {
     setLoading(true)
     let q = supabase.from('site_urunler').select('*').eq('aktif', true)
     if (aktifKat) q = q.eq('kategori', aktifKat)
-    q.order('sira').then(({ data }) => { setUrunler(data || []); setLoading(false) })
+    q.order('sira').then(({ data }: { data: any }) => { setUrunler(data || []); setLoading(false) })
   }, [aktifKat])
 
   const sepeteEkle = (urun: Urun) => {

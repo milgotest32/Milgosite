@@ -1,4 +1,5 @@
 'use client'
+export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
@@ -15,7 +16,7 @@ export default function UrunDetay() {
   const ekle = useSepet(s => s.ekle)
 
   useEffect(() => {
-    supabase.from('site_urunler').select('*').eq('slug', slug).single().then(({ data }) => setUrun(data))
+    supabase.from('site_urunler').select('*').eq('slug', slug).single().then(({ data }: { data: any }) => setUrun(data))
   }, [slug])
 
   if (!urun) return (
