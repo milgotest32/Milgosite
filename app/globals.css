@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,36 +7,51 @@
 
 @layer base {
   body {
-    background: #080f22;
-    color: #f8f4ff;
+    background: #f0eef8;
+    color: #2d2d4e;
     font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
   }
-  * { box-sizing: border-box; }
 }
 
 @layer utilities {
   .font-display { font-family: 'Fraunces', serif; }
+
   .gradient-text {
-    background: linear-gradient(135deg, #f5c8d8, #d4c8f0);
+    background: linear-gradient(135deg, #e8729a, #4dd0e8);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+
   .gradient-bg {
-    background: linear-gradient(135deg, #c4768e, #2d5299);
+    background: linear-gradient(135deg, #e8729a, #4dd0e8);
   }
+
   .glass {
-    background: rgba(255,255,255,0.06);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(232,164,184,0.12);
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.9);
+    box-shadow: 0 2px 20px rgba(232,114,154,0.08);
   }
-  .glass-hover:hover {
-    background: rgba(255,255,255,0.09);
-    border-color: rgba(232,164,184,0.25);
+
+  .card {
+    background: #ffffff;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.9);
+    box-shadow: 0 4px 24px rgba(77,208,232,0.08);
+  }
+
+  .pembe-bg {
+    background: #f5c4d0;
+  }
+
+  .lav-bg {
+    background: #f0eef8;
   }
 }
 
-::selection { background: rgba(196,118,142,0.3); }
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #080f22; }
-::-webkit-scrollbar-thumb { background: rgba(232,164,184,0.3); border-radius: 3px; }
+::selection { background: rgba(232,114,154,0.25); }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #f0eef8; }
+::-webkit-scrollbar-thumb { background: rgba(232,114,154,0.3); border-radius: 3px; }

@@ -4,20 +4,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        gece: '#080f22',
-        lacivert: '#0d1b3e',
-        mavi: '#1e3a6e',
-        pembe: '#e8a4b8',
-        'pembe-ac': '#f5c8d8',
-        'pembe-koy': '#c4768e',
-        lila: '#b8a4d8',
-        'lila-ac': '#d4c8f0',
-        beyaz: '#f8f4ff',
-        gri: '#8a92a8',
+        pembe: '#f2a8bc',
+        'pembe-koy': '#e07898',
+        'pembe-acik': '#fce8ef',
+        mavi: '#7ab8e8',
+        'mavi-koy': '#4a90c4',
+        'mavi-acik': '#e8f4fd',
+        metin: '#1a1a2e',
+        'metin-ac': '#6b7280',
+        sinir: '#f0e8f0',
+        acik: '#f8f5ff',
       },
       fontFamily: {
-        display: ['var(--font-fraunces)', 'serif'],
-        sans: ['var(--font-dm-sans)', 'sans-serif'],
+        display: ['Fraunces', 'serif'],
+        sans: ['DM Sans', 'sans-serif'],
       },
       animation: {
         'fade-up': 'fadeUp 0.6s ease forwards',
