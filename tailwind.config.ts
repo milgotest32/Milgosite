@@ -1,11 +1,6 @@
 import type { Config } from 'tailwindcss'
 const config: Config = {
   content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
-  safelist: [
-    'font-display', 'gradient-text', 'gradient-bg', 'gradient-bg-soft',
-    'card', 'card-hover', 'btn-primary', 'btn-secondary', 'input',
-    'badge-pembe', 'badge-mavi', 'glass',
-  ],
   theme: {
     extend: {
       colors: {
