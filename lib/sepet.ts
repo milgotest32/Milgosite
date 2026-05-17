@@ -1,14 +1,21 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { Urun, SepetItem } from './types'
+import type { Urun, Variant, SepetItem, Kupon } from './types'
 
-type SepetStore = {
+interface SepetStore {
   items: SepetItem[]
-  ekle: (urun: Urun, adet?: number) => void
-  cikar: (urunId: string) => void
-  guncelle: (urunId: string, adet: number) => void
+  kupon: Kupon | null
+  indirim: number
+  notlar: string
+  ekle: (urun: Urun, adet?: number, variant?: Variant) => void
+  cikar: (productId: string, variantId?: string) => void
+  guncelle: (productId: string, adet: number, variantId?: string) => void
   temizle: () => void
-  toplam: () => number
+  setKupon: (kupon: Kupon | null, indirim: number) => void
+  setNotlar: (notlar: string) => void
+  araToplam: () => number
+  kargoUcreti: () => number
+  genelToplam: () => number
   adetToplam: () => number
 }
 
@@ -16,26 +23,44 @@ export const useSepet = create<SepetStore>()(
   persist(
     (set, get) => ({
       items: [],
-      ekle: (urun, adet = 1) => {
-        set(s => {
-          const idx = s.items.findIndex(i => i.urun.id === urun.id)
-          if (idx >= 0) {
-            const items = [...s.items]
-            items[idx] = { ...items[idx], adet: items[idx].adet + adet }
-            return { items }
-          }
-          return { items: [...s.items, { urun, adet }] }
-        })
+      kupon: null,
+      indirim: 0,
+      notlar: '',
+
+      ekle: (urun, adet = 1, variant) => set(s => {
+        const idx = s.items.findIndex(i => i.product_id === urun.id && i.variant_id === variant?.id)
+        if (idx >= 0) {
+          const items = [...s.items]
+          items[idx] = { ...items[idx], adet: items[idx].adet + adet }
+          return { items }
+        }
+        return { items: [...s.items, { product_id: urun.id, variant_id: variant?.id, urun, variant, adet }] }
+      }),
+
+      cikar: (productId, variantId) => set(s => ({
+        items: s.items.filter(i => !(i.product_id === productId && i.variant_id === variantId))
+      })),
+
+      guncelle: (productId, adet, variantId) => {
+        if (adet <= 0) { get().cikar(productId, variantId); return }
+        set(s => ({ items: s.items.map(i => i.product_id === productId && i.variant_id === variantId ? { ...i, adet } : i) }))
       },
-      cikar: (urunId) => set(s => ({ items: s.items.filter(i => i.urun.id !== urunId) })),
-      guncelle: (urunId, adet) => {
-        if (adet <= 0) { get().cikar(urunId); return }
-        set(s => ({ items: s.items.map(i => i.urun.id === urunId ? { ...i, adet } : i) }))
-      },
-      temizle: () => set({ items: [] }),
-      toplam: () => get().items.reduce((t, i) => t + i.urun.fiyat * i.adet, 0),
+
+      temizle: () => set({ items: [], kupon: null, indirim: 0, notlar: '' }),
+      setKupon: (kupon, indirim) => set({ kupon, indirim }),
+      setNotlar: (notlar) => set({ notlar }),
+
+      araToplam: () => get().items.reduce((t, i) => {
+        const fiyat = i.variant?.fiyat ?? i.urun.fiyat
+        return t + fiyat * i.adet
+      }, 0),
+
+      kargoUcreti: () => get().araToplam() >= 500 ? 0 : 49.90,
+
+      genelToplam: () => get().araToplam() + get().kargoUcreti() - get().indirim,
+
       adetToplam: () => get().items.reduce((t, i) => t + i.adet, 0),
     }),
-    { name: 'milgo-sepet' }
+    { name: 'milgo-sepet-v2' }
   )
 )
