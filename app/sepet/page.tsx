@@ -44,33 +44,51 @@ export default function SepetPage() {
   )
 
   return (
-    <div style={{minHeight:'100vh',background:'#F0EEF8',padding:'32px 24px'}}>
-      <div style={{maxWidth:'1100px',margin:'0 auto'}}>
-        <Link href="/urunler" style={{display:'flex',alignItems:'center',gap:'8px',fontSize:'13px',color:'#9CA3AF',textDecoration:'none',marginBottom:'24px'}}><ArrowLeft size={14}/>Alışverişe Devam Et</Link>
-        <h1 style={{fontFamily:'"Playfair Display",serif',fontSize:'32px',color:'#1C1B2E',marginBottom:'32px'}}>Sepetim <span style={{color:'#9CA3AF',fontSize:'22px'}}>({items.length} ürün)</span></h1>
+    <div style={{minHeight:'100vh',background:'#F0EEF8',padding:'24px 16px'}}>
+      <style>{`
+        @media (max-width: 768px) {
+          .sepet-grid { grid-template-columns: 1fr !important; }
+          .sepet-ozet { position: static !important; }
+          .urun-satir { flex-wrap: wrap; gap: 12px !important; }
+          .urun-sag { width: 100%; justify-content: space-between !important; }
+          .urun-fiyat-toplam { display: none !important; }
+        }
+        @media (max-width: 480px) {
+          .urun-gorsel { width: 64px !important; height: 64px !important; }
+          .sepet-baslik { font-size: 24px !important; }
+        }
+      `}</style>
 
-        <div style={{display:'grid',gridTemplateColumns:'1fr 340px',gap:'24px',alignItems:'start'}}>
+      <div style={{maxWidth:'1100px',margin:'0 auto'}}>
+        <Link href="/urunler" style={{display:'flex',alignItems:'center',gap:'8px',fontSize:'13px',color:'#9CA3AF',textDecoration:'none',marginBottom:'24px'}}>
+          <ArrowLeft size={14}/>Alışverişe Devam Et
+        </Link>
+        <h1 className="sepet-baslik" style={{fontFamily:'"Playfair Display",serif',fontSize:'32px',color:'#1C1B2E',marginBottom:'24px'}}>
+          Sepetim <span style={{color:'#9CA3AF',fontSize:'22px'}}>({items.length} ürün)</span>
+        </h1>
+
+        <div className="sepet-grid" style={{display:'grid',gridTemplateColumns:'1fr 340px',gap:'20px',alignItems:'start'}}>
           {/* Ürünler */}
           <div style={{display:'flex',flexDirection:'column',gap:'12px'}}>
             {items.map(({urun,adet})=>{
               const g=urun.site_product_images?.[0]?.url
               return(
-                <div key={urun.id} style={{background:'#fff',borderRadius:'20px',padding:'16px 20px',display:'flex',alignItems:'center',gap:'16px',border:'1px solid #F0ECF5'}}>
-                  <Link href={`/urun/${urun.slug}`} style={{width:'80px',height:'80px',borderRadius:'14px',background:'#F0EEF8',overflow:'hidden',flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',padding:'8px',textDecoration:'none'}}>
+                <div key={urun.id} className="urun-satir" style={{background:'#fff',borderRadius:'20px',padding:'14px 16px',display:'flex',alignItems:'center',gap:'14px',border:'1px solid #F0ECF5'}}>
+                  <Link href={`/urun/${urun.slug}`} className="urun-gorsel" style={{width:'80px',height:'80px',borderRadius:'14px',background:'#F0EEF8',overflow:'hidden',flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',padding:'8px',textDecoration:'none'}}>
                     {g?<img src={g} alt={urun.name} style={{width:'100%',height:'100%',objectFit:'contain'}}/>:<span style={{fontSize:'36px'}}>🥛</span>}
                   </Link>
                   <div style={{flex:1,minWidth:0}}>
                     <Link href={`/urun/${urun.slug}`} style={{fontSize:'15px',fontWeight:700,color:'#1C1B2E',textDecoration:'none',display:'block',marginBottom:'4px',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{urun.name}</Link>
-                    <span style={{fontSize:'16px',fontWeight:700,color:'#1C1B2E'}}>₺{urun.fiyat.toFixed(2)}</span>
+                    <span style={{fontSize:'15px',fontWeight:700,color:'#E07090'}}>₺{urun.fiyat.toFixed(2)}</span>
                   </div>
-                  <div style={{display:'flex',alignItems:'center',gap:'12px',flexShrink:0}}>
+                  <div className="urun-sag" style={{display:'flex',alignItems:'center',gap:'10px',flexShrink:0}}>
                     <div style={{display:'flex',alignItems:'center',background:'#F0EEF8',borderRadius:'10px',overflow:'hidden'}}>
-                      <button onClick={()=>guncelle(urun.id,adet-1)} style={{width:'32px',height:'32px',display:'flex',alignItems:'center',justifyContent:'center',background:'none',border:'none',cursor:'none',color:'#6B7280'}}><Minus size={13}/></button>
-                      <span style={{width:'32px',textAlign:'center',fontSize:'14px',fontWeight:700}}>{adet}</span>
-                      <button onClick={()=>guncelle(urun.id,adet+1)} style={{width:'32px',height:'32px',display:'flex',alignItems:'center',justifyContent:'center',background:'none',border:'none',cursor:'none',color:'#6B7280'}}><Plus size={13}/></button>
+                      <button onClick={()=>guncelle(urun.id,adet-1)} style={{width:'34px',height:'34px',display:'flex',alignItems:'center',justifyContent:'center',background:'none',border:'none',cursor:'pointer',color:'#6B7280'}}><Minus size={13}/></button>
+                      <span style={{width:'28px',textAlign:'center',fontSize:'14px',fontWeight:700}}>{adet}</span>
+                      <button onClick={()=>guncelle(urun.id,adet+1)} style={{width:'34px',height:'34px',display:'flex',alignItems:'center',justifyContent:'center',background:'none',border:'none',cursor:'pointer',color:'#6B7280'}}><Plus size={13}/></button>
                     </div>
-                    <span style={{fontSize:'16px',fontWeight:700,color:'#1C1B2E',minWidth:'72px',textAlign:'right'}}>₺{(urun.fiyat*adet).toFixed(2)}</span>
-                    <button onClick={()=>{cikar(urun.id);toast.success('Ürün kaldırıldı')}} style={{width:'32px',height:'32px',display:'flex',alignItems:'center',justifyContent:'center',background:'none',border:'none',cursor:'none',color:'#9CA3AF'}}><Trash2 size={15}/></button>
+                    <span className="urun-fiyat-toplam" style={{fontSize:'15px',fontWeight:700,color:'#1C1B2E',minWidth:'68px',textAlign:'right'}}>₺{(urun.fiyat*adet).toFixed(2)}</span>
+                    <button onClick={()=>{cikar(urun.id);toast.success('Ürün kaldırıldı')}} style={{width:'34px',height:'34px',display:'flex',alignItems:'center',justifyContent:'center',background:'#FEF2F2',borderRadius:'10px',border:'none',cursor:'pointer',color:'#EF4444',flexShrink:0}}><Trash2 size={15}/></button>
                   </div>
                 </div>
               )
@@ -78,14 +96,14 @@ export default function SepetPage() {
           </div>
 
           {/* Özet */}
-          <div style={{position:'sticky',top:'80px',display:'flex',flexDirection:'column',gap:'12px'}}>
+          <div className="sepet-ozet" style={{position:'sticky',top:'80px',display:'flex',flexDirection:'column',gap:'12px'}}>
             {/* Kupon */}
             <div style={{background:'#fff',borderRadius:'20px',padding:'20px',border:'1px solid #F0ECF5'}}>
               <h3 style={{fontSize:'14px',fontWeight:700,color:'#1C1B2E',marginBottom:'12px',display:'flex',alignItems:'center',gap:'8px'}}><Tag size={16} style={{color:'#E07090'}}/>İndirim Kodu</h3>
               {!kuponBas ? (
                 <div style={{display:'flex',gap:'8px'}}>
-                  <input value={kuponKod} onChange={e=>setKuponKod(e.target.value)} placeholder="Kod girin" style={{flex:1,background:'#F0EEF8',border:'1px solid #F0ECF5',borderRadius:'10px',padding:'10px 14px',fontSize:'13px',color:'#1C1B2E',outline:'none',fontFamily:'inherit'}}/>
-                  <button onClick={kuponUygula} disabled={kuponLoading} style={{background:'linear-gradient(135deg,#E07090,#3B9FCC)',color:'#fff',border:'none',borderRadius:'10px',padding:'10px 16px',fontSize:'13px',fontWeight:700,cursor:'none',fontFamily:'inherit'}}>
+                  <input value={kuponKod} onChange={e=>setKuponKod(e.target.value)} onKeyDown={e=>e.key==='Enter'&&kuponUygula()} placeholder="Kod girin" style={{flex:1,background:'#F0EEF8',border:'1px solid #F0ECF5',borderRadius:'10px',padding:'10px 14px',fontSize:'13px',color:'#1C1B2E',outline:'none',fontFamily:'inherit'}}/>
+                  <button onClick={kuponUygula} disabled={kuponLoading} style={{background:'linear-gradient(135deg,#E07090,#3B9FCC)',color:'#fff',border:'none',borderRadius:'10px',padding:'10px 16px',fontSize:'13px',fontWeight:700,cursor:'pointer',fontFamily:'inherit',whiteSpace:'nowrap'}}>
                     {kuponLoading?'...':'Uygula'}
                   </button>
                 </div>
