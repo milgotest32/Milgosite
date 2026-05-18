@@ -22,7 +22,7 @@ export default function SSSPage() {
         <div style={{display:'flex',flexDirection:'column',gap:'12px'}}>
           {SORULAR.map((item,i)=>(
             <details key={i} style={{background:'#fff',borderRadius:'16px',border:'1px solid #F0ECF5',overflow:'hidden'}}>
-              <summary style={{padding:'18px 20px',fontSize:'15px',fontWeight:600,color:'#1C1B2E',cursor:'none',listStyle:'none',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <summary style={{padding:'18px 20px',fontSize:'15px',fontWeight:600,color:'#1C1B2E',cursor:'pointer',listStyle:'none',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
                 {item.s}
                 <span style={{fontSize:'20px',color:'#E07090',flexShrink:0}}>+</span>
               </summary>

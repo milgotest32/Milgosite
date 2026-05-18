@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase/client'
 import { Package, Heart, MapPin, Settings, ChevronRight, RefreshCw, LogOut } from 'lucide-react'
 export const dynamic = 'force-dynamic'
 export default function HesabimPage() {

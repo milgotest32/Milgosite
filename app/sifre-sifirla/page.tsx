@@ -38,7 +38,7 @@ export default function SifreSifirlaPage() {
               <label style={{display:'block',fontSize:'11px',fontWeight:700,textTransform:'uppercase',color:'#6B7280',marginBottom:'6px'}}>E-posta</label>
               <input type="email" value={email} onChange={e=>setEmail(e.target.value)} required placeholder="ornek@email.com" style={{width:'100%',background:'#F8F7FC',border:'1px solid #F0ECF5',borderRadius:'12px',padding:'12px 14px',fontSize:'14px',color:'#1C1B2E',outline:'none',fontFamily:'inherit'}}/>
             </div>
-            <button type="submit" disabled={loading} style={{width:'100%',background:'linear-gradient(135deg,#E07090,#3B9FCC)',color:'#fff',border:'none',borderRadius:'50px',padding:'14px',fontSize:'14px',fontWeight:700,cursor:'none',fontFamily:'inherit'}}>{loading?'Gönderiliyor...':'Sıfırlama Linki Gönder'}</button>
+            <button type="submit" disabled={loading} style={{width:'100%',background:'linear-gradient(135deg,#E07090,#3B9FCC)',color:'#fff',border:'none',borderRadius:'50px',padding:'14px',fontSize:'14px',fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>{loading?'Gönderiliyor...':'Sıfırlama Linki Gönder'}</button>
           </form>
         </div>
       </div>
