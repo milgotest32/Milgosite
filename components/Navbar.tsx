@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useSepet } from '@/lib/sepet'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase/client'
 import { ShoppingBag, User, Menu, X, Search, Heart, ChevronDown } from 'lucide-react'
 
 export default function Navbar() {
@@ -27,7 +27,7 @@ export default function Navbar() {
     inner: { maxWidth:'1280px', margin:'0 auto', padding:'0 16px', height:'64px', display:'flex', alignItems:'center', gap:'8px' },
     logo: { fontFamily:'"Playfair Display", serif', fontSize:'24px', color:'#1C1B2E', textDecoration:'none', marginRight:'16px', flexShrink:0 },
     link: { padding:'8px 14px', fontSize:'13px', fontWeight:'500', color:'#6B7280', textDecoration:'none', borderRadius:'10px', transition:'all 0.2s', whiteSpace:'nowrap' as const },
-    iconBtn: { width:'38px', height:'38px', display:'flex', alignItems:'center', justifyContent:'center', borderRadius:'10px', color:'#6B7280', textDecoration:'none', background:'transparent', border:'none', cursor:'none', flexShrink:0 },
+    iconBtn: { width:'38px', height:'38px', display:'flex', alignItems:'center', justifyContent:'center', borderRadius:'10px', color:'#6B7280', textDecoration:'none', background:'transparent', border:'none', cursor:'pointer', flexShrink:0 },
     cartBtn: { display:'flex', alignItems:'center', gap:'6px', background:'#F0EEF8', padding:'8px 14px', borderRadius:'12px', textDecoration:'none', flexShrink:0 },
     dropdown: { position:'absolute' as const, top:'calc(100% + 8px)', background:'#fff', borderRadius:'16px', boxShadow:'0 8px 32px rgba(0,0,0,0.12)', border:'1px solid #F0ECF5', padding:'8px', minWidth:'180px', zIndex:100 },
     dropItem: { display:'flex', alignItems:'center', gap:'10px', padding:'10px 12px', borderRadius:'10px', fontSize:'13px', fontWeight:'500', color:'#1C1B2E', textDecoration:'none' },
@@ -43,7 +43,7 @@ export default function Navbar() {
           {/* Masaüstü linkler */}
           <div style={{display:'flex', alignItems:'center', gap:'2px', flex:1}} className="hidden lg:flex">
             <div style={{position:'relative'}} onMouseEnter={() => setUrunMenu(true)} onMouseLeave={() => setUrunMenu(false)}>
-              <button style={{...s.link, display:'flex', alignItems:'center', gap:'4px', background:'none', border:'none', cursor:'none'}}>
+              <button style={{...s.link, display:'flex', alignItems:'center', gap:'4px', background:'none', border:'none', cursor:'pointer'}}>
                 Ürünler <ChevronDown size={13} style={{transition:'transform 0.2s', transform: urunMenu ? 'rotate(180deg)' : 'none'}} />
               </button>
               {urunMenu && (
@@ -81,7 +81,7 @@ export default function Navbar() {
                         <Link key={href} href={href} onClick={() => setUserMenu(false)} style={s.dropItem}>{i} {ad}</Link>
                       ))}
                       <div style={{borderTop:'1px solid #F0ECF5', marginTop:'6px', paddingTop:'6px'}}>
-                        <button onClick={cikis} style={{...s.dropItem, color:'#ef4444', background:'none', border:'none', width:'100%', cursor:'none'}}>🚪 Çıkış Yap</button>
+                        <button onClick={cikis} style={{...s.dropItem, color:'#ef4444', background:'none', border:'none', width:'100%', cursor:'pointer'}}>🚪 Çıkış Yap</button>
                       </div>
                     </>
                   ) : (
@@ -123,7 +123,7 @@ export default function Navbar() {
           </div>
           <div style={{borderTop:'1px solid #F0ECF5', marginTop:'24px', paddingTop:'24px', display:'flex', flexDirection:'column', gap:'10px'}}>
             {user ? (
-              <button onClick={cikis} style={{background:'#fff', border:'2px solid #F4A7B9', color:'#E07090', fontWeight:'600', fontSize:'14px', padding:'14px', borderRadius:'50px', cursor:'none'}}>Çıkış Yap</button>
+              <button onClick={cikis} style={{background:'#fff', border:'2px solid #F4A7B9', color:'#E07090', fontWeight:'600', fontSize:'14px', padding:'14px', borderRadius:'50px', cursor:'pointer'}}>Çıkış Yap</button>
             ) : (
               <>
                 <Link href="/giris" onClick={() => setMenuAcik(false)} style={{background:'linear-gradient(135deg,#E07090,#3B9FCC)', color:'#fff', fontWeight:'600', fontSize:'14px', padding:'14px', borderRadius:'50px', textAlign:'center', textDecoration:'none', display:'block'}}>Giriş Yap</Link>
