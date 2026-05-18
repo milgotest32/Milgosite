@@ -77,10 +77,10 @@ export default function KonumModal() {
       {/* Modal — sabit genişlik, güvenli alt boşluk için env() */}
       <div style={{
         position: 'fixed',
-        bottom: 'max(24px, env(safe-area-inset-bottom, 24px))',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        width: 'min(420px, calc(100vw - 32px))',
+        bottom: 'max(16px, env(safe-area-inset-bottom, 16px))',
+        left: '16px',
+        right: '16px',
+        width: 'auto', maxWidth: '420px',
         background: '#fff',
         borderRadius: '28px',
         zIndex: 999,
