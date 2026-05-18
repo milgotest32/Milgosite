@@ -49,7 +49,7 @@ export default function AbonelikPage() {
           <RefreshCw size={12} /> Haftalık Abonelik
         </div>
         <h1 style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: 'clamp(36px,5vw,68px)', fontWeight: 400, color: '#1A0A12', lineHeight: 1.05, margin: '0 0 12px' }}>
-          Her Hafta <em style={{ fontStyle: 'italic', color: '#E8567A' }}>Kapınıza</em>
+          Her Hafta <em style={{ fontStyle: 'italic', color: '#E8567A', fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif", fontWeight: '400' }}>Kapınıza</em>
         </h1>
         <p style={{ color: '#7A6070', fontSize: '15px', maxWidth: '480px', margin: '0 auto' }}>Taze çiğ sütü her hafta düzenli olarak evinize teslim ediyoruz.</p>
       </div>

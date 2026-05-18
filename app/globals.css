@@ -14,6 +14,7 @@
   --d: #1A0A12;
   --g: #7A6070;
   --font-display: var(--font-nunito), Nunito, sans-serif;
+  --font-accent: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif;
   --font-body: var(--font-nunito), Nunito, sans-serif;
 }
 
@@ -124,7 +125,7 @@ body {
   margin-bottom: 36px;
   font-weight: 400;
 }
-.sec-h em { font-style: italic; color: var(--p); }
+.sec-h em { font-style: italic; color: var(--p); font-family: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif; font-size: 1.08em; font-weight: 400; }
 
 /* Buttons */
 .btn-dark {

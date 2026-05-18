@@ -7,7 +7,7 @@ export default function CiftligimizPage() {
           ATASANCAK Çiftliği
         </div>
         <h1 style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: 'clamp(36px,5vw,68px)', fontWeight: 400, color: '#1A0A12', lineHeight: 1.05, margin: 0 }}>
-          Çiftliğimizi <em style={{ fontStyle: 'italic', color: '#E8567A' }}>Keşfedin</em>
+          Çiftliğimizi <em style={{ fontStyle: 'italic', color: '#E8567A', fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif", fontWeight: '400' }}>Keşfedin</em>
         </h1>
       </div>
 
@@ -17,7 +17,7 @@ export default function CiftligimizPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '48px', alignItems: 'center', marginBottom: '56px' }}>
           <div>
             <h2 style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: 'clamp(26px,3.5vw,40px)', fontWeight: 400, color: '#1A0A12', lineHeight: 1.15, margin: '0 0 20px' }}>
-              Türkiye'nin En Büyük <em style={{ fontStyle: 'italic', color: '#E8567A' }}>Damızlık Çiftliği</em>
+              Türkiye'nin En Büyük <em style={{ fontStyle: 'italic', color: '#E8567A', fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif", fontWeight: '400' }}>Damızlık Çiftliği</em>
             </h2>
             <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#7A6070', marginBottom: '16px' }}>
               ATASANCAK Çiftliği, 24.000 dekar arazi üzerine kuruludur ve 4.800 sağmal olmak üzere toplam 10.500 büyükbaş ile Türkiye ve Avrupa'nın en büyük damızlık yetiştirme tesisidir.

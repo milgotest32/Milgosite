@@ -41,7 +41,7 @@ export default function AnaSayfa() {
 
             <h1 style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: 'clamp(44px, 7vw, 88px)', lineHeight: .95, color: '#1A0A12', marginBottom: '20px', letterSpacing: '-.02em' }}>
               Mutlu&shy;luğun<br />
-              <em style={{ fontStyle: 'italic', color: '#E8567A' }}>Tadını</em><br />
+              <em style={{ fontStyle: 'italic', color: '#E8567A', fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif", fontWeight: '400', fontSize: '1.1em' }}>Tadını</em><br />
               <span>Hissedin</span>
             </h1>
 
@@ -165,7 +165,7 @@ export default function AnaSayfa() {
           <div>
             <span className="sec-tag">⟳ Haftalık Abonelik</span>
             <h2 style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: 'clamp(24px,4vw,44px)', color: '#1A0A12', lineHeight: 1.1, marginBottom: '16px' }}>
-              Her Hafta Taze,<br /><em style={{ fontStyle: 'italic', color: '#E8567A' }}>Hiç Düşünmeden</em>
+              Her Hafta Taze,<br /><em style={{ fontStyle: 'italic', color: '#E8567A', fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif", fontWeight: '400', fontSize: '1.1em' }}>Hiç Düşünmeden</em>
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
               {['İstediğiniz zaman iptal', 'Miktarı değiştirme', 'Her Cuma teslimat', 'Abonelere %10 indirim'].map(o => (
@@ -219,7 +219,7 @@ export default function AnaSayfa() {
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '36px' }}>
             <span style={{ display: 'inline-block', background: 'rgba(244,167,185,.15)', color: '#F4A7B9', fontSize: '10px', fontWeight: 800, letterSpacing: '.25em', textTransform: 'uppercase', padding: '6px 14px', borderRadius: '50px', marginBottom: '12px' }}>Müşterilerimiz</span>
-            <h2 style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: 'clamp(24px,4vw,44px)', color: '#fff' }}>Sizden <em style={{ fontStyle: 'italic', color: '#E8567A' }}>Gelenler</em></h2>
+            <h2 style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: 'clamp(24px,4vw,44px)', color: '#fff' }}>Sizden <em style={{ fontStyle: 'italic', color: '#E8567A', fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif", fontWeight: '400', fontSize: '1.1em' }}>Gelenler</em></h2>
           </div>
           <div className="rev-grid">
             {[
@@ -248,7 +248,7 @@ export default function AnaSayfa() {
       {/* ===== BÜLTEN ===== */}
       <section style={{ padding: 'clamp(48px,7vw,88px) clamp(20px,4vw,48px)', textAlign: 'center' }}>
         <h2 style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: 'clamp(24px,4vw,48px)', color: '#1A0A12', marginBottom: '10px' }}>
-          İlk Siparişte <em style={{ fontStyle: 'italic', color: '#E8567A' }}>%10 İndirim</em>
+          İlk Siparişte <em style={{ fontStyle: 'italic', color: '#E8567A', fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif", fontWeight: '400', fontSize: '1.1em' }}>%10 İndirim</em>
         </h2>
         <p style={{ fontSize: '14px', color: '#7A6070', marginBottom: '24px' }}>Bültene katılın, özel tekliflerden ilk siz haberdar olun.</p>
         <form onSubmit={e => e.preventDefault()}
