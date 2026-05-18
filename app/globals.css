@@ -13,8 +13,8 @@
   --w: #FDFBF9;
   --d: #1A0A12;
   --g: #7A6070;
-  --font-display: var(--font-instrument-serif), 'Instrument Serif', Georgia, serif;
-  --font-body: var(--font-syne), 'Syne', system-ui, sans-serif;
+  --font-display: var(--font-nunito), Nunito, sans-serif;
+  --font-body: var(--font-nunito), Nunito, sans-serif;
 }
 
 /* Reset & Base */
@@ -117,7 +117,7 @@ body {
 
 /* Section heading */
 .sec-h {
-  font-family: var(--font-display) !important;
+  font-family: var(--font-nunito), Nunito, sans-serif !important;
   font-size: clamp(30px, 4vw, 52px);
   line-height: 1.1;
   color: var(--d);

@@ -41,7 +41,7 @@ export default function KayitPage() {
       <input
         type={type} value={(form as any)[key]} onChange={e => set(key, e.target.value)}
         placeholder={placeholder} required={key !== 'telefon'}
-        style={{ width: '100%', background: 'rgba(26,10,18,0.04)', border: '1.5px solid rgba(26,10,18,0.1)', borderRadius: '14px', padding: '13px 16px', fontSize: '14px', color: '#1A0A12', outline: 'none', fontFamily: 'Syne, sans-serif', boxSizing: 'border-box', transition: 'border-color .2s' }}
+        style={{ width: '100%', background: 'rgba(26,10,18,0.04)', border: '1.5px solid rgba(26,10,18,0.1)', borderRadius: '14px', padding: '13px 16px', fontSize: '14px', color: '#1A0A12', outline: 'none', fontFamily: 'Nunito, sans-serif', boxSizing: 'border-box', transition: 'border-color .2s' }}
         onFocus={e => e.target.style.borderColor = '#E8567A'}
         onBlur={e => e.target.style.borderColor = 'rgba(26,10,18,0.1)'}
       />
@@ -54,11 +54,11 @@ export default function KayitPage() {
         <div style={{ width: '64px', height: '64px', background: '#E8567A', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
           <Check size={28} color="#fff" />
         </div>
-        <h2 style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: '28px', color: '#1A0A12', marginBottom: '12px' }}>Kayıt Başarılı!</h2>
+        <h2 style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '28px', color: '#1A0A12', marginBottom: '12px' }}>Kayıt Başarılı!</h2>
         <p style={{ fontSize: '14px', color: '#7A6070', lineHeight: 1.7, marginBottom: '28px' }}>
           <strong>{form.email}</strong> adresine doğrulama e-postası gönderdik. Lütfen e-postanızı kontrol edin.
         </p>
-        <Link href="/giris" style={{ display: 'inline-block', background: '#1A0A12', color: '#fff', padding: '13px 32px', borderRadius: '50px', textDecoration: 'none', fontSize: '14px', fontWeight: 700, fontFamily: 'Syne, sans-serif' }}>
+        <Link href="/giris" style={{ display: 'inline-block', background: '#1A0A12', color: '#fff', padding: '13px 32px', borderRadius: '50px', textDecoration: 'none', fontSize: '14px', fontWeight: 700, fontFamily: 'Nunito, sans-serif' }}>
           Giriş Yap →
         </Link>
       </div>
@@ -66,7 +66,7 @@ export default function KayitPage() {
   )
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #FEE8EF 0%, #EBF5FC 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', fontFamily: 'Syne, sans-serif', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #FEE8EF 0%, #EBF5FC 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', fontFamily: 'Nunito, sans-serif', position: 'relative', overflow: 'hidden' }}>
       <div className="blob blob-p" style={{ width: '400px', height: '400px', top: '-100px', right: '-100px' }} />
       <div className="blob blob-b" style={{ width: '300px', height: '300px', bottom: '-80px', left: '-80px' }} />
 
@@ -77,7 +77,7 @@ export default function KayitPage() {
 
         <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(20px)', borderRadius: '32px', padding: '36px', border: '1px solid rgba(255,255,255,0.9)', boxShadow: '0 20px 60px rgba(26,10,18,0.1)' }}>
           <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-            <div style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: '30px', color: '#1A0A12', marginBottom: '4px' }}>
+            <div style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '30px', color: '#1A0A12', marginBottom: '4px' }}>
               milgo<span style={{ color: '#E8567A' }}>.</span>
             </div>
             <h1 style={{ fontSize: '18px', fontWeight: 700, color: '#1A0A12', margin: 0 }}>Üye Ol</h1>
@@ -104,7 +104,7 @@ export default function KayitPage() {
                 <input
                   type={goster ? 'text' : 'password'} value={form.sifre} onChange={e => set('sifre', e.target.value)}
                   placeholder="En az 6 karakter" required
-                  style={{ width: '100%', background: 'rgba(26,10,18,0.04)', border: '1.5px solid rgba(26,10,18,0.1)', borderRadius: '14px', padding: '13px 48px 13px 16px', fontSize: '14px', color: '#1A0A12', outline: 'none', fontFamily: 'Syne, sans-serif', boxSizing: 'border-box', transition: 'border-color .2s' }}
+                  style={{ width: '100%', background: 'rgba(26,10,18,0.04)', border: '1.5px solid rgba(26,10,18,0.1)', borderRadius: '14px', padding: '13px 48px 13px 16px', fontSize: '14px', color: '#1A0A12', outline: 'none', fontFamily: 'Nunito, sans-serif', boxSizing: 'border-box', transition: 'border-color .2s' }}
                   onFocus={e => e.target.style.borderColor = '#E8567A'}
                   onBlur={e => e.target.style.borderColor = 'rgba(26,10,18,0.1)'}
                 />
@@ -119,13 +119,13 @@ export default function KayitPage() {
               <input
                 type="password" value={form.sifreTekrar} onChange={e => set('sifreTekrar', e.target.value)}
                 placeholder="Şifrenizi tekrar girin" required
-                style={{ width: '100%', background: 'rgba(26,10,18,0.04)', border: `1.5px solid ${form.sifreTekrar && form.sifre !== form.sifreTekrar ? '#E8567A' : 'rgba(26,10,18,0.1)'}`, borderRadius: '14px', padding: '13px 16px', fontSize: '14px', color: '#1A0A12', outline: 'none', fontFamily: 'Syne, sans-serif', boxSizing: 'border-box' }}
+                style={{ width: '100%', background: 'rgba(26,10,18,0.04)', border: `1.5px solid ${form.sifreTekrar && form.sifre !== form.sifreTekrar ? '#E8567A' : 'rgba(26,10,18,0.1)'}`, borderRadius: '14px', padding: '13px 16px', fontSize: '14px', color: '#1A0A12', outline: 'none', fontFamily: 'Nunito, sans-serif', boxSizing: 'border-box' }}
                 onFocus={e => e.target.style.borderColor = '#E8567A'}
                 onBlur={e => e.target.style.borderColor = form.sifre !== form.sifreTekrar ? '#E8567A' : 'rgba(26,10,18,0.1)'}
               />
             </div>
 
-            <button type="submit" disabled={yukleniyor} style={{ width: '100%', background: yukleniyor ? '#7A6070' : '#E8567A', color: '#fff', border: 'none', borderRadius: '50px', padding: '15px', fontSize: '14px', fontWeight: 700, cursor: 'none', fontFamily: 'Syne, sans-serif', marginTop: '4px', transition: 'background .2s', boxShadow: '0 6px 20px rgba(232,86,122,0.35)' }}>
+            <button type="submit" disabled={yukleniyor} style={{ width: '100%', background: yukleniyor ? '#7A6070' : '#E8567A', color: '#fff', border: 'none', borderRadius: '50px', padding: '15px', fontSize: '14px', fontWeight: 700, cursor: 'none', fontFamily: 'Nunito, sans-serif', marginTop: '4px', transition: 'background .2s', boxShadow: '0 6px 20px rgba(232,86,122,0.35)' }}>
               {yukleniyor ? 'Kaydediliyor...' : 'Üye Ol →'}
             </button>
 

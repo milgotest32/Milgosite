@@ -89,7 +89,7 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
               {urun.site_kategoriler && <span style={{ background: 'rgba(26,10,18,.06)', color: '#7A6070', fontSize: '10px', fontWeight: 700, padding: '4px 12px', borderRadius: '50px', textTransform: 'uppercase' as const, letterSpacing: '.08em' }}>{urun.site_kategoriler.name}</span>}
             </div>
 
-            <h1 style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: 'clamp(26px,4vw,42px)', fontWeight: 400, color: '#1A0A12', lineHeight: 1.1, marginBottom: '14px' }}>{urun.name}</h1>
+            <h1 style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: 'clamp(26px,4vw,42px)', fontWeight: 400, color: '#1A0A12', lineHeight: 1.1, marginBottom: '14px' }}>{urun.name}</h1>
 
             {/* Yıldızlar */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
@@ -102,7 +102,7 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
 
             {/* Fiyat */}
             <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px', marginBottom: '24px' }}>
-              <span style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: 'clamp(34px,5vw,50px)', fontWeight: 400, color: '#1A0A12' }}>₺{urun.fiyat.toFixed(2)}</span>
+              <span style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: 'clamp(34px,5vw,50px)', fontWeight: 400, color: '#1A0A12' }}>₺{urun.fiyat.toFixed(2)}</span>
               {urun.eski_fiyat && <span style={{ fontSize: '18px', color: '#7A6070', textDecoration: 'line-through', marginBottom: '6px' }}>₺{urun.eski_fiyat.toFixed(2)}</span>}
             </div>
 
@@ -129,7 +129,7 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
               </div>
 
               <button onClick={sepeteEkle} disabled={urun.stok_takip && urun.stok <= 0}
-                style={{ flex: 1, minWidth: '180px', height: '44px', borderRadius: '50px', border: 'none', fontFamily: 'var(--font-syne), Syne, sans-serif', fontSize: '13px', fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'none', transition: 'all .25s', background: eklendi ? '#22c55e' : '#1A0A12' }}>
+                style={{ flex: 1, minWidth: '180px', height: '44px', borderRadius: '50px', border: 'none', fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '13px', fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'none', transition: 'all .25s', background: eklendi ? '#22c55e' : '#1A0A12' }}>
                 {eklendi ? <><Check size={15} />Eklendi!</> : <><ShoppingBag size={15} />Sepete Ekle · ₺{(urun.fiyat * adet).toFixed(2)}</>}
               </button>
 
@@ -169,7 +169,7 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
           <div style={{ display: 'flex', gap: '4px', borderBottom: '1px solid rgba(26,10,18,.08)', marginBottom: '28px', overflowX: 'auto' }}>
             {([['aciklama','Açıklama'],['ozellikler','Özellikler'],['yorumlar',`Yorumlar (${yorumlar.length})`]] as const).map(([key, label]) => (
               <button key={key} onClick={() => setAktifTab(key)}
-                style={{ padding: '12px 20px', fontSize: '13px', fontWeight: 700, color: aktifTab === key ? '#E8567A' : '#7A6070', background: 'none', border: 'none', borderBottom: `2px solid ${aktifTab === key ? '#E8567A' : 'transparent'}`, cursor: 'none', fontFamily: 'var(--font-syne), Syne, sans-serif', whiteSpace: 'nowrap', transition: 'color .2s', marginBottom: '-1px' }}>
+                style={{ padding: '12px 20px', fontSize: '13px', fontWeight: 700, color: aktifTab === key ? '#E8567A' : '#7A6070', background: 'none', border: 'none', borderBottom: `2px solid ${aktifTab === key ? '#E8567A' : 'transparent'}`, cursor: 'none', fontFamily: 'var(--font-nunito), Nunito, sans-serif', whiteSpace: 'nowrap', transition: 'color .2s', marginBottom: '-1px' }}>
                 {label}
               </button>
             ))}

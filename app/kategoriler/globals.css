@@ -13,8 +13,8 @@
   --w: #FDFBF9;
   --d: #1A0A12;
   --g: #7A6070;
-  --font-display: var(--font-instrument-serif), 'Instrument Serif', Georgia, serif;
-  --font-body: var(--font-syne), 'Syne', system-ui, sans-serif;
+  --font-display: var(--font-nunito), Nunito, sans-serif;
+  --font-body: var(--font-nunito), Nunito, sans-serif;
 }
 
 /* Reset & Base */

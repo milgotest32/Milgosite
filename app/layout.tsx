@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Syne, Instrument_Serif } from 'next/font/google'
+import { Nunito } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
@@ -7,18 +7,11 @@ import Cursor from '@/components/ui/Cursor'
 import KonumModal from '@/components/ui/KonumModal'
 import { Toaster } from 'react-hot-toast'
 
-const syne = Syne({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
-  variable: '--font-syne',
-  display: 'swap',
-})
-
-const instrumentSerif = Instrument_Serif({
+const nunito = Nunito({
   subsets: ['latin', 'latin-ext'],
-  weight: '400',
+  weight: ['300', '400', '500', '600', '700', '800', '900'],
   style: ['normal', 'italic'],
-  variable: '--font-instrument-serif',
+  variable: '--font-nunito',
   display: 'swap',
 })
 
@@ -36,11 +29,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="tr" className={`${syne.variable} ${instrumentSerif.variable}`}>
+    <html lang="tr" className={nunito.variable}>
       <body>
         <Cursor />
         <KonumModal />
-        <Toaster position="top-right" toastOptions={{ duration: 3000, style: { fontFamily: 'var(--font-syne), Syne, sans-serif', fontSize: '14px', borderRadius: '14px' } }} />
+        <Toaster position="top-right" toastOptions={{ duration: 3000, style: { fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '14px', borderRadius: '14px' } }} />
         <Navbar />
         <main>{children}</main>
         <Footer />
