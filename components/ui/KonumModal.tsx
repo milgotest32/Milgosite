@@ -17,21 +17,14 @@ export default function KonumModal() {
 
   useEffect(() => {
     const kayitli = localStorage.getItem('milgo_konum')
-    if (kayitli) {
-      setKonum(kayitli)
-      return
-    }
-    // 1.5 sn sonra göster
+    if (kayitli) { setKonum(kayitli); return }
     const t = setTimeout(() => setGoster(true), 1500)
     return () => clearTimeout(t)
   }, [])
 
   const konumAl = () => {
     setDurum('aliniyor')
-    if (!navigator.geolocation) {
-      setDurum('manuel')
-      return
-    }
+    if (!navigator.geolocation) { setDurum('manuel'); return }
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         try {
@@ -44,9 +37,7 @@ export default function KonumModal() {
           setKonum(ilce)
           setDurum('tamam')
           setTimeout(() => setGoster(false), 2000)
-        } catch {
-          setDurum('manuel')
-        }
+        } catch { setDurum('manuel') }
       },
       () => setDurum('manuel'),
       { timeout: 8000 }
@@ -68,22 +59,41 @@ export default function KonumModal() {
 
   if (!goster) return null
 
+  const btnBase: React.CSSProperties = {
+    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+    border: 'none', borderRadius: '50px', padding: '14px 20px', fontSize: '14px',
+    fontWeight: 700, cursor: 'pointer', fontFamily: 'Syne, sans-serif', width: '100%',
+    WebkitTapHighlightColor: 'transparent',
+  }
+
   return (
     <>
       {/* Overlay */}
-      <div onClick={kapat} style={{ position: 'fixed', inset: 0, background: 'rgba(26,10,18,0.6)', zIndex: 998, backdropFilter: 'blur(4px)' }} />
+      <div
+        onClick={kapat}
+        style={{ position: 'fixed', inset: 0, background: 'rgba(26,10,18,0.5)', zIndex: 998, backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)' }}
+      />
 
-      {/* Modal */}
+      {/* Modal — sabit genişlik, güvenli alt boşluk için env() */}
       <div style={{
-        position: 'fixed', bottom: '24px', left: '50%', transform: 'translateX(-50%)',
+        position: 'fixed',
+        bottom: 'max(24px, env(safe-area-inset-bottom, 24px))',
+        left: '50%',
+        transform: 'translateX(-50%)',
         width: 'min(420px, calc(100vw - 32px))',
-        background: '#fff', borderRadius: '28px', zIndex: 999,
+        background: '#fff',
+        borderRadius: '28px',
+        zIndex: 999,
         boxShadow: '0 24px 64px rgba(26,10,18,0.2)',
-        padding: '28px', fontFamily: 'Syne, sans-serif',
+        padding: 'clamp(20px,4vw,28px)',
+        fontFamily: 'Syne, sans-serif',
         animation: 'fadeUp 0.4s ease forwards',
+        boxSizing: 'border-box',
       }}>
         {/* Kapat */}
-        <button onClick={kapat} style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(26,10,18,0.06)', border: 'none', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'none' }}>
+        <button
+          onClick={kapat}
+          style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(26,10,18,0.06)', border: 'none', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
           <X size={15} color="#7A6070" />
         </button>
 
@@ -92,14 +102,12 @@ export default function KonumModal() {
             <div style={{ width: '56px', height: '56px', background: '#E8567A', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
               <Check size={24} color="#fff" />
             </div>
-            <p style={{ fontFamily: '"Instrument Serif", serif', fontSize: '20px', color: '#1A0A12', margin: '0 0 4px' }}>
-              Konumunuz Belirlendi
-            </p>
-            <p style={{ fontSize: '14px', color: '#E8567A', fontWeight: 700 }}>{konum}</p>
+            <p style={{ fontFamily: '"Instrument Serif", serif', fontSize: '20px', color: '#1A0A12', margin: '0 0 4px' }}>Konumunuz Belirlendi</p>
+            <p style={{ fontSize: '14px', color: '#E8567A', fontWeight: 700, margin: 0 }}>{konum}</p>
           </div>
         ) : (
           <>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', paddingRight: '36px' }}>
               <div style={{ width: '48px', height: '48px', background: '#FEE8EF', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <MapPin size={22} color="#E8567A" />
               </div>
@@ -111,10 +119,10 @@ export default function KonumModal() {
 
             {durum === 'bekliyor' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <button onClick={konumAl} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: '#1A0A12', color: '#fff', border: 'none', borderRadius: '50px', padding: '14px', fontSize: '14px', fontWeight: 700, cursor: 'none', fontFamily: 'Syne, sans-serif', width: '100%' }}>
+                <button onClick={konumAl} style={{ ...btnBase, background: '#1A0A12', color: '#fff' }}>
                   <MapPin size={16} /> Konumumu Otomatik Algıla
                 </button>
-                <button onClick={() => setDurum('manuel')} style={{ background: 'rgba(26,10,18,0.05)', color: '#7A6070', border: 'none', borderRadius: '50px', padding: '14px', fontSize: '13px', fontWeight: 600, cursor: 'none', fontFamily: 'Syne, sans-serif', width: '100%' }}>
+                <button onClick={() => setDurum('manuel')} style={{ ...btnBase, background: 'rgba(26,10,18,0.06)', color: '#7A6070' }}>
                   İlçe Seç
                 </button>
               </div>
@@ -133,16 +141,25 @@ export default function KonumModal() {
 
             {durum === 'manuel' && (
               <div>
-                <p style={{ fontSize: '13px', color: '#7A6070', marginBottom: '12px', fontWeight: 600 }}>İlçenizi seçin:</p>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', maxHeight: '200px', overflowY: 'auto', marginBottom: '16px' }}>
+                <p style={{ fontSize: '12px', color: '#7A6070', marginBottom: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em' }}>İlçenizi seçin</p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', maxHeight: '180px', overflowY: 'auto', marginBottom: '14px' }}>
                   {ISTANBUL_BOLGELER.map(b => (
                     <button key={b} onClick={() => setSecilenIlce(b)}
-                      style={{ padding: '8px 6px', borderRadius: '10px', border: `1.5px solid ${secilenIlce === b ? '#E8567A' : 'rgba(26,10,18,0.1)'}`, background: secilenIlce === b ? '#FEE8EF' : 'transparent', color: secilenIlce === b ? '#E8567A' : '#1A0A12', fontSize: '12px', fontWeight: secilenIlce === b ? 700 : 500, cursor: 'none', fontFamily: 'Syne, sans-serif', transition: 'all .15s' }}>
+                      style={{
+                        padding: '9px 6px', borderRadius: '10px',
+                        border: `1.5px solid ${secilenIlce === b ? '#E8567A' : 'rgba(26,10,18,0.1)'}`,
+                        background: secilenIlce === b ? '#FEE8EF' : 'transparent',
+                        color: secilenIlce === b ? '#E8567A' : '#1A0A12',
+                        fontSize: '12px', fontWeight: secilenIlce === b ? 700 : 500,
+                        cursor: 'pointer', fontFamily: 'Syne, sans-serif',
+                        transition: 'all .15s', WebkitTapHighlightColor: 'transparent',
+                      }}>
                       {b}
                     </button>
                   ))}
                 </div>
-                <button onClick={manuelSec} disabled={!secilenIlce} style={{ width: '100%', background: secilenIlce ? '#1A0A12' : 'rgba(26,10,18,0.15)', color: '#fff', border: 'none', borderRadius: '50px', padding: '13px', fontSize: '14px', fontWeight: 700, cursor: 'none', fontFamily: 'Syne, sans-serif' }}>
+                <button onClick={manuelSec} disabled={!secilenIlce}
+                  style={{ ...btnBase, background: secilenIlce ? '#1A0A12' : 'rgba(26,10,18,0.15)', color: '#fff', opacity: secilenIlce ? 1 : 0.6 }}>
                   {secilenIlce ? `${secilenIlce} → Devam Et` : 'İlçe Seçin'}
                 </button>
               </div>
