@@ -357,3 +357,70 @@ body {
   .prod-grid { grid-template-columns: repeat(2, 1fr) !important; }
   .foot-grid { grid-template-columns: 1fr !important; }
 }
+
+/* ===== OVERRIDES ===== */
+
+/* Hero */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.hero-right-desktop { display: block; }
+.hero-right-mobile { display: none !important; }
+
+/* Kategori — masaüstü: 3 kolon, mobil: 2 kolon */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.cat-first { grid-row: span 2; }
+
+/* Ürün grid */
+.prod-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+/* Abonelik */
+.banner-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 36px;
+  align-items: center;
+}
+
+/* Yorumlar */
+.rev-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+/* Tablet */
+@media (max-width: 1023px) {
+  .hero-grid { grid-template-columns: 1fr !important; min-height: auto !important; }
+  .hero-right-desktop { display: none !important; }
+  .hero-right-mobile { display: flex !important; }
+  .prod-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+  .rev-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
+}
+
+/* Mobil */
+@media (max-width: 767px) {
+  /* Kategoriler: 2+2 eşit grid */
+  .cat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+  .cat-first { grid-row: span 1 !important; }
+
+  /* Abonelik: alt alta */
+  .banner-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+
+  /* Footer */
+  .footer-top { grid-template-columns: 1fr 1fr !important; gap: 24px !important; }
+  .footer-brand-col { grid-column: 1 / -1 !important; }
+}
+
+@media (max-width: 480px) {
+  .footer-top { grid-template-columns: 1fr !important; }
+}
