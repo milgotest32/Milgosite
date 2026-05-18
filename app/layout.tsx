@@ -1,13 +1,7 @@
-'use client'
 import type { Metadata } from 'next'
 import { Nunito, Cormorant_Garamond } from 'next/font/google'
 import './globals.css'
-import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
-import Cursor from '@/components/ui/Cursor'
-import KonumModal from '@/components/ui/KonumModal'
-import { Toaster } from 'react-hot-toast'
-import { usePathname } from 'next/navigation'
+import LayoutClient from '@/components/layout/LayoutClient'
 
 const nunito = Nunito({
   subsets: ['latin', 'latin-ext'],
@@ -25,26 +19,17 @@ const cormorant = Cormorant_Garamond({
   display: 'swap',
 })
 
-function LayoutContent({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-  const isAdmin = pathname?.startsWith('/admin')
-
-  return (
-    <body>
-      <Cursor />
-      {!isAdmin && <KonumModal />}
-      <Toaster position="top-right" toastOptions={{ duration: 3000, style: { fontFamily: 'var(--font-nunito), sans-serif', fontSize: '14px', borderRadius: '14px' } }} />
-      {!isAdmin && <Navbar />}
-      <main>{children}</main>
-      {!isAdmin && <Footer />}
-    </body>
-  )
+export const metadata: Metadata = {
+  title: 'Milgo | Çiftlikten Sofranıza',
+  description: 'Taze ve doğal çiftlik ürünleri',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="tr" className={`${nunito.variable} ${cormorant.variable}`}>
-      <LayoutContent>{children}</LayoutContent>
+      <body>
+        <LayoutClient>{children}</LayoutClient>
+      </body>
     </html>
   )
 }
