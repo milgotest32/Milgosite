@@ -49,7 +49,7 @@ export default function ProductCard({ urun }: { urun: Urun }) {
         <p style={{ fontSize: '10px', color: '#7A6070', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 700 }}>
           {urun.site_kategoriler?.name}
         </p>
-        <h3 style={{ fontFamily: '"Instrument Serif", serif', fontSize: '16px', color: '#1A0A12', marginBottom: '8px', lineHeight: '1.25', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+        <h3 style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: '16px', color: '#1A0A12', marginBottom: '8px', lineHeight: '1.25', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
           {urun.name}
         </h3>
 
@@ -60,7 +60,7 @@ export default function ProductCard({ urun }: { urun: Urun }) {
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <span style={{ fontFamily: '"Instrument Serif", serif', fontSize: '20px', color: '#1A0A12' }}>₺{urun.fiyat.toFixed(2)}</span>
+            <span style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: '20px', color: '#1A0A12' }}>₺{urun.fiyat.toFixed(2)}</span>
             {urun.eski_fiyat && <span style={{ fontSize: '12px', color: '#7A6070', textDecoration: 'line-through', marginLeft: '6px' }}>₺{urun.eski_fiyat.toFixed(2)}</span>}
           </div>
           <button onClick={sepeteEkle} disabled={urun.stok_takip && urun.stok <= 0} className="prod-add" style={{ background: eklendi ? '#22c55e' : '#1A0A12' }}>

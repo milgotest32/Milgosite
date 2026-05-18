@@ -37,7 +37,7 @@ export default function AbonelikPage() {
       <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: '#E8567A', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px', boxShadow: '0 8px 32px rgba(232,86,122,.3)' }}>
         <Check size={32} color="#fff" />
       </div>
-      <h2 style={{ fontFamily: '"Instrument Serif", serif', fontSize: 'clamp(28px,5vw,44px)', fontWeight: 400, color: '#1A0A12', marginBottom: '12px' }}>Aboneliğiniz Başladı! 🎉</h2>
+      <h2 style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: 'clamp(28px,5vw,44px)', fontWeight: 400, color: '#1A0A12', marginBottom: '12px' }}>Aboneliğiniz Başladı! 🎉</h2>
       <p style={{ color: '#7A6070', fontSize: '15px' }}>Bu Cuma ilk teslimatınız kapınızda olacak.</p>
     </div>
   )
@@ -48,7 +48,7 @@ export default function AbonelikPage() {
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#fff', color: '#E8567A', fontSize: '10px', fontWeight: 800, letterSpacing: '.15em', textTransform: 'uppercase', padding: '7px 14px', borderRadius: '50px', marginBottom: '20px' }}>
           <RefreshCw size={12} /> Haftalık Abonelik
         </div>
-        <h1 style={{ fontFamily: '"Instrument Serif", serif', fontSize: 'clamp(36px,5vw,68px)', fontWeight: 400, color: '#1A0A12', lineHeight: 1.05, margin: '0 0 12px' }}>
+        <h1 style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: 'clamp(36px,5vw,68px)', fontWeight: 400, color: '#1A0A12', lineHeight: 1.05, margin: '0 0 12px' }}>
           Her Hafta <em style={{ fontStyle: 'italic', color: '#E8567A' }}>Kapınıza</em>
         </h1>
         <p style={{ color: '#7A6070', fontSize: '15px', maxWidth: '480px', margin: '0 auto' }}>Taze çiğ sütü her hafta düzenli olarak evinize teslim ediyoruz.</p>
@@ -73,8 +73,8 @@ export default function AbonelikPage() {
               <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: `2px solid ${secili === plan.slug ? '#E8567A' : 'rgba(26,10,18,0.2)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
                 {secili === plan.slug && <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#E8567A' }} />}
               </div>
-              <h3 style={{ fontFamily: '"Instrument Serif", serif', fontSize: '22px', fontWeight: 400, color: '#1A0A12', margin: '0 0 4px' }}>{plan.ad}</h3>
-              <div style={{ fontFamily: '"Instrument Serif", serif', fontSize: '36px', color: '#E8567A', lineHeight: 1, margin: '8px 0 2px' }}>₺{plan.fiyat}</div>
+              <h3 style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: '22px', fontWeight: 400, color: '#1A0A12', margin: '0 0 4px' }}>{plan.ad}</h3>
+              <div style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: '36px', color: '#E8567A', lineHeight: 1, margin: '8px 0 2px' }}>₺{plan.fiyat}</div>
               <div style={{ fontSize: '12px', color: '#7A6070', marginBottom: '20px' }}>/ Ay · {plan.litre}L Haftalık</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {plan.ozellikler.map(oz => (
@@ -88,7 +88,7 @@ export default function AbonelikPage() {
         </div>
 
         <div style={{ background: '#fff', borderRadius: '28px', padding: 'clamp(24px,4vw,48px)', maxWidth: '520px', margin: '0 auto', border: '1px solid rgba(26,10,18,0.07)', boxShadow: '0 4px 24px rgba(26,10,18,.06)' }}>
-          <h3 style={{ fontFamily: '"Instrument Serif", serif', fontSize: '26px', fontWeight: 400, color: '#1A0A12', margin: '0 0 24px' }}>Teslimat Bilgileri</h3>
+          <h3 style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: '26px', fontWeight: 400, color: '#1A0A12', margin: '0 0 24px' }}>Teslimat Bilgileri</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {([['Ad Soyad', 'ad', 'text'], ['E-posta', 'email', 'email'], ['Telefon', 'telefon', 'tel'], ['Adres', 'adres', 'text'], ['İlçe', 'ilce', 'text']] as [string,string,string][]).map(([label, key, type]) => (
               <div key={key}>

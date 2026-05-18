@@ -12,7 +12,7 @@ export default function IletisimPage() {
         <div style={{ display: 'inline-block', background: '#fff', color: '#E8567A', fontSize: '10px', fontWeight: 800, letterSpacing: '.15em', textTransform: 'uppercase', padding: '7px 14px', borderRadius: '50px', marginBottom: '20px' }}>
           Bize Ulaşın
         </div>
-        <h1 style={{ fontFamily: '"Instrument Serif", serif', fontSize: 'clamp(36px,5vw,68px)', fontWeight: 400, color: '#1A0A12', lineHeight: 1.05, margin: 0 }}>
+        <h1 style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: 'clamp(36px,5vw,68px)', fontWeight: 400, color: '#1A0A12', lineHeight: 1.05, margin: 0 }}>
           İletişim
         </h1>
       </div>
@@ -46,12 +46,12 @@ export default function IletisimPage() {
             {gonderildi ? (
               <div style={{ textAlign: 'center', padding: '32px 0' }}>
                 <div style={{ fontSize: '48px', marginBottom: '16px' }}>✅</div>
-                <h3 style={{ fontFamily: '"Instrument Serif", serif', fontSize: '22px', fontWeight: 400, color: '#1A0A12', margin: '0 0 8px' }}>Mesajınız Alındı!</h3>
+                <h3 style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: '22px', fontWeight: 400, color: '#1A0A12', margin: '0 0 8px' }}>Mesajınız Alındı!</h3>
                 <p style={{ color: '#7A6070', fontSize: '14px' }}>En kısa sürede size dönüş yapacağız.</p>
               </div>
             ) : (
               <>
-                <h3 style={{ fontFamily: '"Instrument Serif", serif', fontSize: '26px', fontWeight: 400, color: '#1A0A12', margin: '0 0 24px' }}>Bize Yazın</h3>
+                <h3 style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: '26px', fontWeight: 400, color: '#1A0A12', margin: '0 0 24px' }}>Bize Yazın</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   {(['Ad Soyad', 'E-posta', 'Konu'] as const).map(label => (
                     <div key={label}>

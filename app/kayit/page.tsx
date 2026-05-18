@@ -54,7 +54,7 @@ export default function KayitPage() {
         <div style={{ width: '64px', height: '64px', background: '#E8567A', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
           <Check size={28} color="#fff" />
         </div>
-        <h2 style={{ fontFamily: '"Instrument Serif", serif', fontSize: '28px', color: '#1A0A12', marginBottom: '12px' }}>Kayıt Başarılı!</h2>
+        <h2 style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: '28px', color: '#1A0A12', marginBottom: '12px' }}>Kayıt Başarılı!</h2>
         <p style={{ fontSize: '14px', color: '#7A6070', lineHeight: 1.7, marginBottom: '28px' }}>
           <strong>{form.email}</strong> adresine doğrulama e-postası gönderdik. Lütfen e-postanızı kontrol edin.
         </p>
@@ -77,7 +77,7 @@ export default function KayitPage() {
 
         <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(20px)', borderRadius: '32px', padding: '36px', border: '1px solid rgba(255,255,255,0.9)', boxShadow: '0 20px 60px rgba(26,10,18,0.1)' }}>
           <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-            <div style={{ fontFamily: '"Instrument Serif", serif', fontSize: '30px', color: '#1A0A12', marginBottom: '4px' }}>
+            <div style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: '30px', color: '#1A0A12', marginBottom: '4px' }}>
               milgo<span style={{ color: '#E8567A' }}>.</span>
             </div>
             <h1 style={{ fontSize: '18px', fontWeight: 700, color: '#1A0A12', margin: 0 }}>Üye Ol</h1>

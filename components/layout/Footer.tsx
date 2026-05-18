@@ -50,7 +50,7 @@ export default function Footer() {
         }
         .footer-brand-col {}
         .footer-logo {
-          font-family: "Instrument Serif", serif;
+          font-family: var(--font-instrument-serif), "Instrument Serif", serif;
           font-size: 28px;
           color: #fff;
           margin-bottom: 4px;

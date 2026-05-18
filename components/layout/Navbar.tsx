@@ -79,7 +79,7 @@ export default function Navbar() {
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 clamp(16px,4vw,48px)', height: '60px', display: 'flex', alignItems: 'center', gap: '8px' }}>
 
           {/* Logo */}
-          <Link href="/" style={{ fontFamily: '"Instrument Serif", serif', fontSize: '26px', color: '#1A0A12', textDecoration: 'none', flexShrink: 0 }}>
+          <Link href="/" style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: '26px', color: '#1A0A12', textDecoration: 'none', flexShrink: 0 }}>
             milgo<span style={{ color: '#E8567A' }}>.</span>
           </Link>
 
@@ -185,7 +185,7 @@ export default function Navbar() {
           <button onClick={() => setMenuAcik(false)} style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(26,10,18,.06)', border: 'none', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'none' }}>
             <X size={20} color="#1A0A12" />
           </button>
-          <div style={{ fontFamily: '"Instrument Serif", serif', fontSize: '24px', color: '#1A0A12', marginBottom: '24px' }}>
+          <div style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: '24px', color: '#1A0A12', marginBottom: '24px' }}>
             milgo<span style={{ color: '#E8567A' }}>.</span>
             {konum && <span style={{ fontSize: '12px', fontFamily: 'Syne, sans-serif', fontWeight: 600, color: '#E8567A', marginLeft: '10px' }}>📍 {konum}</span>}
           </div>

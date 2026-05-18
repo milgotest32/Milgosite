@@ -39,7 +39,7 @@ export default function AnaSayfa() {
               Çiftliğimizden Sofranıza
             </div>
 
-            <h1 style={{ fontFamily: '"Instrument Serif", serif', fontSize: 'clamp(44px, 7vw, 88px)', lineHeight: .95, color: '#1A0A12', marginBottom: '20px', letterSpacing: '-.02em' }}>
+            <h1 style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: 'clamp(44px, 7vw, 88px)', lineHeight: .95, color: '#1A0A12', marginBottom: '20px', letterSpacing: '-.02em' }}>
               Mutlu&shy;luğun<br />
               <em style={{ fontStyle: 'italic', color: '#E8567A' }}>Tadını</em><br />
               <span>Hissedin</span>
@@ -57,7 +57,7 @@ export default function AnaSayfa() {
             <div style={{ display: 'flex', gap: '28px', paddingTop: '24px', borderTop: '1px solid rgba(26,10,18,.08)', flexWrap: 'wrap' }}>
               {[['10.5K', 'Büyükbaş'], ['%100', 'Katkısız'], ['AB', 'Onaylı']].map(([n, l]) => (
                 <div key={l}>
-                  <div style={{ fontFamily: '"Instrument Serif", serif', fontSize: '32px', color: '#E8567A', lineHeight: 1 }}>{n}</div>
+                  <div style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: '32px', color: '#E8567A', lineHeight: 1 }}>{n}</div>
                   <div style={{ fontSize: '11px', color: '#7A6070', marginTop: '4px', fontWeight: 500 }}>{l}</div>
                 </div>
               ))}
@@ -131,7 +131,7 @@ export default function AnaSayfa() {
                 <div style={{ position: 'absolute', top: '16px', right: '16px', fontSize: '36px' }}>{k.emoji}</div>
                 <div>
                   <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.15em', textTransform: 'uppercase', color: '#7A6070', marginBottom: '4px' }}>{k.lbl}</div>
-                  <div style={{ fontFamily: '"Instrument Serif", serif', fontSize: '20px', color: '#1A0A12', marginBottom: '12px' }}>{k.ad}</div>
+                  <div style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: '20px', color: '#1A0A12', marginBottom: '12px' }}>{k.ad}</div>
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#1A0A12', color: '#fff', padding: '7px 16px', borderRadius: '50px', fontSize: '11px', fontWeight: 700 }}>İncele →</div>
                 </div>
               </div>
@@ -164,7 +164,7 @@ export default function AnaSayfa() {
           {/* Sol — başlık */}
           <div>
             <span className="sec-tag">⟳ Haftalık Abonelik</span>
-            <h2 style={{ fontFamily: '"Instrument Serif", serif', fontSize: 'clamp(24px,4vw,44px)', color: '#1A0A12', lineHeight: 1.1, marginBottom: '16px' }}>
+            <h2 style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: 'clamp(24px,4vw,44px)', color: '#1A0A12', lineHeight: 1.1, marginBottom: '16px' }}>
               Her Hafta Taze,<br /><em style={{ fontStyle: 'italic', color: '#E8567A' }}>Hiç Düşünmeden</em>
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
@@ -198,14 +198,14 @@ export default function AnaSayfa() {
                 boxShadow: p.hot ? '0 4px 20px rgba(232,86,122,.15)' : 'none',
               }}>
                 <div>
-                  <div style={{ fontFamily: '"Instrument Serif", serif', fontSize: '18px', color: '#1A0A12', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <div style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: '18px', color: '#1A0A12', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                     {p.a}
                     {p.hot && <span style={{ fontSize: '9px', fontWeight: 800, background: '#E8567A', color: '#fff', padding: '3px 10px', borderRadius: '50px', letterSpacing: '.08em', fontFamily: 'Syne, sans-serif' }}>POPÜLER</span>}
                   </div>
                   <div style={{ fontSize: '12px', color: '#7A6070', marginTop: '2px' }}>{p.d}</div>
                 </div>
                 <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: '12px' }}>
-                  <div style={{ fontFamily: '"Instrument Serif", serif', fontSize: '26px', color: '#E8567A', lineHeight: 1 }}>₺{p.f}</div>
+                  <div style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: '26px', color: '#E8567A', lineHeight: 1 }}>₺{p.f}</div>
                   <div style={{ fontSize: '10px', color: '#7A6070' }}>/ ay</div>
                 </div>
               </div>
@@ -219,7 +219,7 @@ export default function AnaSayfa() {
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '36px' }}>
             <span style={{ display: 'inline-block', background: 'rgba(244,167,185,.15)', color: '#F4A7B9', fontSize: '10px', fontWeight: 800, letterSpacing: '.25em', textTransform: 'uppercase', padding: '6px 14px', borderRadius: '50px', marginBottom: '12px' }}>Müşterilerimiz</span>
-            <h2 style={{ fontFamily: '"Instrument Serif", serif', fontSize: 'clamp(24px,4vw,44px)', color: '#fff' }}>Sizden <em style={{ fontStyle: 'italic', color: '#E8567A' }}>Gelenler</em></h2>
+            <h2 style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: 'clamp(24px,4vw,44px)', color: '#fff' }}>Sizden <em style={{ fontStyle: 'italic', color: '#E8567A' }}>Gelenler</em></h2>
           </div>
           <div className="rev-grid">
             {[
@@ -231,7 +231,7 @@ export default function AnaSayfa() {
                 <div style={{ display: 'flex', gap: '3px', marginBottom: '14px' }}>
                   {[1,2,3,4,5].map(s => <Star key={s} size={14} fill="#FBBF24" style={{ color: '#FBBF24' }} />)}
                 </div>
-                <p style={{ fontFamily: '"Instrument Serif", serif', fontStyle: 'italic', fontSize: '16px', lineHeight: 1.7, color: 'rgba(255,255,255,.85)', marginBottom: '18px' }}>{y.t}</p>
+                <p style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontStyle: 'italic', fontSize: '16px', lineHeight: 1.7, color: 'rgba(255,255,255,.85)', marginBottom: '18px' }}>{y.t}</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '50%', background: 'linear-gradient(135deg,#E8567A,#5BA4CF)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#fff', fontSize: '13px' }}>{y.h}</div>
                   <div>
@@ -247,7 +247,7 @@ export default function AnaSayfa() {
 
       {/* ===== BÜLTEN ===== */}
       <section style={{ padding: 'clamp(48px,7vw,88px) clamp(20px,4vw,48px)', textAlign: 'center' }}>
-        <h2 style={{ fontFamily: '"Instrument Serif", serif', fontSize: 'clamp(24px,4vw,48px)', color: '#1A0A12', marginBottom: '10px' }}>
+        <h2 style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: 'clamp(24px,4vw,48px)', color: '#1A0A12', marginBottom: '10px' }}>
           İlk Siparişte <em style={{ fontStyle: 'italic', color: '#E8567A' }}>%10 İndirim</em>
         </h2>
         <p style={{ fontSize: '14px', color: '#7A6070', marginBottom: '24px' }}>Bültene katılın, özel tekliflerden ilk siz haberdar olun.</p>

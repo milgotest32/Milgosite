@@ -38,7 +38,7 @@ export default function GirisPage() {
         <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(20px)', borderRadius: '32px', padding: '40px', border: '1px solid rgba(255,255,255,0.9)', boxShadow: '0 20px 60px rgba(26,10,18,0.1)' }}>
           {/* Logo */}
           <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-            <div style={{ fontFamily: '"Instrument Serif", serif', fontSize: '32px', color: '#1A0A12', marginBottom: '4px' }}>
+            <div style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: '32px', color: '#1A0A12', marginBottom: '4px' }}>
               milgo<span style={{ color: '#E8567A' }}>.</span>
             </div>
             <h1 style={{ fontSize: '18px', fontWeight: 700, color: '#1A0A12', margin: 0 }}>Hoş Geldiniz</h1>

@@ -102,7 +102,7 @@ export default function KonumModal() {
             <div style={{ width: '56px', height: '56px', background: '#E8567A', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
               <Check size={24} color="#fff" />
             </div>
-            <p style={{ fontFamily: '"Instrument Serif", serif', fontSize: '20px', color: '#1A0A12', margin: '0 0 4px' }}>Konumunuz Belirlendi</p>
+            <p style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: '20px', color: '#1A0A12', margin: '0 0 4px' }}>Konumunuz Belirlendi</p>
             <p style={{ fontSize: '14px', color: '#E8567A', fontWeight: 700, margin: 0 }}>{konum}</p>
           </div>
         ) : (
@@ -112,7 +112,7 @@ export default function KonumModal() {
                 <MapPin size={22} color="#E8567A" />
               </div>
               <div>
-                <h3 style={{ fontFamily: '"Instrument Serif", serif', fontSize: '20px', color: '#1A0A12', margin: '0 0 2px' }}>Konumunuz nerede?</h3>
+                <h3 style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontSize: '20px', color: '#1A0A12', margin: '0 0 2px' }}>Konumunuz nerede?</h3>
                 <p style={{ fontSize: '13px', color: '#7A6070', margin: 0 }}>Size yakın çiftlik ürünleri gösterelim</p>
               </div>
             </div>
