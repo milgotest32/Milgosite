@@ -1,172 +1,120 @@
 'use client'
-import { Suspense } from 'react'
 import { useEffect, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
-import ProductCard from '@/components/product/ProductCard'
-import type { Urun } from '@/lib/types'
-import { SlidersHorizontal, MapPin } from 'lucide-react'
-
+import { Plus, Search, Edit, Trash2, Eye, Package } from 'lucide-react'
+import toast from 'react-hot-toast'
 export const dynamic = 'force-dynamic'
 
-const SIRALA = [
-  { v:'newest', ad:'En Yeni' },
-  { v:'fiyat-as', ad:'Fiyat: Düşük → Yüksek' },
-  { v:'fiyat-us', ad:'Fiyat: Yüksek → Düşük' },
-]
-
-// Kullanıcının konumuna göre bölge ID'sini bul
-async function bolgeIdBul(ilce: string): Promise<string | null> {
-  // Önce geocode ile koordinat al
-  try {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(ilce + ', İstanbul, Türkiye')}&limit=1`
-    )
-    const data = await res.json()
-    if (!data[0]) return null
-
-    const lat = parseFloat(data[0].lat)
-    const lng = parseFloat(data[0].lon)
-
-    // KMZ API'ye koordinatı gönder
-    const kmzRes = await fetch('/api/kmz', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lat, lng })
-    })
-    const kmzData = await kmzRes.json()
-
-    if (kmzData.hizmet && kmzData.bolge?.id) return kmzData.bolge.id
-  } catch {}
-  return null
-}
-
-function Icerik() {
-  const params = useSearchParams()
-  const [urunler, setUrunler] = useState<Urun[]>([])
+export default function AdminUrunlerPage() {
+  const [urunler, setUrunler] = useState<any[]>([])
+  const [arama, setArama] = useState('')
   const [loading, setLoading] = useState(true)
-  const [sira, setSira] = useState('newest')
-  const [bolgeId, setBolgeId] = useState<string | null>(null)
-  const [bolgeAd, setBolgeAd] = useState<string | null>(null)
-  const [hizmetYok, setHizmetYok] = useState(false)
-  const arama = params.get('q') || ''
+  const [durum, setDurum] = useState('all')
 
-  // Konum kontrolü
-  useEffect(() => {
-    const ilce = localStorage.getItem('milgo_konum')
-    if (!ilce) return
-
-    bolgeIdBul(ilce).then(id => {
-      if (id) {
-        setBolgeId(id)
-        // Bölge adını bul
-        supabase.from('site_hizmet_bolgeleri').select('name').eq('id', id).single().then(({data}) => {
-          if (data) setBolgeAd(data.name)
-        })
-      } else if (ilce) {
-        // Konum var ama bölge bulunamadı - hizmet bölgeleri var mı kontrol et
-        supabase.from('site_hizmet_bolgeleri').select('id').eq('aktif', true).limit(1).then(({data}) => {
-          // Aktif bölge varsa ve kullanıcı bu bölgede değilse hizmet yok
-          if (data && data.length > 0) setHizmetYok(true)
-          // Hiç bölge tanımlanmamışsa herkese göster (bölgesiz)
-        })
-      }
-    })
-  }, [])
-
-  useEffect(() => {
+  const yukle = async () => {
     setLoading(true)
-    let q: any = supabase.from('site_products')
-      .select('*, site_product_images(*), site_kategoriler(name,slug)')
-      .eq('durum', 'active')
+    let q: any = supabase.from('site_products').select('*, site_kategoriler(name), site_product_images(url,ana)').order('created_at', { ascending: false })
+    if (durum !== 'all') q = q.eq('durum', durum)
+    if (arama) q = q.ilike('name', `%${arama}%`)
+    const { data } = await q
+    setUrunler(data || [])
+    setLoading(false)
+  }
 
-    if (arama) q = q.or(`name.ilike.%${arama}%,aciklama.ilike.%${arama}%`)
-    if (sira === 'fiyat-as') q = q.order('fiyat')
-    else if (sira === 'fiyat-us') q = q.order('fiyat', { ascending: false })
-    else q = q.order('created_at', { ascending: false })
+  useEffect(() => { yukle() }, [arama, durum])
 
-    q.then(({ data }: any) => {
-      let tumUrunler: Urun[] = data || []
+  const sil = async (id: string, name: string) => {
+    if (!confirm(`"${name}" ürününü silmek istediğinizden emin misiniz?`)) return
+    await supabase.from('site_products').update({ durum: 'deleted' }).eq('id', id)
+    toast.success('Ürün silindi')
+    yukle()
+  }
 
-      // Bölge filtresi: bolge_ids boşsa herkese göster, doluysa bölge eşleşmeli
-      if (bolgeId) {
-        tumUrunler = tumUrunler.filter((u: any) =>
-          !u.bolge_ids || u.bolge_ids.length === 0 || u.bolge_ids.includes(bolgeId)
-        )
-      }
-
-      setUrunler(tumUrunler)
-      setLoading(false)
-    })
-  }, [arama, sira, bolgeId])
-
-  if (hizmetYok) {
-    return (
-      <div style={{minHeight:'100vh',background:'#F0EEF8',display:'flex',alignItems:'center',justifyContent:'center'}}>
-        <div style={{textAlign:'center',padding:'40px',background:'#fff',borderRadius:'24px',maxWidth:'400px',margin:'24px'}}>
-          <div style={{fontSize:'64px',marginBottom:'16px'}}>📍</div>
-          <h2 style={{fontSize:'22px',fontWeight:700,color:'#1C1B2E',marginBottom:'8px'}}>Bu bölgeye hizmet veremiyoruz</h2>
-          <p style={{fontSize:'14px',color:'#9CA3AF',marginBottom:'20px'}}>
-            Şu an {localStorage.getItem('milgo_konum')} bölgesine teslimat yapamıyoruz.
-          </p>
-          <button
-            onClick={() => { localStorage.removeItem('milgo_konum'); window.location.reload() }}
-            style={{background:'linear-gradient(135deg,#E07090,#3B9FCC)',color:'#fff',border:'none',borderRadius:'50px',padding:'12px 24px',fontSize:'14px',fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}
-          >
-            Konumu Değiştir
-          </button>
-        </div>
-      </div>
-    )
+  const DURUM_RENK: Record<string, { bg: string, tx: string }> = {
+    active: { bg: '#F0FDF4', tx: '#22C55E' },
+    draft: { bg: '#F8F7FC', tx: '#9CA3AF' },
+    deleted: { bg: '#FEF2F2', tx: '#EF4444' }
   }
 
   return (
-    <div style={{minHeight:'100vh',background:'#F0EEF8'}}>
-      <div style={{background:'#fff',borderBottom:'1px solid #F0ECF5',padding:'32px 24px'}}>
-        <div style={{maxWidth:'1280px',margin:'0 auto'}}>
-          <h1 style={{fontFamily:'"Playfair Display",serif',fontSize:'36px',fontWeight:400,color:'#1C1B2E',marginBottom:'8px'}}>
-            {arama ? `"${arama}" sonuçları` : 'Tüm Ürünler'}
-          </h1>
-          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:'12px'}}>
-            <div style={{display:'flex',alignItems:'center',gap:'12px'}}>
-              <p style={{fontSize:'13px',color:'#9CA3AF'}}>{urunler.length} ürün listeleniyor</p>
-              {bolgeAd && (
-                <div style={{display:'flex',alignItems:'center',gap:'4px',background:'#FEE8EF',color:'#E8567A',fontSize:'12px',fontWeight:600,padding:'4px 10px',borderRadius:'50px'}}>
-                  <MapPin size={11}/> {bolgeAd}
-                </div>
-              )}
-            </div>
-            <div style={{display:'flex',alignItems:'center',gap:'8px'}}>
-              <SlidersHorizontal size={14} style={{color:'#9CA3AF'}}/>
-              <select value={sira} onChange={e=>setSira(e.target.value)} style={{fontSize:'13px',color:'#1C1B2E',background:'#F0EEF8',border:'1px solid #F0ECF5',borderRadius:'10px',padding:'8px 12px',outline:'none',fontFamily:'inherit'}}>
-                {SIRALA.map(s=><option key={s.v} value={s.v}>{s.ad}</option>)}
-              </select>
-            </div>
-          </div>
-        </div>
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#1C1B2E' }}>Ürünler</h1>
+        <Link href="/admin/urunler/yeni" style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg,#E07090,#3B9FCC)', color: '#fff', padding: '10px 20px', borderRadius: '50px', textDecoration: 'none', fontSize: '13px', fontWeight: 700 }}>
+          <Plus size={15} />Yeni Ürün
+        </Link>
       </div>
 
-      <div style={{maxWidth:'1280px',margin:'0 auto',padding:'32px 24px'}}>
-        {loading ? (
-          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'16px'}}>
-            {[1,2,3,4,5,6,7,8].map(i=><div key={i} style={{borderRadius:'20px',background:'#fff',aspectRatio:'3/4',animation:'pulse 1.5s ease-in-out infinite'}}/>)}
-          </div>
-        ) : urunler.length === 0 ? (
-          <div style={{textAlign:'center',padding:'80px 0'}}>
-            <div style={{fontSize:'64px',marginBottom:'16px'}}>🔍</div>
-            <p style={{fontSize:'18px',fontWeight:600,color:'#1C1B2E',marginBottom:'8px'}}>Ürün bulunamadı</p>
-            <p style={{fontSize:'14px',color:'#9CA3AF'}}>Farklı arama terimi deneyin</p>
-          </div>
-        ) : (
-          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))',gap:'16px'}}>
-            {urunler.map(u=><ProductCard key={u.id} urun={u}/>)}
-          </div>
-        )}
+      <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #F0ECF5', padding: '16px 20px', marginBottom: '16px', display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '8px', background: '#F8F7FC', borderRadius: '10px', padding: '0 14px', minWidth: '200px' }}>
+          <Search size={15} style={{ color: '#9CA3AF', flexShrink: 0 }} />
+          <input value={arama} onChange={e => setArama(e.target.value)} placeholder="Ürün adı, SKU ara..." style={{ flex: 1, background: 'transparent', border: 'none', padding: '10px 0', fontSize: '13px', color: '#1C1B2E', outline: 'none', fontFamily: 'inherit' }} />
+        </div>
+        <select value={durum} onChange={e => setDurum(e.target.value)} style={{ background: '#F8F7FC', border: '1px solid #F0ECF5', borderRadius: '10px', padding: '10px 14px', fontSize: '13px', color: '#1C1B2E', outline: 'none', fontFamily: 'inherit' }}>
+          <option value="all">Tüm Durumlar</option>
+          <option value="active">Aktif</option>
+          <option value="draft">Taslak</option>
+        </select>
+      </div>
+
+      <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #F0ECF5', overflow: 'hidden' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr style={{ background: '#F8F7FC', borderBottom: '1px solid #F0ECF5' }}>
+              {['Ürün', 'Kategori', 'Fiyat', 'Stok', 'Durum', 'İşlem'].map(h => (
+                <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9CA3AF' }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr><td colSpan={6} style={{ padding: '32px', textAlign: 'center', color: '#9CA3AF', fontSize: '13px' }}>Yükleniyor...</td></tr>
+            ) : urunler.length === 0 ? (
+              <tr><td colSpan={6} style={{ padding: '32px', textAlign: 'center' }}>
+                <Package size={32} style={{ color: '#F0ECF5', margin: '0 auto 8px', display: 'block' }} />
+                <p style={{ color: '#9CA3AF', fontSize: '13px' }}>Ürün bulunamadı</p>
+              </td></tr>
+            ) : urunler.map((u, i) => {
+              const gorsel = u.site_product_images?.find((g: any) => g.ana)?.url || u.site_product_images?.[0]?.url
+              const d = DURUM_RENK[u.durum] || DURUM_RENK.draft
+              return (
+                <tr key={u.id} style={{ borderBottom: '1px solid #F0ECF5', background: i % 2 === 0 ? '#fff' : '#FAFAF9' }}>
+                  <td style={{ padding: '12px 16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: '#F0EEF8', overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {gorsel ? <img src={gorsel} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '4px' }} /> : <span style={{ fontSize: '20px' }}>🥛</span>}
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '13px', fontWeight: 600, color: '#1C1B2E', marginBottom: '2px' }}>{u.name}</div>
+                        {u.sku && <div style={{ fontSize: '11px', color: '#9CA3AF', fontFamily: 'monospace' }}>SKU: {u.sku}</div>}
+                      </div>
+                    </div>
+                  </td>
+                  <td style={{ padding: '12px 16px', fontSize: '12px', color: '#6B7280' }}>{u.site_kategoriler?.name || '-'}</td>
+                  <td style={{ padding: '12px 16px' }}>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: '#1C1B2E' }}>₺{u.fiyat?.toFixed(2)}</div>
+                    {u.eski_fiyat && <div style={{ fontSize: '11px', color: '#9CA3AF', textDecoration: 'line-through' }}>₺{u.eski_fiyat?.toFixed(2)}</div>}
+                  </td>
+                  <td style={{ padding: '12px 16px' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: u.stok <= u.min_stok ? '#EF4444' : u.stok <= 10 ? '#F59E0B' : '#22C55E' }}>{u.stok}</span>
+                  </td>
+                  <td style={{ padding: '12px 16px' }}>
+                    <span style={{ fontSize: '10px', fontWeight: 700, padding: '3px 10px', borderRadius: '50px', background: d.bg, color: d.tx }}>{u.durum}</span>
+                  </td>
+                  <td style={{ padding: '12px 16px' }}>
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      <Link href={`/urun/${u.slug}`} target="_blank" style={{ width: '30px', height: '30px', borderRadius: '8px', background: '#F0EEF8', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6B7280', textDecoration: 'none' }}><Eye size={13} /></Link>
+                      <Link href={`/admin/urunler/${u.id}`} style={{ width: '30px', height: '30px', borderRadius: '8px', background: '#EBF7FC', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3B9FCC', textDecoration: 'none' }}><Edit size={13} /></Link>
+                      <button onClick={() => sil(u.id, u.name)} style={{ width: '30px', height: '30px', borderRadius: '8px', background: '#FEF2F2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#EF4444', border: 'none', cursor: 'pointer' }}><Trash2 size={13} /></button>
+                    </div>
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
       </div>
     </div>
   )
-}
-
-export default function UrunlerPage() {
-  return <Suspense fallback={<div style={{minHeight:'100vh',background:'#F0EEF8'}}/>}><Icerik/></Suspense>
 }
