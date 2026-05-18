@@ -15,7 +15,7 @@ const syne = Syne({
 })
 
 const instrumentSerif = Instrument_Serif({
-  subsets: ['latin'],
+  subsets: ['latin', 'latin-ext'],
   weight: '400',
   style: ['normal', 'italic'],
   variable: '--font-instrument-serif',
