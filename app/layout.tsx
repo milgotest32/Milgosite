@@ -1,3 +1,4 @@
+'use client'
 import type { Metadata } from 'next'
 import { Nunito, Cormorant_Garamond } from 'next/font/google'
 import './globals.css'
@@ -6,6 +7,7 @@ import Footer from '@/components/layout/Footer'
 import Cursor from '@/components/ui/Cursor'
 import KonumModal from '@/components/ui/KonumModal'
 import { Toaster } from 'react-hot-toast'
+import { usePathname } from 'next/navigation'
 
 const nunito = Nunito({
   subsets: ['latin', 'latin-ext'],
@@ -23,29 +25,26 @@ const cormorant = Cormorant_Garamond({
   display: 'swap',
 })
 
-export const metadata: Metadata = {
-  title: { default: 'milgo. — Mutluluğun Tadı', template: '%s | milgo.' },
-  description: 'Çiftliğimizden sofranıza. %100 doğal, katkısız süt ve süt ürünleri. Günlük taze teslimat.',
-  keywords: ['çiğ süt', 'doğal süt', 'taze peynir', 'tereyağı', 'milgo', 'ab onaylı'],
-  openGraph: {
-    type: 'website', locale: 'tr_TR', url: 'https://milgo.com.tr',
-    siteName: 'milgo.', title: 'milgo. — Mutluluğun Tadı',
-    description: 'Çiftliğimizden sofranıza. %100 doğal süt ürünleri.',
-  },
-  robots: { index: true, follow: true },
+function LayoutContent({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+  const isAdmin = pathname?.startsWith('/admin')
+
+  return (
+    <body>
+      <Cursor />
+      {!isAdmin && <KonumModal />}
+      <Toaster position="top-right" toastOptions={{ duration: 3000, style: { fontFamily: 'var(--font-nunito), sans-serif', fontSize: '14px', borderRadius: '14px' } }} />
+      {!isAdmin && <Navbar />}
+      <main>{children}</main>
+      {!isAdmin && <Footer />}
+    </body>
+  )
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="tr" className={`${nunito.variable} ${cormorant.variable}`}>
-      <body>
-        <Cursor />
-        <KonumModal />
-        <Toaster position="top-right" toastOptions={{ duration: 3000, style: { fontFamily: 'var(--font-nunito), sans-serif', fontSize: '14px', borderRadius: '14px' } }} />
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
-      </body>
+      <LayoutContent>{children}</LayoutContent>
     </html>
   )
 }
