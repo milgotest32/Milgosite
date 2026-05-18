@@ -10,7 +10,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const db = createServerClient()
   const { data } = await db.from('site_products')
     .select('name, aciklama, seo_title, seo_description, site_product_images(url)')
-    .eq('slug', slug).single()
+    .eq('slug', slug)
+    .limit(1)
+    .maybeSingle()
   if (!data) return { title: 'Ürün Bulunamadı' }
   const gorsel = (data.site_product_images as any[])?.[0]?.url
   return {
@@ -28,23 +30,35 @@ export default async function UrunDetayPage({ params }: { params: Promise<{ slug
   const { slug } = await params
   const db = createServerClient()
 
-  const { data: urun, error } = await db.from('site_products')
-    .select('*, site_product_images(*), site_kategoriler(*), site_markalar(*), site_variants(*)')
+  // .single() yerine .limit(1) + maybeSingle() — daha güvenli
+  const { data: urun, error } = await db
+    .from('site_products')
+    .select(`
+      *,
+      site_product_images (*),
+      site_kategoriler (*),
+      site_markalar (*),
+      site_variants (*)
+    `)
     .eq('slug', slug)
-    .eq('durum', 'active')
-    .single()
+    .limit(1)
+    .maybeSingle()
 
-  if (error || !urun) notFound()
+  if (error) {
+    console.error('Ürün sorgu hatası:', error.message)
+    notFound()
+  }
+  if (!urun) notFound()
 
-  // Benzer ürünler - aynı kategoriden
-  const { data: benzerler } = await db.from('site_products')
+  // Benzer ürünler
+  const { data: benzerler } = await db
+    .from('site_products')
     .select('*, site_product_images(*), site_kategoriler(name, slug)')
     .eq('durum', 'active')
-    .eq('kategori_id', urun.kategori_id)
+    .eq('kategori_id', urun.kategori_id || '')
     .neq('id', urun.id)
     .limit(4)
 
-  // Schema.org Product markup
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -57,14 +71,10 @@ export default async function UrunDetayPage({ params }: { params: Promise<{ slug
       '@type': 'Offer',
       price: urun.fiyat,
       priceCurrency: 'TRY',
-      availability: urun.stok > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      availability: (urun.stok ?? 1) > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       seller: { '@type': 'Organization', name: 'milgo.' }
     },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.9',
-      reviewCount: '48'
-    }
+    aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', reviewCount: '48' }
   }
 
   return (
