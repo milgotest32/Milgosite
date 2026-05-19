@@ -30,7 +30,7 @@ export default function HesabimPage() {
   const MENULER = [
     { icon: <Package size={20} />, baslik: 'Siparişlerim', ac: 'Geçmiş siparişleriniz', href: '/hesabim/siparisler', bg: '#FEE8EF', renk: '#E8567A' },
     { icon: <Heart size={20} />, baslik: 'Favorilerim', ac: 'Beğendiğiniz ürünler', href: '/hesabim/favoriler', bg: '#FEF2F2', renk: '#EF4444' },
-    { icon: <RefreshCw size={20} />, baslik: 'Aboneliğim', ac: 'Abonelik planınız', href: '/abonelik', bg: '#EBF5FC', renk: '#3B9FCC' },
+    { icon: <RefreshCw size={20} />, baslik: 'Aboneliğim', ac: 'Abonelik planınız', href: '/hesabim/abonelik', bg: '#EBF5FC', renk: '#3B9FCC' },
     { icon: <MapPin size={20} />, baslik: 'Adreslerim', ac: 'Teslimat adresleriniz', href: '/hesabim/adresler', bg: '#F0FDF4', renk: '#22C55E' },
     { icon: <Settings size={20} />, baslik: 'Hesap Ayarları', ac: 'Profil ve şifre', href: '/hesabim/ayarlar', bg: '#F0EEF8', renk: '#7A6070' },
   ]
