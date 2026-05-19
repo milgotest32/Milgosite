@@ -37,7 +37,7 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
     setTimeout(() => setEklendi(false), 2000)
   }
 
-  const ortPuan = yorumlar.length ? (yorumlar.reduce((t, y) => t + y.puan, 0) / yorumlar.length).toFixed(1) : '4.9'
+  const ortPuan = yorumlar.length ? (yorumlar.reduce((t, y) => t + y.puan, 0) / yorumlar.length).toFixed(1) : null
 
   return (
     <div style={{ minHeight: '100vh', background: '#FDFBF9' }}>
@@ -91,14 +91,16 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
 
             <h1 style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: 'clamp(26px,4vw,42px)', fontWeight: 400, color: '#1A0A12', lineHeight: 1.1, marginBottom: '14px' }}>{urun.name}</h1>
 
-            {/* Yıldızlar */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
-              <div style={{ display: 'flex', gap: '2px' }}>
-                {[1,2,3,4,5].map(s => <Star key={s} size={15} fill="#FBBF24" style={{ color: '#FBBF24' }} />)}
+            {/* Yıldızlar - sadece gerçek yorum varsa göster */}
+            {yorumlar.length > 0 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', gap: '2px' }}>
+                  {[1,2,3,4,5].map(s => <Star key={s} size={15} fill={s <= Math.round(Number(ortPuan)) ? '#FBBF24' : 'none'} style={{ color: '#FBBF24' }} />)}
+                </div>
+                <span style={{ fontSize: '13px', color: '#7A6070', fontWeight: 600 }}>{ortPuan}</span>
+                <span style={{ fontSize: '13px', color: '#7A6070' }}>({yorumlar.length} yorum)</span>
               </div>
-              <span style={{ fontSize: '13px', color: '#7A6070', fontWeight: 600 }}>{ortPuan}</span>
-              <span style={{ fontSize: '13px', color: '#7A6070' }}>({yorumlar.length || 48} yorum)</span>
-            </div>
+            )}
 
             {/* Fiyat */}
             <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px', marginBottom: '24px' }}>
