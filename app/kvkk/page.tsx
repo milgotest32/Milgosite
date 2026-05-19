@@ -30,7 +30,7 @@ export default function KVKKPage() {
         <p style={S.p}>Ayrıca satışlar, indirimler, kampanyalar ve promosyonlar hakkında bilgilendirme amacıyla da işlenecektir.</p>
 
         <h2 style={S.h2}>c) Kişisel Verilerin Aktarılabileceği Kişiler</h2>
-        <p style={S.p}>Toplanan kişisel verileriniz; iş ortakları, tedarikçiler, kargo şirketleri, ödeme kuruluşları ve yasal zorunluluk halinde kamu kurumlarıyla, KVKK'nın 8. ve 9. maddeleri çerçevesinde paylaşılabilmektedir.</p>
+        <p style={S.p}>Toplanan kişisel verileriniz; iş ortakları, tedarikçiler, kurye firmaları, ödeme kuruluşları ve yasal zorunluluk halinde kamu kurumlarıyla, KVKK'nın 8. ve 9. maddeleri çerçevesinde paylaşılabilmektedir.</p>
 
         <h2 style={S.h2}>d) Kişisel Veri Toplamanın Yöntemi ve Hukuki Sebebi</h2>
         <p style={S.p}>Kişisel verileriniz; sözleşmenin kurulması ve ifası, yasal yükümlülüklerin yerine getirilmesi, meşru menfaat ve açık rıza hukuki sebeplerine dayalı olarak otomatik ve otomatik olmayan yöntemlerle toplanmaktadır.</p>

@@ -41,7 +41,7 @@ export default function GizlilikPage() {
         <p style={S.p}>Kişisel verileriniz; ürün ve hizmetlerin sunulması, sipariş yönetimi, müşteri ilişkileri, fatura/sözleşme süreçleri, kampanya ve promosyon bildirimleri, yasal yükümlülüklerin yerine getirilmesi ve güvenliğin sağlanması amaçlarıyla işlenmektedir.</p>
 
         <h2 style={S.h2}>5. KİŞİSEL VERİLERİN AKTARILMASI</h2>
-        <p style={S.p}>Kişisel verileriniz; hizmet aldığımız tedarikçiler, iş ortakları, kargo ve lojistik firmaları, ödeme kuruluşları ile yasal zorunluluk halinde kamu kurumlarıyla KVKK'nın 8. ve 9. maddelerinde belirtilen koşullar çerçevesinde paylaşılabilmektedir.</p>
+        <p style={S.p}>Kişisel verileriniz; hizmet aldığımız tedarikçiler, iş ortakları, kurye ve lojistik firmaları, ödeme kuruluşları ile yasal zorunluluk halinde kamu kurumlarıyla KVKK'nın 8. ve 9. maddelerinde belirtilen koşullar çerçevesinde paylaşılabilmektedir.</p>
 
         <h2 style={S.h2}>6. KİŞİSEL VERİ SAHİBİNİN HAKLARI</h2>
         <p style={S.p}>KVKK'nın 11. maddesi uyarınca aşağıdaki haklara sahipsiniz:</p>

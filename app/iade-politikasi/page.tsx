@@ -39,14 +39,14 @@ export default function IadePolitikasiPage() {
         <h2 style={S.h2}>3. İADE BEDELİNİN ÖDENMESİ</h2>
         <p style={S.p}>3.1. <strong>Kredi kartı ödemelerinde:</strong> İade onayından sonra 14 gün içinde ilgili bankaya iade yapılır. Bankanın hesabınıza yansıtma süreci 2-3 haftayı bulabilir.</p>
         <p style={S.p}>3.2. <strong>Havale/EFT ödemelerinde:</strong> İade onayından sonra 14 gün içinde ödeme yapılan hesaba aktarılır.</p>
-        <p style={S.p}>3.3. Kargo ücretleri iade edilmez. İade edilecek tutar yalnızca ürün bedelidir.</p>
+        <p style={S.p}>3.3. Kurye ücretleri iade edilmez. İade edilecek tutar yalnızca ürün bedelidir.</p>
 
         <h2 style={S.h2}>4. DEĞİŞİM</h2>
-        <p style={S.p}>Değişim hakkı yalnızca aynı ürüne ilişkin kullanılabilir. Farklı bir ürünle değişim mümkün değildir. Değişim kargo ücreti alıcı tarafından karşılanır.</p>
+        <p style={S.p}>Değişim hakkı yalnızca aynı ürüne ilişkin kullanılabilir. Farklı bir ürünle değişim mümkün değildir. Değişim kurye ücreti alıcı tarafından karşılanır.</p>
 
         <h2 style={S.h2}>5. İPTAL</h2>
-        <p style={S.p}>5.1. Sipariş kargoya verilmeden önce iptal talebinde bulunulabilir. İptal için <strong>(0212) 352 10 76</strong> numaralı hattı arayınız.</p>
-        <p style={S.p}>5.2. Kargoya verilmiş siparişlerde iptal mümkün olmayıp teslim alındıktan sonra iade süreci başlatılabilir.</p>
+        <p style={S.p}>5.1. Sipariş kuryeye verilmeden önce iptal talebinde bulunulabilir. İptal için <strong>(0212) 352 10 76</strong> numaralı hattı arayınız.</p>
+        <p style={S.p}>5.2. Kuryeye verilmiş siparişlerde iptal mümkün olmayıp teslim alındıktan sonra iade süreci başlatılabilir.</p>
         <p style={S.p}>5.3. Haksız iptal veya teslim almaktan imtina halinde SATICI'dan herhangi bir talepte bulunulamaz.</p>
 
         <h2 style={S.h2}>6. CAYMA HAKKI</h2>

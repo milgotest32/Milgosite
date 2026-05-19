@@ -197,7 +197,7 @@ export default function HizmetBolgeleriPage() {
               <input type="color" value={yeniForm.renk} onChange={e => setYeniForm({ ...yeniForm, renk: e.target.value })} style={{ width: '100%', height: '41px', borderRadius: '10px', border: '1px solid #F0ECF5', padding: '4px', cursor: 'pointer' }} />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: '#6B7280', marginBottom: '6px' }}>Kargo Ücreti (₺)</label>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: '#6B7280', marginBottom: '6px' }}>Kurye Ücreti (₺)</label>
               <input type="number" value={yeniForm.kargo_ucreti} onChange={e => setYeniForm({ ...yeniForm, kargo_ucreti: e.target.value })} style={{ width: '100%', background: '#F8F7FC', border: '1px solid #F0ECF5', borderRadius: '10px', padding: '10px 14px', fontSize: '13px', outline: 'none', fontFamily: 'inherit' }} />
             </div>
             <div>
@@ -236,7 +236,7 @@ export default function HizmetBolgeleriPage() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
                 <div style={{ background: '#F8F7FC', borderRadius: '8px', padding: '8px 12px' }}>
-                  <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Kargo</div>
+                  <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Kurye</div>
                   <div style={{ fontSize: '14px', fontWeight: 700, color: '#1C1B2E' }}>{b.kargo_ucreti === 0 ? 'Ücretsiz' : `₺${b.kargo_ucreti}`}</div>
                 </div>
                 <div style={{ background: '#F8F7FC', borderRadius: '8px', padding: '8px 12px' }}>

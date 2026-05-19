@@ -35,7 +35,7 @@ export default function AyarlarPage() {
 
   const TABS = [
     {k:'odeme',ad:'💳 PayTR Ödeme'},
-    {k:'kargo',ad:'🚚 Kargo'},
+    {k:'kargo',ad:'🛵 Kurye'},
     {k:'mail',ad:'✉️ SMTP Mail'},
     {k:'seo',ad:'🔍 SEO'},
     {k:'genel',ad:'⚙️ Genel'},
@@ -96,9 +96,9 @@ export default function AyarlarPage() {
             )}
             {aktifTab==='kargo' && (
               <div style={{display:'flex',flexDirection:'column',gap:'16px'}}>
-                <h2 style={{fontSize:'16px',fontWeight:700,color:'#1C1B2E',marginBottom:'4px'}}>Kargo Ayarları</h2>
-                {inp('Standart Kargo Ücreti (₺)','kargo','standart_kargo_ucreti','number','49.90')}
-                {inp('Ücretsiz Kargo Alt Tutarı (₺)','kargo','ucretsiz_kargo_tutari','number','500')}
+                <h2 style={{fontSize:'16px',fontWeight:700,color:'#1C1B2E',marginBottom:'4px'}}>Kurye Ayarları</h2>
+                {inp('Standart Kurye Ücreti (₺)','kargo','standart_kargo_ucreti','number','49.90')}
+                {inp('Ücretsiz Kurye Alt Tutarı (₺)','kargo','ucretsiz_kargo_tutari','number','500')}
               </div>
             )}
             {aktifTab==='mail' && (

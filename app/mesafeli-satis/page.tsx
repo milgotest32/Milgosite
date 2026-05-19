@@ -37,7 +37,7 @@ export default function MesafeliSatisPage() {
         <p style={S.p}>Sözleşme'ye konu ürün/ürünlerin türü, miktarı, marka/modeli, adedi, satış bedeli ve ödeme şekli sipariş onayında belirtilmektedir.</p>
 
         <h2 style={S.h2}>MADDE 5 – ÜRÜN BEDELİ VE ÖDEME</h2>
-        <p style={S.p}>5.1. SİPARİŞ VEREN/ALICI, vermiş olduğu siparişlerde toplam sipariş tutarı üzerinden kargo dahil tüm bedelleri ödemekle yükümlüdür.</p>
+        <p style={S.p}>5.1. SİPARİŞ VEREN/ALICI, vermiş olduğu siparişlerde toplam sipariş tutarı üzerinden kurye dahil tüm bedelleri ödemekle yükümlüdür.</p>
         <p style={S.p}>5.2. Sözleşme konusu ürünlerin teslimatı için sözleşmenin elektronik ortamda onaylanmış olması ve bedelinin ödenmiş olması şarttır.</p>
         <p style={S.p}>5.3. SATICI, uzak dağıtım bölgelerine minimum sipariş tutarları dahilinde teslimat yapma hakkını saklı tutar.</p>
         <p style={S.p}>5.4. Teslimat sonrası kredi kartının yetkisiz kişilerce kullanılması nedeniyle ödeme yapılmaması halinde SİPARİŞ VEREN/ALICI, bildirimi takiben 3 gün içinde ürün bedelini ödemeyi kabul ve taahhüt eder.</p>
@@ -48,13 +48,13 @@ export default function MesafeliSatisPage() {
         <p style={S.p}>6.1. Ayıplı ürünler için (0212) 352 10 76 numaralı hattı arayarak KEBA GIDA Müşteri İlişkileri ile iletişime geçilmelidir.</p>
         <p style={S.p}>6.2. Müşteri İlişkileri, bildirim kapsamında en geç 7 gün içinde bilgilendirme yapacaktır.</p>
         <p style={S.p}>6.3. Fabrikaya gönderilen ürünler incelenerek 7 gün içinde sonuç bildirilecektir.</p>
-        <p style={S.p}>6.4. Uygunsuzluk tespiti halinde iade ve değişim hakkı doğar. Kredi kartı ödemelerinde iade 14 gün içinde bankaya yapılır. Havale ödemelerinde iade 14 gün içinde gerçekleştirilir. Kargo ücretleri iade edilmez.</p>
+        <p style={S.p}>6.4. Uygunsuzluk tespiti halinde iade ve değişim hakkı doğar. Kredi kartı ödemelerinde iade 14 gün içinde bankaya yapılır. Havale ödemelerinde iade 14 gün içinde gerçekleştirilir. Kurye ücretleri iade edilmez.</p>
         <p style={S.p}>6.5. Fişsiz, faturasız ve tutanaksız gönderilen ürünlerin iadeleri kabul edilmez. <strong>Çiğ süt ürünleri doğası gereği hızla bozulabilen hassas ürünler olduğu için iade hakkı kapsamına girmemektedir.</strong></p>
 
         <h2 style={S.h2}>MADDE 7 – TESLİMATA İLİŞKİN HÜKÜMLER</h2>
-        <p style={S.p}>7.1. Siparişler, kargo şirketinin hizmet verdiği alanlara Türkiye sınırları dahilinde ulaştırılır.</p>
-        <p style={S.p}>7.2. Kargo bedeli sipariş tutarı ile birlikte tahsil edilir.</p>
-        <p style={S.p}>7.3. Hafta sonu ve tatil günlerinde verilen siparişler ilk iş günü kargoya verilir.</p>
+        <p style={S.p}>7.1. Siparişler, kurye sisteminin hizmet verdiği alanlara Türkiye sınırları dahilinde ulaştırılır.</p>
+        <p style={S.p}>7.2. Kurye bedeli sipariş tutarı ile birlikte tahsil edilir.</p>
+        <p style={S.p}>7.3. Hafta sonu ve tatil günlerinde verilen siparişler ilk iş günü kuryeye teslim edilir.</p>
         <p style={S.p}>7.4. Teslimat, sipariş tarihinden itibaren en geç 3 iş günü içinde gerçekleştirilir. Mücbir sebepler veya olağanüstü trafik durumunda bu süre uzayabilir.</p>
 
         <h2 style={S.h2}>MADDE 8 – CAYMA HAKKI</h2>

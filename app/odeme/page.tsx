@@ -293,7 +293,7 @@ export default function OdemePage() {
                   <span style={{fontWeight:600}}>₺{araToplam().toFixed(2)}</span>
                 </div>
                 <div style={{display:'flex',justifyContent:'space-between',fontSize:'13px'}}>
-                  <span style={{color:'#6B7280'}}>Kargo</span>
+                  <span style={{color:'#6B7280'}}>Kurye</span>
                   <span style={{fontWeight:600}}>{kargoUcreti()===0?'Ücretsiz':`₺${kargoUcreti().toFixed(2)}`}</span>
                 </div>
                 {indirim > 0 && (
@@ -309,7 +309,7 @@ export default function OdemePage() {
               </div>
               {araToplam() < 500 && (
                 <div style={{marginTop:'12px',background:'#FEF0F4',borderRadius:'10px',padding:'10px 12px',fontSize:'12px',color:'#E07090',fontWeight:600}}>
-                  ₺{(500-araToplam()).toFixed(2)} daha alışveriş yap, kargo bedava!
+                  ₺{(500-araToplam()).toFixed(2)} daha alışveriş yap, kurye bedava!
                 </div>
               )}
             </div>

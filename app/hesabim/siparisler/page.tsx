@@ -16,7 +16,7 @@ export default function SiparislerimPage() {
       setSiparisler(sip || []); setYukleniyor(false)
     })
   }, [router])
-  const DURUM: Record<string, string> = { bekliyor: 'Hazırlanıyor', kargoda: 'Kargoda', teslim: 'Teslim Edildi', iptal: 'İptal' }
+  const DURUM: Record<string, string> = { bekliyor: 'Hazırlanıyor', kargoda: 'Kuryede', teslim: 'Teslim Edildi', iptal: 'İptal' }
   const DURUM_RENK: Record<string, string> = { bekliyor: 'badge-mavi', kargoda: 'badge-pembe', teslim: 'bg-green-50 text-green-700 text-[11px] font-semibold px-2.5 py-1 rounded-full', iptal: 'bg-red-50 text-red-500 text-[11px] font-semibold px-2.5 py-1 rounded-full' }
   if (yukleniyor) return <div className="min-h-screen bg-lav flex items-center justify-center"><div className="w-10 h-10 rounded-full border-2 border-pembe-koy border-t-transparent animate-spin" /></div>
   return (

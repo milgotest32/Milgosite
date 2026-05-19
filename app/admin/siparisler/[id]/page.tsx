@@ -39,7 +39,7 @@ export default function SiparisDetay() {
           </div>
         </div>
         <select value={siparis.durum} onChange={e=>durumGuncelle(e.target.value)} style={{background:'#fff',border:'1px solid #F0ECF5',borderRadius:'12px',padding:'10px 16px',fontSize:'13px',color:'#1C1B2E',outline:'none',fontFamily:'inherit',cursor:'pointer',fontWeight:600}}>
-          {['bekliyor','onaylandi','kargoda','teslim','iptal'].map(d=><option key={d} value={d}>{d}</option>)}
+          {['bekliyor','onaylandi','kuryede','teslim','iptal'].map(d=><option key={d} value={d}>{d}</option>)}
         </select>
       </div>
       <div style={{display:'grid',gridTemplateColumns:'1fr 300px',gap:'16px'}}>
@@ -56,7 +56,7 @@ export default function SiparisDetay() {
               </div>
             ))}
             <div style={{paddingTop:'12px',display:'flex',flexDirection:'column',gap:'6px'}}>
-              {[['Ara Toplam',`₺${siparis.ara_toplam?.toFixed(2)}`],['Kargo',siparis.kargo_ucreti===0?'Ücretsiz':`₺${siparis.kargo_ucreti?.toFixed(2)}`],[...(siparis.indirim>0?[['İndirim',`-₺${siparis.indirim?.toFixed(2)}`]]:[])]].flat(1).map((item,i)=>Array.isArray(item)&&(
+              {[['Ara Toplam',`₺${siparis.ara_toplam?.toFixed(2)}`],['Kurye',siparis.kargo_ucreti===0?'Ücretsiz':`₺${siparis.kargo_ucreti?.toFixed(2)}`],[...(siparis.indirim>0?[['İndirim',`-₺${siparis.indirim?.toFixed(2)}`]]:[])]].flat(1).map((item,i)=>Array.isArray(item)&&(
                 <div key={i} style={{display:'flex',justifyContent:'space-between',fontSize:'13px'}}><span style={{color:'#9CA3AF'}}>{item[0]}</span><span style={{fontWeight:600}}>{item[1]}</span></div>
               ))}
               <div style={{display:'flex',justifyContent:'space-between',paddingTop:'8px',borderTop:'1px solid #F0ECF5'}}>

@@ -29,7 +29,7 @@ export function siparisMail(siparis: any, items: any[]): string {
         <tbody>${satirlar}</tbody>
       </table>
       <div style="margin-top:16px;padding-top:16px;border-top:2px solid #F0EEF8">
-        ${siparis.kargo_ucreti > 0 ? `<div style="display:flex;justify-content:space-between;font-size:13px;color:#7A6070;margin-bottom:6px"><span>Kargo</span><span>₺${siparis.kargo_ucreti.toFixed(2)}</span></div>` : '<div style="font-size:13px;color:#22C55E;margin-bottom:6px">🎉 Ücretsiz Kargo</div>'}
+        ${siparis.kargo_ucreti > 0 ? `<div style="display:flex;justify-content:space-between;font-size:13px;color:#7A6070;margin-bottom:6px"><span>Kargo</span><span>₺${siparis.kargo_ucreti.toFixed(2)}</span></div>` : '<div style="font-size:13px;color:#22C55E;margin-bottom:6px">🎉 Ücretsiz Kurye</div>'}
         ${siparis.indirim > 0 ? `<div style="display:flex;justify-content:space-between;font-size:13px;color:#22C55E;margin-bottom:6px"><span>İndirim</span><span>-₺${siparis.indirim.toFixed(2)}</span></div>` : ''}
         <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:700;color:#1A0A12;margin-top:8px"><span>Toplam</span><span>₺${siparis.toplam.toFixed(2)}</span></div>
       </div>

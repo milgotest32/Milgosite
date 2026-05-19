@@ -111,11 +111,11 @@ export default function SepetPage() {
               {kuponMesaj && <p style={{fontSize:'12px',marginTop:'8px',color:kuponBas?'#22c55e':'#ef4444',fontWeight:600}}>{kuponMesaj}</p>}
             </div>
 
-            {/* Kargo uyarısı */}
+            {/* Kurye uyarısı */}
             {kargoUcreti() > 0 && (
               <div style={{background:'#EBF7FC',borderRadius:'16px',padding:'14px 16px',display:'flex',alignItems:'center',gap:'10px'}}>
                 <Truck size={16} style={{color:'#3B9FCC',flexShrink:0}}/>
-                <p style={{fontSize:'12px',color:'#3B9FCC',fontWeight:600}}>₺{(500-araToplam()).toFixed(0)} daha ekleyin, kargo ücretsiz!</p>
+                <p style={{fontSize:'12px',color:'#3B9FCC',fontWeight:600}}>₺{(500-araToplam()).toFixed(0)} daha ekleyin, kurye ücretsiz!</p>
               </div>
             )}
 
@@ -125,7 +125,7 @@ export default function SepetPage() {
               <div style={{display:'flex',flexDirection:'column',gap:'12px',marginBottom:'20px'}}>
                 {[
                   ['Ara Toplam', `₺${araToplam().toFixed(2)}`],
-                  ['Kargo', kargoUcreti()===0?'Ücretsiz':`₺${kargoUcreti().toFixed(2)}`],
+                  ['Kurye', kargoUcreti()===0?'Ücretsiz':`₺${kargoUcreti().toFixed(2)}`],
                   ...(indirim>0?[['İndirim', `-₺${indirim.toFixed(2)}`]]:[])
                 ].map(([l,v])=>(
                   <div key={l} style={{display:'flex',justifyContent:'space-between',fontSize:'13px'}}>
