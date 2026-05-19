@@ -47,7 +47,8 @@ export default function Navbar() {
 
   const cikis = async () => { await supabase.auth.signOut(); router.push('/'); setUserDrop(false) }
 
-  const drop: React.CSSProperties = { position: 'absolute', top: '100%', background: '#fff', borderRadius: '20px', boxShadow: '0 12px 40px rgba(26,10,18,0.15)', border: '1px solid rgba(232,86,122,0.08)', padding: '8px', minWidth: '190px', zIndex: 200 }
+  const drop: React.CSSProperties = { position: 'absolute', top: '100%', paddingTop: '8px', background: 'transparent', minWidth: '190px', zIndex: 200 }
+  const dropInner: React.CSSProperties = { background: '#fff', borderRadius: '20px', boxShadow: '0 12px 40px rgba(26,10,18,0.15)', border: '1px solid rgba(232,86,122,0.08)', padding: '8px' }
   const di: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '10px', fontSize: '13px', fontWeight: 500, color: '#1A0A12', textDecoration: 'none', background: 'none', border: 'none', width: '100%', cursor: 'none', fontFamily: 'Nunito, sans-serif' }
   const ico: React.CSSProperties = { width: '38px', height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '10px', color: '#7A6070', background: 'transparent', border: 'none', cursor: 'none', flexShrink: 0 }
 
@@ -96,11 +97,13 @@ export default function Navbar() {
                 </button>
                 {urunDrop && (
                   <div style={drop}>
+                    <div style={dropInner}>
                     {[{ e: '🥛', a: 'Çiğ Süt', h: '/kategoriler/cig-sut' }, { e: '🧀', a: 'Peynir', h: '/kategoriler/peynir' }, { e: '🧈', a: 'Tereyağı', h: '/kategoriler/tereyagi' }].map(k => (
                       <Link key={k.h} href={k.h} style={di as any}>{k.e} {k.a}</Link>
                     ))}
                     <div style={{ borderTop: '1px solid rgba(26,10,18,.06)', margin: '6px 0 0', paddingTop: '6px' }}>
                       <Link href="/kampanyalar" style={{ ...di, color: '#E8567A', fontWeight: 700 } as any}>🔥 Kampanyalar</Link>
+                    </div>
                     </div>
                   </div>
                 )}
