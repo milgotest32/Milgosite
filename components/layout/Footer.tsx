@@ -26,10 +26,10 @@ const LINKS = [
   {
     baslik: 'Yasal',
     items: [
-      ['Mesafeli Satış Sözleşmesi', 'https://market.milgo.com.tr/pages/mesafeli%CC%87-satis-sozlesmesi%CC%87'],
-      ['Gizlilik Politikası', 'https://market.milgo.com.tr/pages/gizlilik-politikasi'],
-      ['Açık Rıza Metni (KVKK)', 'https://market.milgo.com.tr/pages/kvkk'],
-      ['İade ve İptal Politikası', 'https://market.milgo.com.tr/pages/keba-gida-i%CC%87ptal-i%CC%87ade-poli%CC%87ti%CC%87kasi'],
+      ['Mesafeli Satış Sözleşmesi', '/mesafeli-satis'],
+      ['Gizlilik Politikası', '/gizlilik-politikasi'],
+      ['Açık Rıza Metni (KVKK)', '/kvkk'],
+      ['İade ve İptal Politikası', '/iade-politikasi'],
     ],
   },
 ]
