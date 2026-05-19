@@ -36,7 +36,7 @@ export default async function Footer() {
           {/* Links */}
           {[
             {baslik:'Ürünler', linkler:[['Çiğ Süt','/urunler?kategori=sut'],['Peynir','/urunler?kategori=peynir'],['Tereyağı','/urunler?kategori=tereyag'],['Tüm Ürünler','/urunler']]},
-            {baslik:'Keşfet', linkler:[['Abonelik','/abonelik'],['Çiftliğimiz','/ciftligimiz'],['Tarifler','/tarifler'],['Hakkımızda','/hakkimizda']]},
+            {baslik:'Keşfet', linkler:[['Abonelik','/abonelik'],['Çiftliğimiz','/ciftligimiz'],['Hakkımızda','/hakkimizda']]},
           ].map(({baslik,linkler}) => (
             <div key={baslik}>
               <h4 style={{fontSize:'10px', letterSpacing:'0.3em', textTransform:'uppercase', color:'#E07090', fontWeight:'700', marginBottom:'20px'}}>{baslik}</h4>

@@ -11,7 +11,7 @@ const LINKLER = [
   ['Çiftliğimiz', '/ciftligimiz'],
   ['Blog', '/blog'],
   ['Hakkımızda', '/hakkimizda'],
-  ['Tarifler', '/tarifler'],
+  
 ]
 
 export default function Navbar() {
@@ -127,7 +127,7 @@ export default function Navbar() {
       {menuAcik && (
         <div style={{position:'fixed', inset:0, zIndex:40, background:'#fff', paddingTop:'80px', paddingLeft:'24px', paddingRight:'24px', overflowY:'auto'}}>
           <div style={{display:'flex', flexDirection:'column', gap:'4px'}}>
-            {[['🥛 Çiğ Süt','/urunler?kategori=sut'],['🧀 Peynir','/urunler?kategori=peynir'],['🧈 Tereyağı','/urunler?kategori=tereyag'],['Tüm Ürünler','/urunler'],['Abonelik','/abonelik'],['Çiftliğimiz','/ciftligimiz'],['Blog','/blog'],['Hakkımızda','/hakkimizda'],['Tarifler','/tarifler'],['İletişim','/iletisim']].map(([ad,href]) => (
+            {[['🥛 Çiğ Süt','/urunler?kategori=sut'],['🧀 Peynir','/urunler?kategori=peynir'],['🧈 Tereyağı','/urunler?kategori=tereyag'],['Tüm Ürünler','/urunler'],['Abonelik','/abonelik'],['Çiftliğimiz','/ciftligimiz'],['Blog','/blog'],['Hakkımızda','/hakkimizda'],['İletişim','/iletisim']].map(([ad,href]) => (
               <Link key={href} href={href} onClick={() => setMenuAcik(false)}
                 style={{display:'block', padding:'14px 16px', fontSize:'16px', fontWeight:'500', color:'#1C1B2E', textDecoration:'none', borderRadius:'12px'}}>
                 {ad}
