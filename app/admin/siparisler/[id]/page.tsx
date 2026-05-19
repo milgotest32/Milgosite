@@ -38,7 +38,7 @@ export default function SiparisDetay() {
             <p style={{fontSize:'12px',color:'#9CA3AF'}}>{new Date(siparis.created_at).toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'})}</p>
           </div>
         </div>
-        <select value={siparis.durum} onChange={e=>durumGuncelle(e.target.value)} style={{background:'#fff',border:'1px solid #F0ECF5',borderRadius:'12px',padding:'10px 16px',fontSize:'13px',color:'#1C1B2E',outline:'none',fontFamily:'inherit',cursor:'none',fontWeight:600}}>
+        <select value={siparis.durum} onChange={e=>durumGuncelle(e.target.value)} style={{background:'#fff',border:'1px solid #F0ECF5',borderRadius:'12px',padding:'10px 16px',fontSize:'13px',color:'#1C1B2E',outline:'none',fontFamily:'inherit',cursor:'pointer',fontWeight:600}}>
           {['bekliyor','onaylandi','kargoda','teslim','iptal'].map(d=><option key={d} value={d}>{d}</option>)}
         </select>
       </div>

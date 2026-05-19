@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase/client'
 import { Check, RefreshCw } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
@@ -16,18 +16,26 @@ export default function AbonelikPage() {
   const [form, setForm] = useState({ ad: '', email: '', telefon: '', adres: '', ilce: '' })
   const [basari, setBasari] = useState(false)
   const [yukleniyor, setYukleniyor] = useState(false)
+  const [hata, setHata] = useState('')
+
+  const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }))
 
   const kaydet = async () => {
+    if (!form.ad || !form.email || !form.telefon || !form.adres || !form.ilce) {
+      setHata('Lütfen tüm alanları doldurun.'); return
+    }
+    if (!/\S+@\S+\.\S+/.test(form.email)) {
+      setHata('Geçerli bir e-posta adresi girin.'); return
+    }
+    setHata('')
     const plan = PLANLAR.find(p => p.slug === secili)!
     setYukleniyor(true)
-    if (supabase) {
-      await supabase.from('site_abonelikler').insert({
-        musteri_ad: form.ad, musteri_email: form.email,
-        musteri_telefon: form.telefon,
-        teslimat_adres: `${form.adres}, ${form.ilce}`,
-        plan: secili, haftalik_litre: plan.litre, fiyat: plan.fiyat,
-      })
-    }
+    await supabase.from('site_abonelikler').insert({
+      musteri_ad: form.ad, musteri_email: form.email,
+      musteri_telefon: form.telefon,
+      teslimat_adres: `${form.adres}, ${form.ilce}`,
+      plan: secili, haftalik_litre: plan.litre, fiyat: plan.fiyat,
+    })
     setBasari(true)
     setYukleniyor(false)
   }
@@ -42,44 +50,44 @@ export default function AbonelikPage() {
     </div>
   )
 
+  const inpStyle: React.CSSProperties = {
+    width: '100%', background: 'rgba(26,10,18,0.04)', border: '1.5px solid rgba(26,10,18,0.1)',
+    borderRadius: '14px', padding: '13px 16px', fontSize: '14px', color: '#1A0A12',
+    outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box'
+  }
+
   return (
     <div style={{ background: '#FDFBF9', minHeight: '100vh' }}>
+      <style>{`
+        .abo-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+        .abo-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        @media(max-width:768px){ .abo-grid{grid-template-columns:1fr;} .abo-form-grid{grid-template-columns:1fr;} }
+      `}</style>
+
       <div style={{ background: 'linear-gradient(135deg, #FEE8EF 0%, #EBF5FC 100%)', padding: 'clamp(48px,8vw,96px) 24px', textAlign: 'center' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#fff', color: '#E8567A', fontSize: '10px', fontWeight: 800, letterSpacing: '.15em', textTransform: 'uppercase', padding: '7px 14px', borderRadius: '50px', marginBottom: '20px' }}>
           <RefreshCw size={12} /> Haftalık Abonelik
         </div>
-        <h1 style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: 'clamp(36px,5vw,68px)', fontWeight: 400, color: '#1A0A12', lineHeight: 1.05, margin: '0 0 12px' }}>
-          Her Hafta <em style={{ fontStyle: 'italic', color: '#E8567A', fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif", fontWeight: '400' }}>Kapınıza</em>
+        <h1 style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: 'clamp(36px,5vw,64px)', fontWeight: 400, color: '#1A0A12', lineHeight: 1.05, margin: '0 0 12px' }}>
+          Her Hafta Taze Süt
         </h1>
-        <p style={{ color: '#7A6070', fontSize: '15px', maxWidth: '480px', margin: '0 auto' }}>Taze çiğ sütü her hafta düzenli olarak evinize teslim ediyoruz.</p>
+        <p style={{ color: '#7A6070', fontSize: '15px', maxWidth: '480px', margin: '0 auto' }}>Çiftlikten kapınıza, haftada bir otomatik teslimat. İstediğiniz zaman iptal.</p>
       </div>
 
-      <div style={{ maxWidth: '960px', margin: '0 auto', padding: 'clamp(32px,5vw,64px) clamp(16px,4vw,32px)' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '48px' }}>
+      <div style={{ maxWidth: '960px', margin: '0 auto', padding: 'clamp(32px,5vw,64px) 16px' }}>
+        {/* Planlar */}
+        <div className="abo-grid" style={{ marginBottom: '40px' }}>
           {PLANLAR.map(plan => (
             <div key={plan.slug} onClick={() => setSecili(plan.slug)}
-              style={{
-                position: 'relative', borderRadius: '24px', padding: '28px 24px', cursor: 'pointer',
-                background: '#fff', border: `2px solid ${secili === plan.slug ? '#E8567A' : 'rgba(26,10,18,0.08)'}`,
-                boxShadow: secili === plan.slug ? '0 8px 32px rgba(232,86,122,.15)' : '0 2px 12px rgba(26,10,18,.05)',
-                transform: secili === plan.slug ? 'translateY(-4px)' : 'none',
-                transition: 'all .2s',
-              }}>
-              {plan.one && (
-                <div style={{ position: 'absolute', top: 0, right: '20px', background: '#E8567A', color: '#fff', fontSize: '9px', letterSpacing: '.2em', textTransform: 'uppercase', padding: '5px 12px', borderRadius: '0 0 12px 12px', fontWeight: 800 }}>
-                  Popüler
-                </div>
-              )}
-              <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: `2px solid ${secili === plan.slug ? '#E8567A' : 'rgba(26,10,18,0.2)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-                {secili === plan.slug && <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#E8567A' }} />}
-              </div>
-              <h3 style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '22px', fontWeight: 400, color: '#1A0A12', margin: '0 0 4px' }}>{plan.ad}</h3>
-              <div style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '36px', color: '#E8567A', lineHeight: 1, margin: '8px 0 2px' }}>₺{plan.fiyat}</div>
-              <div style={{ fontSize: '12px', color: '#7A6070', marginBottom: '20px' }}>/ Ay · {plan.litre}L Haftalık</div>
+              style={{ background: '#fff', borderRadius: '24px', padding: '28px 24px', cursor: 'pointer', border: `2px solid ${secili===plan.slug?'#E8567A':'rgba(26,10,18,0.08)'}`, position: 'relative', transition: 'all .2s', boxShadow: secili===plan.slug?'0 8px 32px rgba(232,86,122,0.15)':'none' }}>
+              {plan.one && <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: '#E8567A', color: '#fff', fontSize: '10px', fontWeight: 800, padding: '4px 14px', borderRadius: '50px', whiteSpace: 'nowrap' }}>EN POPÜLER</div>}
+              <h3 style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '22px', color: '#1A0A12', marginBottom: '4px' }}>{plan.ad}</h3>
+              <p style={{ fontSize: '13px', color: '#7A6070', marginBottom: '16px' }}>{plan.litre}L / hafta</p>
+              <p style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '32px', color: '#1A0A12', marginBottom: '20px' }}>₺{plan.fiyat}<span style={{ fontSize: '13px', color: '#7A6070' }}>/ay</span></p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {plan.ozellikler.map(oz => (
-                  <div key={oz} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#1A0A12' }}>
-                    <Check size={13} color="#E8567A" style={{ flexShrink: 0 }} /> {oz}
+                {plan.ozellikler.map(o => (
+                  <div key={o} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#1A0A12' }}>
+                    <Check size={14} style={{ color: '#E8567A', flexShrink: 0 }} /> {o}
                   </div>
                 ))}
               </div>
@@ -87,24 +95,36 @@ export default function AbonelikPage() {
           ))}
         </div>
 
-        <div style={{ background: '#fff', borderRadius: '28px', padding: 'clamp(24px,4vw,48px)', maxWidth: '520px', margin: '0 auto', border: '1px solid rgba(26,10,18,0.07)', boxShadow: '0 4px 24px rgba(26,10,18,.06)' }}>
-          <h3 style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '26px', fontWeight: 400, color: '#1A0A12', margin: '0 0 24px' }}>Teslimat Bilgileri</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {([['Ad Soyad', 'ad', 'text'], ['E-posta', 'email', 'email'], ['Telefon', 'telefon', 'tel'], ['Adres', 'adres', 'text'], ['İlçe', 'ilce', 'text']] as [string,string,string][]).map(([label, key, type]) => (
-              <div key={key}>
-                <label style={{ display: 'block', fontSize: '10px', letterSpacing: '.2em', textTransform: 'uppercase', color: '#7A6070', marginBottom: '8px', fontWeight: 700 }}>{label}</label>
-                <input
-                  type={type}
-                  value={form[key as keyof typeof form]}
-                  onChange={e => setForm({ ...form, [key]: e.target.value })}
-                  style={{ width: '100%', background: '#FDFBF9', border: '1.5px solid rgba(26,10,18,0.12)', borderRadius: '12px', padding: '12px 16px', fontSize: '14px', color: '#1A0A12', outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' }}
-                />
-              </div>
-            ))}
+        {/* Form */}
+        <div style={{ background: '#fff', borderRadius: '28px', padding: 'clamp(24px,4vw,40px)', border: '1px solid rgba(26,10,18,0.07)', boxShadow: '0 4px 24px rgba(26,10,18,.06)' }}>
+          <h2 style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '24px', color: '#1A0A12', marginBottom: '24px' }}>Teslimat Bilgileri</h2>
+          {hata && <div style={{ background: '#FEE8EF', border: '1px solid #F4A7B9', borderRadius: '12px', padding: '12px 16px', marginBottom: '20px', fontSize: '13px', color: '#E8567A', fontWeight: 600 }}>{hata}</div>}
+          <div className="abo-form-grid" style={{ marginBottom: '14px' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: '#7A6070', marginBottom: '6px' }}>Ad Soyad *</label>
+              <input value={form.ad} onChange={e => set('ad', e.target.value)} placeholder="Adınız Soyadınız" style={inpStyle} />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: '#7A6070', marginBottom: '6px' }}>E-posta *</label>
+              <input type="email" value={form.email} onChange={e => set('email', e.target.value)} placeholder="ornek@email.com" style={inpStyle} />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: '#7A6070', marginBottom: '6px' }}>Telefon *</label>
+              <input type="tel" value={form.telefon} onChange={e => set('telefon', e.target.value)} placeholder="0532 xxx xx xx" style={inpStyle} />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: '#7A6070', marginBottom: '6px' }}>İlçe *</label>
+              <input value={form.ilce} onChange={e => set('ilce', e.target.value)} placeholder="Beşiktaş" style={inpStyle} />
+            </div>
+          </div>
+          <div style={{ marginBottom: '24px' }}>
+            <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: '#7A6070', marginBottom: '6px' }}>Teslimat Adresi *</label>
+            <textarea value={form.adres} onChange={e => set('adres', e.target.value)} placeholder="Mahalle, sokak, bina no, daire no..."
+              style={{ ...inpStyle, resize: 'none', height: '80px' }} />
           </div>
           <button onClick={kaydet} disabled={yukleniyor}
-            style={{ background: yukleniyor ? 'rgba(26,10,18,0.3)' : '#1A0A12', color: '#fff', width: '100%', padding: '16px', borderRadius: '50px', border: 'none', fontSize: '14px', fontWeight: 700, marginTop: '24px', fontFamily: 'inherit', cursor: 'pointer' }}>
-            {yukleniyor ? 'İşleniyor...' : 'Aboneliği Başlat'}
+            style={{ width: '100%', background: 'linear-gradient(135deg,#E8567A,#3B9FCC)', color: '#fff', border: 'none', borderRadius: '50px', padding: '16px', fontSize: '15px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', opacity: yukleniyor ? 0.7 : 1 }}>
+            {yukleniyor ? 'Kaydediliyor...' : `${PLANLAR.find(p=>p.slug===secili)?.ad} Planı Başlat →`}
           </button>
         </div>
       </div>

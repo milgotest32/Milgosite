@@ -21,7 +21,7 @@
 /* Reset & Base */
 *, *::before, *::after {
   box-sizing: border-box;
-  cursor: none !important;
+  
 }
 
 html { scroll-behavior: smooth; }
@@ -424,4 +424,15 @@ body {
 
 @media (max-width: 480px) {
   .footer-top { grid-template-columns: 1fr !important; }
+}
+
+/* Özel cursor - sadece non-admin */
+body:not(.admin-body) * {
+  cursor: none !important;
+}
+.admin-body * {
+  cursor: auto;
+}
+.admin-body button, .admin-body a, .admin-body select, .admin-body input[type="checkbox"], .admin-body input[type="radio"] {
+  cursor: pointer;
 }

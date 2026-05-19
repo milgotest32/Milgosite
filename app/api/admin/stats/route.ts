@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
+import { requireAdmin } from '@/lib/supabase/admin-check'
 export const dynamic = 'force-dynamic'
 export async function GET() {
+  const auth = await requireAdmin()
+  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 403 })
   const db = createServerClient()
   const [sip, urun, mus, gelir] = await Promise.all([
     db.from('site_siparisler').select('*', { count: 'exact', head: true }),

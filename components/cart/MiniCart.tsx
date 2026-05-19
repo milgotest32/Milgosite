@@ -9,7 +9,7 @@ export default function MiniCart({ onClose }: { onClose: () => void }) {
     <div style={{position:'fixed',top:0,right:0,bottom:0,width:'380px',background:'#fff',zIndex:200,boxShadow:'-4px 0 32px rgba(0,0,0,0.12)',display:'flex',flexDirection:'column'}}>
       <div style={{padding:'20px 24px',borderBottom:'1px solid #F0ECF5',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
         <h2 style={{fontSize:'18px',fontWeight:700,color:'#1C1B2E'}}>Sepetim ({adetToplam()})</h2>
-        <button onClick={onClose} style={{background:'none',border:'none',cursor:'none',color:'#6B7280'}}><X size={20}/></button>
+        <button onClick={onClose} style={{background:'none',border:'none',cursor:'pointer',color:'#6B7280'}}><X size={20}/></button>
       </div>
       
       {items.length === 0 ? (
@@ -32,7 +32,7 @@ export default function MiniCart({ onClose }: { onClose: () => void }) {
                     <p style={{fontSize:'13px',fontWeight:600,color:'#1C1B2E',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{urun.name}</p>
                     <p style={{fontSize:'12px',color:'#6B7280'}}>x{adet} · ₺{(urun.fiyat*adet).toFixed(2)}</p>
                   </div>
-                  <button onClick={()=>cikar(urun.id)} style={{background:'none',border:'none',cursor:'none',color:'#9CA3AF'}}><X size={14}/></button>
+                  <button onClick={()=>cikar(urun.id)} style={{background:'none',border:'none',cursor:'pointer',color:'#9CA3AF'}}><X size={14}/></button>
                 </div>
               )
             })}

@@ -45,7 +45,7 @@ export default function AdminSiparislerPage() {
           {DURUMLAR.map(d=>{
             const renk = DURUM_RENK[d] || {bg:'#F8F7FC',tx:'#9CA3AF'}
             return (
-              <button key={d} onClick={()=>setDurum(d)} style={{padding:'6px 14px',borderRadius:'50px',border:'none',fontSize:'12px',fontWeight:600,cursor:'none',fontFamily:'inherit',background:durum===d?(d==='all'?'linear-gradient(135deg,#E07090,#3B9FCC)':renk.bg):'#F8F7FC',color:durum===d?(d==='all'?'#fff':renk.tx):'#9CA3AF'}}>
+              <button key={d} onClick={()=>setDurum(d)} style={{padding:'6px 14px',borderRadius:'50px',border:'none',fontSize:'12px',fontWeight:600,cursor:'pointer',fontFamily:'inherit',background:durum===d?(d==='all'?'linear-gradient(135deg,#E07090,#3B9FCC)':renk.bg):'#F8F7FC',color:durum===d?(d==='all'?'#fff':renk.tx):'#9CA3AF'}}>
                 {d==='all'?'Tümü':d}
               </button>
             )
@@ -79,7 +79,7 @@ export default function AdminSiparislerPage() {
                   <td style={{padding:'12px 16px',fontSize:'12px',color:'#6B7280'}}>{s.site_siparis_kalemleri?.length||0} ürün</td>
                   <td style={{padding:'12px 16px'}}><span style={{fontSize:'11px',fontWeight:700,padding:'3px 10px',borderRadius:'50px',background:d.bg,color:d.tx}}>{s.durum}</span></td>
                   <td style={{padding:'12px 16px'}}>
-                    <select value={s.durum} onChange={e=>durumGuncelle(s.id,e.target.value)} style={{background:'#F8F7FC',border:'1px solid #F0ECF5',borderRadius:'8px',padding:'6px 10px',fontSize:'12px',color:'#1C1B2E',outline:'none',fontFamily:'inherit',cursor:'none'}}>
+                    <select value={s.durum} onChange={e=>durumGuncelle(s.id,e.target.value)} style={{background:'#F8F7FC',border:'1px solid #F0ECF5',borderRadius:'8px',padding:'6px 10px',fontSize:'12px',color:'#1C1B2E',outline:'none',fontFamily:'inherit',cursor:'pointer'}}>
                       {DURUMLAR.filter(d=>d!=='all').map(d=><option key={d} value={d}>{d}</option>)}
                     </select>
                   </td>

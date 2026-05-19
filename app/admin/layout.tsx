@@ -40,21 +40,33 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
   const [collapsed, setCollapsed] = useState(false)
+  const [yetkiKontrol, setYetkiKontrol] = useState(true)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { router.push('/giris'); return }
+      // Rol kontrolü
+      const { data: profile } = await supabase.from('site_users').select('role').eq('id', data.session.user.id).single()
+      if (!profile || profile.role !== 'admin') {
+        router.push('/')
+        return
+      }
       setUser(data.session.user)
+      setYetkiKontrol(false)
     })
   }, [router])
 
   const cikis = async () => { await supabase.auth.signOut(); router.push('/giris') }
 
+  if (yetkiKontrol) return (
+    <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#F8F7FC'}}>
+      <p style={{color:'#9CA3AF',fontSize:'14px'}}>Yetki kontrol ediliyor...</p>
+    </div>
+  )
+
   return (
     <div style={{display:'flex',minHeight:'100vh',background:'#F8F7FC',fontFamily:'"Plus Jakarta Sans",sans-serif'}}>
-      {/* Sidebar */}
       <aside style={{width: collapsed ? '64px' : '220px',background:'#1C1B2E',display:'flex',flexDirection:'column',position:'fixed',top:0,left:0,bottom:0,zIndex:50,transition:'width 0.25s',overflow:'hidden'}}>
-        {/* Logo */}
         <div style={{padding:'20px 16px',borderBottom:'1px solid rgba(255,255,255,0.06)',display:'flex',alignItems:'center',gap:'10px',flexShrink:0}}>
           <div style={{width:'32px',height:'32px',background:'linear-gradient(135deg,#E07090,#3B9FCC)',borderRadius:'10px',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,fontSize:'14px',fontWeight:700,color:'#fff'}}>M</div>
           {!collapsed && <div>
@@ -62,8 +74,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div style={{fontSize:'9px',color:'rgba(255,255,255,0.4)',letterSpacing:'0.15em',textTransform:'uppercase'}}>Admin Panel</div>
           </div>}
         </div>
-
-        {/* Nav */}
         <nav style={{flex:1,overflowY:'auto',padding:'12px 8px'}}>
           {MENU.map(g => (
             <div key={g.grup} style={{marginBottom:'4px'}}>
@@ -81,29 +91,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
           ))}
         </nav>
-
-        {/* Alt */}
         <div style={{padding:'12px 8px',borderTop:'1px solid rgba(255,255,255,0.06)'}}>
           <Link href="/" style={{display:'flex',alignItems:'center',gap:'10px',padding:'8px 10px',borderRadius:'10px',color:'rgba(255,255,255,0.4)',fontSize:'13px',textDecoration:'none',marginBottom:'4px',whiteSpace:'nowrap'}}>
             <Globe size={16}/>
             {!collapsed && 'Siteye Git'}
           </Link>
-          <button onClick={cikis} style={{display:'flex',alignItems:'center',gap:'10px',padding:'8px 10px',borderRadius:'10px',color:'rgba(255,255,255,0.4)',fontSize:'13px',background:'none',border:'none',cursor:'none',width:'100%',fontFamily:'inherit',whiteSpace:'nowrap'}}>
+          <button onClick={cikis} style={{display:'flex',alignItems:'center',gap:'10px',padding:'8px 10px',borderRadius:'10px',color:'rgba(255,255,255,0.4)',fontSize:'13px',background:'none',border:'none',cursor:'pointer',width:'100%',fontFamily:'inherit',whiteSpace:'nowrap'}}>
             <LogOut size={16}/>
             {!collapsed && 'Çıkış'}
           </button>
         </div>
       </aside>
-
-      {/* Main */}
       <div style={{marginLeft: collapsed ? '64px' : '220px',flex:1,display:'flex',flexDirection:'column',transition:'margin-left 0.25s'}}>
-        {/* Topbar */}
         <header style={{background:'#fff',borderBottom:'1px solid #F0ECF5',padding:'0 24px',height:'56px',display:'flex',alignItems:'center',justifyContent:'space-between',position:'sticky',top:0,zIndex:40}}>
-          <button onClick={()=>setCollapsed(!collapsed)} style={{background:'none',border:'none',cursor:'none',color:'#6B7280',display:'flex',alignItems:'center'}}>
+          <button onClick={()=>setCollapsed(!collapsed)} style={{background:'none',border:'none',cursor:'pointer',color:'#6B7280',display:'flex',alignItems:'center'}}>
             <ChevronRight size={18} style={{transform:collapsed?'none':'rotate(180deg)',transition:'transform 0.25s'}}/>
           </button>
           <div style={{display:'flex',alignItems:'center',gap:'12px'}}>
-            <button style={{background:'none',border:'none',cursor:'none',color:'#6B7280',position:'relative'}}>
+            <button style={{background:'none',border:'none',cursor:'pointer',color:'#6B7280',position:'relative'}}>
               <Bell size={18}/>
             </button>
             <div style={{width:'32px',height:'32px',background:'linear-gradient(135deg,#E07090,#3B9FCC)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'12px',fontWeight:700,color:'#fff'}}>
@@ -111,8 +116,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
           </div>
         </header>
-
-        {/* Content */}
         <main style={{flex:1,padding:'24px',overflowY:'auto'}}>
           {children}
         </main>
