@@ -144,7 +144,7 @@ export default function Footer() {
           {/* Marka */}
           <div className="footer-brand-col">
             <div className="footer-logo">
-              milgo<span style={{ color: '#E8567A' }}>.</span>
+              <img src="https://jxfegluntgssrgpnvscs.supabase.co/storage/v1/object/public/site-medya/medya/1779186053874-lpldyhy0u38.png" alt="milgo." style={{height:"36px",width:"auto",objectFit:"contain"}}/>
             </div>
             <p className="footer-tagline">Mutluluğun Tadı</p>
             <p className="footer-desc">

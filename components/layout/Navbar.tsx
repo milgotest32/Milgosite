@@ -82,8 +82,12 @@ export default function Navbar() {
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 clamp(16px,4vw,48px)', height: '60px', display: 'flex', alignItems: 'center', gap: '8px' }}>
 
           {/* Logo */}
-          <Link href="/" style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '26px', color: '#1A0A12', textDecoration: 'none', flexShrink: 0 }}>
-            milgo<span style={{ color: '#E8567A' }}>.</span>
+          <Link href="/" style={{ textDecoration: 'none', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+            <img
+              src="https://jxfegluntgssrgpnvscs.supabase.co/storage/v1/object/public/site-medya/medya/1779186053874-lpldyhy0u38.png"
+              alt="milgo."
+              style={{ height: '40px', width: 'auto', objectFit: 'contain' }}
+            />
           </Link>
 
           {/* Masaüstü menü */}
@@ -191,7 +195,7 @@ export default function Navbar() {
             <X size={20} color="#1A0A12" />
           </button>
           <div style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '24px', color: '#1A0A12', marginBottom: '24px' }}>
-            milgo<span style={{ color: '#E8567A' }}>.</span>
+            <img src="https://jxfegluntgssrgpnvscs.supabase.co/storage/v1/object/public/site-medya/medya/1779186053874-lpldyhy0u38.png" alt="milgo." style={{height:"36px",width:"auto",objectFit:"contain"}}/>
             {konum && <span style={{ fontSize: '12px', fontFamily: 'Nunito, sans-serif', fontWeight: 600, color: '#E8567A', marginLeft: '10px' }}>📍 {konum}</span>}
           </div>
           <div style={{ flex: 1 }}>
