@@ -56,9 +56,13 @@ function Icerik() {
     q.then(({ data }: any) => {
       let tumUrunler: Urun[] = data || []
       if (bolgeId) {
+        // Bölge seçiliyse sadece o bölgedeki ürünleri göster
         tumUrunler = tumUrunler.filter((u: any) =>
-          !u.bolge_ids || u.bolge_ids.length === 0 || u.bolge_ids.includes(bolgeId)
+          u.bolge_ids && u.bolge_ids.includes(bolgeId)
         )
+      } else if (localStorage.getItem('milgo_hizmet') === 'false') {
+        // Hizmet bölgesi dışındaysa hiç ürün gösterme
+        tumUrunler = []
       }
       setUrunler(tumUrunler)
       setLoading(false)

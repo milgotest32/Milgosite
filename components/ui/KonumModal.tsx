@@ -89,16 +89,20 @@ export default function KonumModal() {
         const lng = parseFloat(data[0].lon)
         await koordinatKaydetVeKontrolEt(lat, lng, secilenIlce)
       } else {
-        // Koordinat bulunamazsa sadece ismi kaydet
+        // Koordinat bulunamazsa hizmet false - güvenli taraf
         localStorage.setItem('milgo_konum', secilenIlce)
-        localStorage.setItem('milgo_hizmet', 'true')
+        localStorage.setItem('milgo_hizmet', 'false')
+        localStorage.removeItem('milgo_bolge_id')
+        localStorage.removeItem('milgo_bolge_ad')
         setKonum(secilenIlce)
         setDurum('tamam')
         setTimeout(() => setGoster(false), 1500)
       }
     } catch {
       localStorage.setItem('milgo_konum', secilenIlce)
-      localStorage.setItem('milgo_hizmet', 'true')
+      localStorage.setItem('milgo_hizmet', 'false')
+      localStorage.removeItem('milgo_bolge_id')
+      localStorage.removeItem('milgo_bolge_ad')
       setKonum(secilenIlce)
       setDurum('tamam')
       setTimeout(() => setGoster(false), 1500)
@@ -106,8 +110,12 @@ export default function KonumModal() {
   }
 
   const kapat = () => {
-    localStorage.setItem('milgo_konum', 'İstanbul')
-    localStorage.setItem('milgo_hizmet', 'true')
+    // Kapatınca hizmet bilgisini silme - konum belirlenmemiş sayılır
+    // Ürünler sayfası bolge_id olmadığında ürün göstermez
+    localStorage.removeItem('milgo_konum')
+    localStorage.removeItem('milgo_hizmet')
+    localStorage.removeItem('milgo_bolge_id')
+    localStorage.removeItem('milgo_bolge_ad')
     setGoster(false)
   }
 
