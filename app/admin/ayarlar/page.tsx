@@ -1,7 +1,7 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase/client'
-import { Save } from 'lucide-react'
+import { Save, Upload, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 export const dynamic = 'force-dynamic'
 
@@ -11,11 +11,20 @@ export default function AyarlarPage() {
   const [saving, setSaving] = useState(false)
   const [aktifTab, setAktifTab] = useState('odeme')
 
+  // Favicon state
+  const [faviconUrl, setFaviconUrl] = useState('')
+  const [faviconYukleniyor, setFaviconYukleniyor] = useState(false)
+  const faviconRef = useRef<HTMLInputElement>(null)
+
   useEffect(() => {
     supabase.from('site_ayarlar').select('*').then(({data})=>{
       const a: Record<string,Record<string,string>> = {}
       data?.forEach((item:any)=>{ if(!a[item.grup]) a[item.grup]={}; a[item.grup][item.anahtar]=item.deger||'' })
-      setAyarlar(a); setLoading(false)
+      setAyarlar(a)
+      // Mevcut favicon'u yükle
+      const favicon = a['genel']?.['favicon_url'] || ''
+      setFaviconUrl(favicon)
+      setLoading(false)
     })
   }, [])
 
@@ -33,12 +42,40 @@ export default function AyarlarPage() {
     setSaving(false)
   }
 
+  const faviconYukle = async (files: FileList | null) => {
+    if (!files?.length) return
+    const file = files[0]
+    // Boyut kontrolü (max 1MB)
+    if (file.size > 1024 * 1024) { toast.error('Favicon en fazla 1MB olabilir'); return }
+    setFaviconYukleniyor(true)
+    const ext = file.name.split('.').pop()
+    const yol = `favicon/favicon-${Date.now()}.${ext}`
+    const { error } = await supabase.storage.from('site-medya').upload(yol, file, { upsert: true })
+    if (error) { toast.error('Yükleme hatası: ' + error.message); setFaviconYukleniyor(false); return }
+    const { data: { publicUrl } } = supabase.storage.from('site-medya').getPublicUrl(yol)
+    // Ayarlara kaydet
+    await supabase.from('site_ayarlar').upsert({ grup: 'genel', anahtar: 'favicon_url', deger: publicUrl }, { onConflict: 'grup,anahtar' })
+    setFaviconUrl(publicUrl)
+    set('genel', 'favicon_url', publicUrl)
+    toast.success('Favicon yüklendi ve kaydedildi!')
+    setFaviconYukleniyor(false)
+  }
+
+  const faviconSil = async () => {
+    if (!confirm('Favicon\'ı kaldırmak istediğinize emin misiniz?')) return
+    await supabase.from('site_ayarlar').upsert({ grup: 'genel', anahtar: 'favicon_url', deger: '' }, { onConflict: 'grup,anahtar' })
+    setFaviconUrl('')
+    set('genel', 'favicon_url', '')
+    toast.success('Favicon kaldırıldı')
+  }
+
   const TABS = [
     {k:'odeme',ad:'💳 PayTR Ödeme'},
     {k:'kargo',ad:'🛵 Kurye'},
     {k:'mail',ad:'✉️ SMTP Mail'},
     {k:'seo',ad:'🔍 SEO'},
     {k:'genel',ad:'⚙️ Genel'},
+    {k:'favicon',ad:'🌐 Favicon'},
     {k:'whatsapp',ad:'💬 WhatsApp'},
     {k:'guvenlik',ad:'🔒 Güvenlik'},
   ]
@@ -129,6 +166,56 @@ export default function AyarlarPage() {
                 {inp('İletişim E-posta','genel','iletisim_email','email','bilgi@milgo.com.tr')}
                 {inp('İletişim Telefon','genel','iletisim_telefon','tel','02123521076')}
                 {inp('Adres','genel','adres','text','Etiler, Beşiktaş / İstanbul')}
+              </div>
+            )}
+            {aktifTab==='favicon' && (
+              <div style={{display:'flex',flexDirection:'column',gap:'20px'}}>
+                <div>
+                  <h2 style={{fontSize:'16px',fontWeight:700,color:'#1C1B2E',marginBottom:'4px'}}>Favicon Ayarları</h2>
+                  <p style={{fontSize:'13px',color:'#9CA3AF',margin:'0'}}>Tarayıcı sekmesinde görünen küçük ikon. ICO, PNG veya SVG önerilir (ideal: 32x32 px).</p>
+                </div>
+                <div style={{background:'#F8F7FC',borderRadius:'16px',border:'1px solid #F0ECF5',padding:'24px',display:'flex',alignItems:'center',gap:'20px'}}>
+                  <div style={{width:'80px',height:'80px',borderRadius:'14px',border:'2px solid #E8E4F0',background:'#fff',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,overflow:'hidden'}}>
+                    {faviconUrl ? (
+                      <img src={faviconUrl} alt="Favicon" style={{width:'48px',height:'48px',objectFit:'contain'}} onError={e=>{(e.target as HTMLImageElement).style.display='none'}}/>
+                    ) : (
+                      <span style={{fontSize:'28px'}}>🌐</span>
+                    )}
+                  </div>
+                  <div style={{flex:1}}>
+                    <p style={{fontSize:'14px',fontWeight:600,color:'#1C1B2E',marginBottom:'4px'}}>
+                      {faviconUrl ? 'Mevcut Favicon' : 'Favicon Yüklenmemiş'}
+                    </p>
+                    <p style={{fontSize:'12px',color:'#9CA3AF',marginBottom:'12px',wordBreak:'break-all'}}>
+                      {faviconUrl || 'Henüz bir favicon yüklenmedi.'}
+                    </p>
+                    <div style={{display:'flex',gap:'8px',flexWrap:'wrap'}}>
+                      <button onClick={()=>faviconRef.current?.click()} disabled={faviconYukleniyor}
+                        style={{display:'flex',alignItems:'center',gap:'6px',background:'linear-gradient(135deg,#E07090,#3B9FCC)',color:'#fff',padding:'8px 16px',borderRadius:'50px',border:'none',fontSize:'12px',fontWeight:700,cursor:'pointer',fontFamily:'inherit',opacity:faviconYukleniyor?0.7:1}}>
+                        <Upload size={13}/>{faviconYukleniyor?'Yükleniyor...':'Yeni Favicon Yükle'}
+                      </button>
+                      {faviconUrl && (
+                        <button onClick={faviconSil}
+                          style={{display:'flex',alignItems:'center',gap:'6px',background:'#FEF2F2',color:'#EF4444',padding:'8px 16px',borderRadius:'50px',border:'none',fontSize:'12px',fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>
+                          <Trash2 size={13}/>Kaldır
+                        </button>
+                      )}
+                    </div>
+                    <input ref={faviconRef} type="file" accept=".ico,.png,.svg,.jpg,.jpeg,.webp" style={{display:'none'}} onChange={e=>faviconYukle(e.target.files)}/>
+                  </div>
+                </div>
+                <div
+                  onDragOver={e=>e.preventDefault()}
+                  onDrop={e=>{e.preventDefault();faviconYukle(e.dataTransfer.files)}}
+                  onClick={()=>faviconRef.current?.click()}
+                  style={{border:'2px dashed #E8E4F0',borderRadius:'16px',padding:'32px',textAlign:'center',cursor:'pointer',background:'#FAFAF9',transition:'all .2s'}}>
+                  <Upload size={28} style={{color:'#D1D5DB',margin:'0 auto 10px',display:'block'}}/>
+                  <p style={{fontSize:'13px',fontWeight:600,color:'#1C1B2E',marginBottom:'4px'}}>Sürükleyip bırakın veya tıklayın</p>
+                  <p style={{fontSize:'11px',color:'#9CA3AF'}}>ICO, PNG, SVG, WebP — maks. 1 MB</p>
+                </div>
+                <div style={{background:'#EBF7FC',border:'1px solid #BAE6FD',borderRadius:'12px',padding:'14px 16px',fontSize:'13px',color:'#075985'}}>
+                  💡 Favicon değişikliği sonrasında Next.js uygulamasının yeniden deploy edilmesi gerekebilir. Tarayıcınızı yenileyerek (Ctrl+F5) sonucu görebilirsiniz.
+                </div>
               </div>
             )}
             {aktifTab==='whatsapp' && (
