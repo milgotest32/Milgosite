@@ -46,12 +46,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { router.push('/giris'); return }
       // Rol kontrolü
-      const { data: profile } = await supabase.from('site_users').select('role').eq('id', data.session.user.id).single()
+      // Önce user_metadata'ya bak (hızlı), sonra DB'ye sor
+      const userId = data.session.user.id
+      const { data: profile, error: profileError } = await supabase
+        .from('site_users')
+        .select('role')
+        .eq('id', userId)
+        .maybeSingle()
+
+      if (profileError) {
+        console.error('Profil hatası:', profileError.message)
+        router.push('/')
+        return
+      }
+
       if (!profile || profile.role !== 'admin') {
         router.push('/')
         return
       }
       setUser(data.session.user)
+      document.body.classList.add('admin-body')
       setYetkiKontrol(false)
     })
   }, [router])
