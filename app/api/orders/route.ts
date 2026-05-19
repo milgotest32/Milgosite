@@ -1,9 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
+import { siparisMail, adminSiparisMail } from '@/lib/mail-templates'
 export const dynamic = 'force-dynamic'
 
 function genNo() {
   return 'MG' + new Date().toISOString().slice(0,10).replace(/-/g,'') + Math.floor(Math.random()*99999).toString().padStart(5,'0')
+}
+
+async function mailGonder(to: string, subject: string, html: string, baseUrl: string) {
+  try {
+    await fetch(`${baseUrl}/api/mail`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to, subject, html })
+    })
+  } catch { /* mail hatası siparişi durdurmasın */ }
 }
 
 export async function GET(req: NextRequest) {
@@ -37,13 +48,13 @@ export async function POST(req: NextRequest) {
 
   if (error || !siparis) return NextResponse.json({ error: error?.message || 'Sipariş oluşturulamadı' }, { status: 400 })
 
-  await db.from('site_siparis_kalemleri').insert(
-    items.map((i: any) => ({
-      siparis_id: siparis.id, product_id: i.product_id,
-      urun_ad: i.urun_ad, urun_gorsel: i.urun_gorsel,
-      birim_fiyat: i.fiyat, adet: i.adet, toplam: i.fiyat * i.adet,
-    }))
-  )
+  const kalemler = items.map((i: any) => ({
+    siparis_id: siparis.id, product_id: i.product_id,
+    urun_ad: i.urun_ad, urun_gorsel: i.urun_gorsel,
+    birim_fiyat: i.fiyat, adet: i.adet, toplam: i.fiyat * i.adet,
+  }))
+
+  await db.from('site_siparis_kalemleri').insert(kalemler)
 
   // Stok düş
   for (const item of items) {
@@ -55,6 +66,30 @@ export async function POST(req: NextRequest) {
   // Kupon sayacı
   if (kupon_kod) {
     try { await db.rpc('kupon_kullan', { p_kod: kupon_kod }) } catch {}
+  }
+
+  // Mail gönder
+  const baseUrl = req.headers.get('origin') || 'https://milgosite.vercel.app'
+  const musteriEmail = siparis.musteri_email
+  
+  if (musteriEmail) {
+    await mailGonder(
+      musteriEmail,
+      `Siparişiniz Alındı - #${siparis.siparis_no}`,
+      siparisMail(siparis, kalemler),
+      baseUrl
+    )
+  }
+
+  // Admin bildirimi
+  const { data: adminMail } = await db.from('site_ayarlar').select('deger').eq('grup', 'genel').eq('anahtar', 'iletisim_email').single()
+  if (adminMail?.deger) {
+    await mailGonder(
+      adminMail.deger,
+      `🛍 Yeni Sipariş #${siparis.siparis_no} - ₺${toplam.toFixed(2)}`,
+      adminSiparisMail(siparis),
+      baseUrl
+    )
   }
 
   return NextResponse.json({ data: siparis }, { status: 201 })
