@@ -28,13 +28,15 @@ export default function Navbar() {
   }, [])
 
   useEffect(() => {
-    const k = localStorage.getItem('milgo_konum')
-    setKonum(k)
-    const iv = setInterval(() => {
-      const k2 = localStorage.getItem('milgo_konum')
-      setKonum(k2)
-    }, 1000)
-    return () => clearInterval(iv)
+    const oku = () => setKonum(localStorage.getItem('milgo_konum'))
+    oku()
+    window.addEventListener('storage', oku)
+    // storage event sadece diğer tab'lardan tetiklenir, aynı tab için custom event
+    window.addEventListener('milgo_konum_degisti', oku)
+    return () => {
+      window.removeEventListener('storage', oku)
+      window.removeEventListener('milgo_konum_degisti', oku)
+    }
   }, [])
 
   useEffect(() => {

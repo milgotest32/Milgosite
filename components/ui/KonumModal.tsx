@@ -58,6 +58,7 @@ export default function KonumModal() {
 
     setKonum(ilceAdi)
     setDurum('tamam')
+    window.dispatchEvent(new Event('milgo_konum_degisti'))
     setTimeout(() => setGoster(false), 2000)
   }
 
