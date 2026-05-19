@@ -127,6 +127,7 @@ export default function Navbar() {
               <button onClick={() => setUserDrop(!userDrop)} style={ico}><User size={17} strokeWidth={1.75} /></button>
               {userDrop && (
                 <div style={{ ...drop, right: 0, left: 'auto' }}>
+                  <div style={dropInner}>
                   {user ? (
                     <>
                       <div style={{ padding: '8px 12px 12px', borderBottom: '1px solid rgba(26,10,18,.06)', marginBottom: '6px' }}>
@@ -147,6 +148,7 @@ export default function Navbar() {
                       <Link href="/kayit" onClick={() => setUserDrop(false)} style={di as any}>Üye Ol</Link>
                     </>
                   )}
+                  </div>
                 </div>
               )}
             </div>
