@@ -81,29 +81,44 @@ export default function KonumModal() {
     )
   }
 
+  // İstanbul ilçe koordinatları (Nominatim'e gerek yok)
+  const ILCE_KOORDINAT: Record<string, [number, number]> = {
+    'Beşiktaş': [41.0422, 29.0067], 'Şişli': [41.0602, 28.9870],
+    'Kağıthane': [41.0782, 28.9703], 'Beyoğlu': [41.0333, 28.9771],
+    'Sarıyer': [41.1671, 29.0570], 'Kadıköy': [40.9927, 29.0277],
+    'Üsküdar': [41.0231, 29.0150], 'Ataşehir': [40.9923, 29.1244],
+    'Maltepe': [40.9353, 29.1331], 'Pendik': [40.8771, 29.2337],
+    'Bakırköy': [40.9822, 28.8720], 'Bahçelievler': [41.0000, 28.8500],
+    'Bağcılar': [41.0378, 28.8560], 'Gaziosmanpaşa': [41.0631, 28.9119],
+    'Fatih': [41.0186, 28.9397], 'Eyüpsultan': [41.0478, 28.9336],
+    'Zeytinburnu': [40.9972, 28.9008], 'Güngören': [41.0197, 28.8726],
+  }
+
   const manuelSec = async () => {
     if (!secilenIlce) return
     setDurum('aliniyor')
     try {
-      // İlçe adından koordinat al
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(secilenIlce + ', İstanbul, Türkiye')}&limit=1`
-      )
+      const coords = ILCE_KOORDINAT[secilenIlce]
+      if (!coords) { localStorage.setItem('milgo_hizmet', 'false'); setDurum('tamam'); return }
+      const [lat, lng] = coords
+      const res = await fetch('/api/kmz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lat, lng })
+      })
       const data = await res.json()
-      if (data[0]) {
-        const lat = parseFloat(data[0].lat)
-        const lng = parseFloat(data[0].lon)
-        await koordinatKaydetVeKontrolEt(lat, lng, secilenIlce)
+      localStorage.setItem('milgo_konum', secilenIlce)
+      localStorage.setItem('milgo_hizmet', data.hizmet ? 'true' : 'false')
+      if (data.bolge?.id) {
+        localStorage.setItem('milgo_bolge_id', data.bolge.id)
+        localStorage.setItem('milgo_bolge_ad', data.bolge.name)
       } else {
-        // Koordinat bulunamazsa hizmet false - güvenli taraf
-        localStorage.setItem('milgo_konum', secilenIlce)
-        localStorage.setItem('milgo_hizmet', 'false')
         localStorage.removeItem('milgo_bolge_id')
         localStorage.removeItem('milgo_bolge_ad')
-        setKonum(secilenIlce)
-        setDurum('tamam')
-        setTimeout(() => setGoster(false), 1500)
       }
+      setKonum(secilenIlce)
+      setDurum('tamam')
+      setTimeout(() => setGoster(false), 1500)
     } catch {
       localStorage.setItem('milgo_konum', secilenIlce)
       localStorage.setItem('milgo_hizmet', 'false')
