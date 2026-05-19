@@ -47,7 +47,7 @@ export default function Navbar() {
 
   const cikis = async () => { await supabase.auth.signOut(); router.push('/'); setUserDrop(false) }
 
-  const drop: React.CSSProperties = { position: 'absolute', top: 'calc(100% + 8px)', background: '#fff', borderRadius: '20px', boxShadow: '0 12px 40px rgba(26,10,18,0.15)', border: '1px solid rgba(232,86,122,0.08)', padding: '8px', minWidth: '190px', zIndex: 200 }
+  const drop: React.CSSProperties = { position: 'absolute', top: '100%', background: '#fff', borderRadius: '20px', boxShadow: '0 12px 40px rgba(26,10,18,0.15)', border: '1px solid rgba(232,86,122,0.08)', padding: '8px', minWidth: '190px', zIndex: 200 }
   const di: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '10px', fontSize: '13px', fontWeight: 500, color: '#1A0A12', textDecoration: 'none', background: 'none', border: 'none', width: '100%', cursor: 'none', fontFamily: 'Nunito, sans-serif' }
   const ico: React.CSSProperties = { width: '38px', height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '10px', color: '#7A6070', background: 'transparent', border: 'none', cursor: 'none', flexShrink: 0 }
 
@@ -88,7 +88,7 @@ export default function Navbar() {
           {/* Masaüstü menü */}
           {!isMobile && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '2px', flex: 1, marginLeft: '16px' }}>
-              <div style={{ position: 'relative' }}
+              <div style={{ position: 'relative', paddingBottom: '8px', marginBottom: '-8px' }}
                 onMouseEnter={() => setUrunDrop(true)}
                 onMouseLeave={() => setUrunDrop(false)}>
                 <button style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '7px 14px', fontSize: '13px', fontWeight: 500, color: '#7A6070', borderRadius: '10px', background: 'none', border: 'none', cursor: 'none', fontFamily: 'Nunito, sans-serif' }}>
