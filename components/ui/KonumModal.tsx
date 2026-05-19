@@ -17,7 +17,13 @@ export default function KonumModal() {
 
   useEffect(() => {
     const kayitli = localStorage.getItem('milgo_konum')
-    if (kayitli) { setKonum(kayitli); return }
+    const hizmet = localStorage.getItem('milgo_hizmet')
+    // Konum var ama hizmet durumu belirsizse modal'ı yeniden göster
+    if (kayitli && hizmet !== null) { setKonum(kayitli); return }
+    // Hizmet bilgisi yoksa temizle ve modal göster
+    localStorage.removeItem('milgo_konum')
+    localStorage.removeItem('milgo_bolge_id')
+    localStorage.removeItem('milgo_bolge_ad')
     const t = setTimeout(() => setGoster(true), 1500)
     return () => clearTimeout(t)
   }, [])
@@ -47,7 +53,7 @@ export default function KonumModal() {
       localStorage.setItem('milgo_hizmet', data.hizmet ? 'true' : 'false')
     } catch {
       // API hatası → herkese göster (güvenli taraf)
-      localStorage.setItem('milgo_hizmet', 'true')
+      localStorage.setItem('milgo_hizmet', 'false')
     }
 
     setKonum(ilceAdi)
