@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase/server'
+import { createServerClient } from '@/lib/supabase/server'
 
 const DEFAULT = {
   baslik: 'Kalitenin ve Doğallığın İzinde',
@@ -15,6 +15,7 @@ const DEFAULT = {
 
 async function geticerik() {
   try {
+    const supabase = createServerClient()
     const { data } = await supabase.from('site_ayarlar').select('anahtar,deger').eq('grup', 'hakkimizda')
     if (!data?.length) return DEFAULT
     const a: Record<string,string> = {}
