@@ -45,22 +45,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { router.push('/giris'); return }
-      // Rol kontrolü
-      // Önce user_metadata'ya bak (hızlı), sonra DB'ye sor
-      const userId = data.session.user.id
-      const { data: profile, error: profileError } = await supabase
-        .from('site_users')
-        .select('role')
-        .eq('id', userId)
-        .maybeSingle()
-
-      if (profileError) {
-        console.error('Profil hatası:', profileError.message)
-        router.push('/')
-        return
-      }
-
-      if (!profile || profile.role !== 'admin') {
+      // Rol kontrolü - SECURITY DEFINER RPC ile RLS bypass
+      const { data: role, error: roleError } = await supabase.rpc('get_my_role')
+      if (roleError || role !== 'admin') {
         router.push('/')
         return
       }
