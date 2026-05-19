@@ -166,6 +166,25 @@ export default function AyarlarPage() {
                 {inp('İletişim E-posta','genel','iletisim_email','email','bilgi@milgo.com.tr')}
                 {inp('İletişim Telefon','genel','iletisim_telefon','tel','02123521076')}
                 {inp('Adres','genel','adres','text','Etiler, Beşiktaş / İstanbul')}
+
+                {/* ETBİS Logo */}
+                <div style={{marginTop:'8px'}}>
+                  <label style={{display:'block',fontSize:'11px',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',color:'#6B7280',marginBottom:'8px'}}>ETBİS Logo</label>
+                  <div style={{display:'flex',gap:'8px',alignItems:'center',flexWrap:'wrap'}}>
+                    {get('genel','etbis_logo_url') ? (
+                      <img src={get('genel','etbis_logo_url')} alt="ETBİS Logo" style={{height:'60px',objectFit:'contain',borderRadius:'8px',border:'1px solid #F0ECF5',padding:'4px',background:'#F8F7FC'}}
+                        onError={e=>{(e.target as HTMLImageElement).style.display='none'}}/>
+                    ) : (
+                      <div style={{height:'60px',width:'120px',background:'#F8F7FC',border:'1px dashed #E0D8F0',borderRadius:'8px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'11px',color:'#9CA3AF'}}>Logo yok</div>
+                    )}
+                    <div style={{flex:1,minWidth:'200px'}}>
+                      <input type="text" value={get('genel','etbis_logo_url')} onChange={e=>set('genel','etbis_logo_url',e.target.value)}
+                        placeholder="https://... (logo URL veya Medya'dan kopyalayın)"
+                        style={{width:'100%',background:'#F8F7FC',border:'1px solid #F0ECF5',borderRadius:'10px',padding:'10px 14px',fontSize:'13px',color:'#1C1B2E',outline:'none',fontFamily:'inherit',boxSizing:'border-box' as const}}/>
+                      <p style={{fontSize:'11px',color:'#9CA3AF',marginTop:'4px'}}>Medya sayfasından logo yükleyip URL'sini buraya yapıştırabilirsiniz.</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
             {aktifTab==='favicon' && (
