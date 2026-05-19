@@ -68,8 +68,14 @@ export default function KonumModal() {
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         const { latitude: lat, longitude: lng } = pos.coords
-        // Nominatim yok - GPS koordinatını direkt KMZ'e gönder
-        await koordinatKaydetVeKontrolEt(lat, lng, 'Konumunuz')
+        // Önce ilçe adını al, sonra KMZ kontrol et
+        let ilceAdi = 'Konumunuz'
+        try {
+          const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=tr`)
+          const d = await r.json()
+          ilceAdi = d.address?.suburb || d.address?.town || d.address?.city_district || d.address?.city || 'Konumunuz'
+        } catch { /* Nominatim çalışmazsa GPS koordinatıyla devam et */ }
+        await koordinatKaydetVeKontrolEt(lat, lng, ilceAdi)
       },
       () => setDurum('manuel'),
       { timeout: 8000 }
