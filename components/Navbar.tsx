@@ -24,7 +24,7 @@ export default function Navbar() {
   const s = {
     band: { background:'linear-gradient(90deg, #E07090, #3B9FCC)', color:'#fff', textAlign:'center' as const, padding:'8px', fontSize:'12px', fontWeight:'500', letterSpacing:'0.02em' },
     nav: { background:'rgba(255,255,255,0.97)', backdropFilter:'blur(20px)', borderBottom:'1px solid #F0ECF5', position:'sticky' as const, top:0, zIndex:50, boxShadow:'0 1px 12px rgba(224,112,144,0.06)' },
-    inner: { maxWidth:'1280px', margin:'0 auto', padding:'0 16px', height:'64px', display:'flex', alignItems:'center', gap:'8px' },
+    inner: { maxWidth:'1280px', margin:'0 auto', padding:'0 16px', height:'64px', display:'flex', alignItems:'center', gap:'4px' },
     logo: { fontFamily:'"Playfair Display", serif', fontSize:'24px', color:'#1C1B2E', textDecoration:'none', marginRight:'16px', flexShrink:0 },
     link: { padding:'6px 10px', fontSize:'12px', fontWeight:'500', color:'#6B7280', textDecoration:'none', borderRadius:'10px', transition:'all 0.2s', whiteSpace:'nowrap' as const },
     iconBtn: { width:'38px', height:'38px', display:'flex', alignItems:'center', justifyContent:'center', borderRadius:'10px', color:'#6B7280', textDecoration:'none', background:'transparent', border:'none', cursor:'pointer', flexShrink:0 },
@@ -41,7 +41,7 @@ export default function Navbar() {
           <Link href="/" style={s.logo}>milgo<span style={{color:'#E07090'}}>.</span></Link>
 
           {/* Masaüstü linkler */}
-          <div style={{display:'flex', alignItems:'center', gap:'1px', flex:1}} className="hidden md:flex">
+          <div style={{display:'flex', alignItems:'center', gap:'0px', flexShrink:1, overflow:'hidden', minWidth:0}}>
             <div style={{position:'relative'}} onMouseEnter={() => setUrunMenu(true)} onMouseLeave={() => setUrunMenu(false)}>
               <button style={{...s.link, display:'flex', alignItems:'center', gap:'4px', background:'none', border:'none', cursor:'pointer'}}>
                 Ürünler <ChevronDown size={13} style={{transition:'transform 0.2s', transform: urunMenu ? 'rotate(180deg)' : 'none'}} />
@@ -63,7 +63,7 @@ export default function Navbar() {
           </div>
 
           {/* Sağ ikonlar */}
-          <div style={{display:'flex', alignItems:'center', gap:'4px', marginLeft:'auto'}}>
+          <div style={{display:'flex', alignItems:'center', gap:'4px', marginLeft:'auto', flexShrink:0}}>
             <Link href="/favoriler" style={s.iconBtn as any}><Heart size={18} strokeWidth={1.75} /></Link>
 
             {/* Kullanıcı */}
@@ -97,13 +97,13 @@ export default function Navbar() {
             {/* Sepet */}
             <Link href="/sepet" style={s.cartBtn as any}>
               <ShoppingBag size={18} strokeWidth={1.75} style={{color:'#E07090'}} />
-              <span style={{fontSize:'13px', fontWeight:'600', color:'#1C1B2E'}} className="hidden sm:block">Sepet</span>
+              <span style={{fontSize:'13px', fontWeight:'600', color:'#1C1B2E'}} >Sepet</span>
               {adet > 0 && (
                 <span style={{width:'18px', height:'18px', background:'linear-gradient(135deg, #E07090, #3B9FCC)', borderRadius:'50%', fontSize:'10px', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontWeight:'700'}}>{adet}</span>
               )}
             </Link>
 
-            <button onClick={() => setMenuAcik(!menuAcik)} style={{...s.iconBtn, display:'flex'}} className="md:hidden">
+            <button onClick={() => setMenuAcik(!menuAcik)} style={{...s.iconBtn, display:'flex'}} >
               {menuAcik ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
@@ -112,7 +112,7 @@ export default function Navbar() {
 
       {/* Mobil menü */}
       {menuAcik && (
-        <div style={{position:'fixed', inset:0, zIndex:40, background:'#fff', paddingTop:'80px', paddingLeft:'24px', paddingRight:'24px', overflowY:'auto'}} className="md:hidden">
+        <div style={{position:'fixed', inset:0, zIndex:40, background:'#fff', paddingTop:'80px', paddingLeft:'24px', paddingRight:'24px', overflowY:'auto'}} >
           <div style={{display:'flex', flexDirection:'column', gap:'4px'}}>
             {[['🥛 Çiğ Süt','/urunler?kategori=sut'],['🧀 Peynir','/urunler?kategori=peynir'],['🧈 Tereyağı','/urunler?kategori=tereyag'],['Tüm Ürünler','/urunler'],['Abonelik','/abonelik'],['Çiftliğimiz','/ciftligimiz'],['Blog','/blog'],['Hakkımızda','/hakkimizda'],['Tarifler','/tarifler'],['İletişim','/iletisim']].map(([ad,href]) => (
               <Link key={href} href={href} onClick={() => setMenuAcik(false)}
