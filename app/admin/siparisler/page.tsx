@@ -40,7 +40,7 @@ export default function SiparislerPage() {
       <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #F0ECF5', overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead><tr style={{ background: '#F8F7FC', borderBottom: '1px solid #F0ECF5' }}>
-            {['Sipariş No', 'Müşteri', 'Tutar', 'Durum', 'Tarih', ''].map(h =>
+            {['Sipariş No', 'Müşteri', 'Bölge', 'Tutar', 'Ödeme', 'Durum', 'Tarih', ''].map(h =>
               <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: '#9CA3AF', letterSpacing: '0.1em' }}>{h}</th>
             )}
           </tr></thead>
@@ -56,7 +56,16 @@ export default function SiparislerPage() {
                       <p style={{ fontSize: '13px', fontWeight: 600, color: '#1C1B2E', margin: '0 0 2px' }}>{s.musteri_ad || '—'}</p>
                       <p style={{ fontSize: '11px', color: '#9CA3AF', margin: 0 }}>{s.musteri_email}</p>
                     </td>
+                    <td style={{ padding: '12px 16px' }}>
+                      <span style={{ fontSize: '12px', color: '#6B7280' }}>{s.teslimat_ilce || s.adres?.ilce || '—'}</span>
+                      {(s.teslimat_sehir || s.adres?.sehir) && <span style={{ fontSize: '11px', color: '#9CA3AF', display: 'block' }}>{s.teslimat_sehir || s.adres?.sehir}</span>}
+                    </td>
                     <td style={{ padding: '12px 16px', fontSize: '14px', fontWeight: 700, color: '#1C1B2E' }}>₺{s.toplam?.toFixed(2)}</td>
+                    <td style={{ padding: '12px 16px' }}>
+                      <span style={{ fontSize: '11px', color: '#6B7280', background: '#F8F7FC', padding: '2px 8px', borderRadius: '6px', border: '1px solid #F0ECF5' }}>
+                        {s.odeme_yontemi === 'kapida' ? '🚪 Kapıda' : s.odeme_yontemi === 'havale' ? '🏦 Havale' : '💳 Kart'}
+                      </span>
+                    </td>
                     <td style={{ padding: '12px 16px' }}><span style={{ fontSize: '11px', fontWeight: 700, padding: '3px 10px', borderRadius: '50px', background: d.bg, color: d.tx }}>{s.durum || 'bekliyor'}</span></td>
                     <td style={{ padding: '12px 16px', fontSize: '12px', color: '#6B7280' }}>{s.created_at ? new Date(s.created_at).toLocaleDateString('tr-TR') : '—'}</td>
                     <td style={{ padding: '12px 16px' }}>

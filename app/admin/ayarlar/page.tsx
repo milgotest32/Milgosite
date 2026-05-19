@@ -129,6 +129,58 @@ export default function AyarlarPage() {
                   </div>
                 </div>
                 {inp('Taksit Seçenekleri (JSON)','odeme','taksit_secenekleri','text','[1,2,3,6,9,12]')}
+
+                {/* Ek Ödeme Yöntemleri */}
+                <div style={{borderTop:'1px solid #F0ECF5',paddingTop:'16px'}}>
+                  <h3 style={{fontSize:'13px',fontWeight:700,color:'#1C1B2E',marginBottom:'12px'}}>Ek Ödeme Yöntemleri</h3>
+                  <div style={{display:'flex',flexDirection:'column',gap:'10px'}}>
+
+                    {/* Kapıda Ödeme */}
+                    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',background:'#F8F7FC',borderRadius:'12px',padding:'14px 16px',border:'1px solid #F0ECF5'}}>
+                      <div>
+                        <p style={{fontSize:'13px',fontWeight:600,color:'#1C1B2E',margin:'0 0 2px'}}>🚪 Kapıda Ödeme</p>
+                        <p style={{fontSize:'11px',color:'#9CA3AF',margin:0}}>Müşteri kapıda nakit veya kart ile ödeme yapar</p>
+                      </div>
+                      <label style={{position:'relative',display:'inline-block',width:'44px',height:'24px',cursor:'pointer',flexShrink:0}}>
+                        <input type="checkbox" checked={get('odeme','kapida_odeme_aktif')==='1'} onChange={e=>set('odeme','kapida_odeme_aktif',e.target.checked?'1':'0')} style={{opacity:0,width:0,height:0}}/>
+                        <span style={{position:'absolute',inset:0,background:get('odeme','kapida_odeme_aktif')==='1'?'#E07090':'#D1D5DB',borderRadius:'24px',transition:'0.2s'}}>
+                          <span style={{position:'absolute',left:get('odeme','kapida_odeme_aktif')==='1'?'22px':'2px',top:'2px',width:'20px',height:'20px',background:'#fff',borderRadius:'50%',transition:'0.2s',boxShadow:'0 1px 4px rgba(0,0,0,0.2)'}}/>
+                        </span>
+                      </label>
+                    </div>
+
+                    {/* Kapıda Ödeme Ücreti */}
+                    {get('odeme','kapida_odeme_aktif')==='1' && (
+                      <div style={{paddingLeft:'16px'}}>
+                        {inp('Kapıda Ödeme Ücreti (₺, 0 = ücretsiz)','odeme','kapida_odeme_ucreti','number','0')}
+                      </div>
+                    )}
+
+                    {/* Havale/EFT */}
+                    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',background:'#F8F7FC',borderRadius:'12px',padding:'14px 16px',border:'1px solid #F0ECF5'}}>
+                      <div>
+                        <p style={{fontSize:'13px',fontWeight:600,color:'#1C1B2E',margin:'0 0 2px'}}>🏦 Havale / EFT</p>
+                        <p style={{fontSize:'11px',color:'#9CA3AF',margin:0}}>Müşteri banka hesabınıza havale/EFT ile ödeme yapar</p>
+                      </div>
+                      <label style={{position:'relative',display:'inline-block',width:'44px',height:'24px',cursor:'pointer',flexShrink:0}}>
+                        <input type="checkbox" checked={get('odeme','havale_aktif')==='1'} onChange={e=>set('odeme','havale_aktif',e.target.checked?'1':'0')} style={{opacity:0,width:0,height:0}}/>
+                        <span style={{position:'absolute',inset:0,background:get('odeme','havale_aktif')==='1'?'#3B9FCC':'#D1D5DB',borderRadius:'24px',transition:'0.2s'}}>
+                          <span style={{position:'absolute',left:get('odeme','havale_aktif')==='1'?'22px':'2px',top:'2px',width:'20px',height:'20px',background:'#fff',borderRadius:'50%',transition:'0.2s',boxShadow:'0 1px 4px rgba(0,0,0,0.2)'}}/>
+                        </span>
+                      </label>
+                    </div>
+
+                    {/* Havale Banka Bilgileri */}
+                    {get('odeme','havale_aktif')==='1' && (
+                      <div style={{paddingLeft:'16px',display:'flex',flexDirection:'column',gap:'10px'}}>
+                        {inp('Banka Adı','odeme','havale_banka','text','Ziraat Bankası')}
+                        {inp('Hesap Sahibi','odeme','havale_hesap_sahibi','text','Keba Gıda San. Tic. A.Ş.')}
+                        {inp('IBAN','odeme','havale_iban','text','TR00 0000 0000 0000 0000 0000 00')}
+                        {inp('Açıklama (opsiyonel)','odeme','havale_aciklama','text','Sipariş numaranızı açıklamaya yazmayı unutmayın')}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
             {aktifTab==='kargo' && (
