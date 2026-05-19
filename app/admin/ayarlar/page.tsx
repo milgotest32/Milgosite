@@ -39,6 +39,7 @@ export default function AyarlarPage() {
     {k:'mail',ad:'✉️ SMTP Mail'},
     {k:'seo',ad:'🔍 SEO'},
     {k:'genel',ad:'⚙️ Genel'},
+    {k:'whatsapp',ad:'💬 WhatsApp'},
     {k:'guvenlik',ad:'🔒 Güvenlik'},
   ]
 
@@ -128,6 +129,18 @@ export default function AyarlarPage() {
                 {inp('İletişim E-posta','genel','iletisim_email','email','bilgi@milgo.com.tr')}
                 {inp('İletişim Telefon','genel','iletisim_telefon','tel','02123521076')}
                 {inp('Adres','genel','adres','text','Etiler, Beşiktaş / İstanbul')}
+              </div>
+            )}
+            {aktifTab==='whatsapp' && (
+              <div style={{display:'flex',flexDirection:'column',gap:'14px'}}>
+                <h2 style={{fontSize:'16px',fontWeight:700,color:'#1C1B2E',marginBottom:'4px'}}>WhatsApp Butonu</h2>
+                <p style={{fontSize:'13px',color:'#9CA3AF',margin:'0 0 8px'}}>Numara ve yazı girilince site genelinde WhatsApp butonu aktif olur.</p>
+                {inp('WhatsApp Numarası','whatsapp','numara','text','905321234567 (başında + olmadan)')}
+                {inp('Buton Yazısı','whatsapp','yazi','text','Sipariş için WhatsApp')}
+                {inp('Ön Mesaj','whatsapp','mesaj','text','Merhaba, sipariş vermek istiyorum.')}
+                <div style={{background:'#F0FDF4',border:'1px solid #BBF7D0',borderRadius:'12px',padding:'14px 16px',fontSize:'13px',color:'#166534'}}>
+                  ✅ Numara girildiğinde buton otomatik aktif olur, boşsa gizlenir.
+                </div>
               </div>
             )}
             {aktifTab==='guvenlik' && (

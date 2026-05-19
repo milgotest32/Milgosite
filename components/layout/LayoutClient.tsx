@@ -4,6 +4,7 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import Cursor from '@/components/ui/Cursor'
 import KonumModal from '@/components/ui/KonumModal'
+import WhatsAppButon from '@/components/ui/WhatsAppButon'
 import { Toaster } from 'react-hot-toast'
 
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
@@ -14,6 +15,7 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
     <>
       <Cursor />
       {!isAdmin && <KonumModal />}
+      {!isAdmin && <WhatsAppButon />}
       <Toaster
         position="top-right"
         toastOptions={{
