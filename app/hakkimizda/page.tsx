@@ -50,7 +50,7 @@ export default async function HakkimizdaPage() {
             <p style={{color:'#6B7280', fontSize:'14px', lineHeight:1.9}}>{ic.misyon}</p>
           </div>
           <div style={{borderRadius:'24px', overflow:'hidden', boxShadow:'0 20px 60px rgba(224,112,144,0.15)'}}>
-            <img src={ic.hero_gorsel} alt="Milgo Çiğ Süt" style={{width:'100%', height:'360px', objectFit:'cover', display:'block'}}/>
+            <img src={ic.hero_gorsel} alt="Milgo Çiğ Süt" style={{width:'100%', height:'420px', objectFit:'contain', background:'transparent', display:'block'}}/>
           </div>
         </div>
       </div>
