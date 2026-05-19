@@ -112,7 +112,7 @@ export default function Navbar() {
                   </div>
                 )}
               </div>
-              {[['Abonelik', '/abonelik'], ['Çiftliğimiz', '/ciftligimiz'], ['Blog', '/blog']].map(([a, h]) => (
+              {[['Abonelik', '/abonelik'], ['Çiftliğimiz', '/ciftligimiz'], ['Blog', '/blog'], ['Hakkımızda', '/hakkimizda'], ['Tarifler', '/tarifler']].map(([a, h]) => (
                 <Link key={h} href={h} style={{ padding: '7px 14px', fontSize: '13px', fontWeight: 500, color: '#7A6070', borderRadius: '10px', textDecoration: 'none' }}>{a}</Link>
               ))}
             </div>
