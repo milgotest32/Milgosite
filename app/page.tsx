@@ -12,10 +12,24 @@ export default function AnaSayfa() {
   const [urunler, setUrunler] = useState<Urun[]>([])
 
   useEffect(() => {
+    const bolgeId = localStorage.getItem('milgo_bolge_id')
+    const hizmet = localStorage.getItem('milgo_hizmet')
+    if (hizmet === 'false') return // Hizmet bölgesi dışında, ürün gösterme
+
     supabase.from('site_products')
       .select('*, site_product_images(*), site_kategoriler(name,slug)')
       .eq('durum', 'active').order('created_at', { ascending: false }).limit(8)
-      .then(({ data }: any) => setUrunler(data || []))
+      .then(({ data }: any) => {
+        let tumUrunler = data || []
+        if (bolgeId) {
+          tumUrunler = tumUrunler.filter((u: any) =>
+            u.bolge_ids && u.bolge_ids.includes(bolgeId)
+          )
+        } else {
+          tumUrunler = [] // Konum seçilmemişse ürün gösterme
+        }
+        setUrunler(tumUrunler)
+      })
   }, [])
 
   const featured = urunler.filter(u => u.featured).slice(0, 4)
