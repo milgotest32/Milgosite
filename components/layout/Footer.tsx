@@ -1,3 +1,4 @@
+import EtbisLogo from '@/components/ui/EtbisLogo'
 import Link from 'next/link'
 
 const yr = new Date().getFullYear()
@@ -9,7 +10,7 @@ const LINKS = [
       ['Çiğ Süt', '/kategoriler/cig-sut'],
       ['Peynir', '/kategoriler/peynir'],
       ['Tereyağı', '/kategoriler/tereyagi'],
-      ['Kampanyalar', '/kampanyalar'],
+      
       ['İndirimdekiler', '/indirimler'],
     ],
   },
@@ -26,9 +27,10 @@ const LINKS = [
   {
     baslik: 'Yasal',
     items: [
-      ['Gizlilik', '/gizlilik'],
-      ['İade Politikası', '/iade'],
-      ['Mesafeli Satış', '/mesafeli'],
+      ['Mesafeli Satış Sözleşmesi', '/mesafeli-satis'],
+      ['Gizlilik Politikası', '/gizlilik-politikasi'],
+      ['Açık Rıza Metni (KVKK)', '/kvkk'],
+      ['İade ve İptal Politikası', '/iade-politikasi'],
     ],
   },
 ]
@@ -144,7 +146,7 @@ export default function Footer() {
           {/* Marka */}
           <div className="footer-brand-col">
             <div className="footer-logo">
-              milgo<span style={{ color: '#E8567A' }}>.</span>
+              <img src="https://jxfegluntgssrgpnvscs.supabase.co/storage/v1/object/public/site-medya/medya/1779186053874-lpldyhy0u38.png" alt="milgo." style={{height:"36px",width:"auto",objectFit:"contain"}}/>
             </div>
             <p className="footer-tagline">Mutluluğun Tadı</p>
             <p className="footer-desc">
@@ -178,14 +180,17 @@ export default function Footer() {
 
         {/* Sertifikalar */}
         <div className="footer-badges">
-          {['🇪🇺 AB Onaylı', '✓ Hastalıklardan Ari', '🌿 %100 Doğal', '🔒 SSL Güvenli'].map(s => (
+          {['🇪🇺 AB Onaylı', '✓ Hastalıklardan Ari', '🌿 Doğal', '🔒 SSL Güvenli'].map(s => (
             <span key={s} className="footer-badge">{s}</span>
           ))}
         </div>
 
         {/* Alt bar */}
         <div className="footer-bottom">
-          <span className="footer-copy">© {yr} milgo. · Keba Gıda San. Tic. A.Ş.</span>
+          <div style={{display:'flex',alignItems:'center',gap:'16px',flexWrap:'wrap',justifyContent:'center'}}>
+            <span className="footer-copy">© {yr} milgo. · Keba Gıda San. Tic. A.Ş.</span>
+            <EtbisLogo />
+          </div>
           <div className="footer-socials">
             {[
               ['📸', 'https://instagram.com/milgosut'],

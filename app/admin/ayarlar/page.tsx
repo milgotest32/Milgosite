@@ -1,7 +1,7 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase/client'
-import { Save } from 'lucide-react'
+import { Save, Upload, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 export const dynamic = 'force-dynamic'
 
@@ -11,11 +11,20 @@ export default function AyarlarPage() {
   const [saving, setSaving] = useState(false)
   const [aktifTab, setAktifTab] = useState('odeme')
 
+  // Favicon state
+  const [faviconUrl, setFaviconUrl] = useState('')
+  const [faviconYukleniyor, setFaviconYukleniyor] = useState(false)
+  const faviconRef = useRef<HTMLInputElement>(null)
+
   useEffect(() => {
     supabase.from('site_ayarlar').select('*').then(({data})=>{
       const a: Record<string,Record<string,string>> = {}
       data?.forEach((item:any)=>{ if(!a[item.grup]) a[item.grup]={}; a[item.grup][item.anahtar]=item.deger||'' })
-      setAyarlar(a); setLoading(false)
+      setAyarlar(a)
+      // Mevcut favicon'u yükle
+      const favicon = a['genel']?.['favicon_url'] || ''
+      setFaviconUrl(favicon)
+      setLoading(false)
     })
   }, [])
 
@@ -33,12 +42,41 @@ export default function AyarlarPage() {
     setSaving(false)
   }
 
+  const faviconYukle = async (files: FileList | null) => {
+    if (!files?.length) return
+    const file = files[0]
+    // Boyut kontrolü (max 1MB)
+    if (file.size > 1024 * 1024) { toast.error('Favicon en fazla 1MB olabilir'); return }
+    setFaviconYukleniyor(true)
+    const ext = file.name.split('.').pop()
+    const yol = `favicon/favicon-${Date.now()}.${ext}`
+    const { error } = await supabase.storage.from('site-medya').upload(yol, file, { upsert: true })
+    if (error) { toast.error('Yükleme hatası: ' + error.message); setFaviconYukleniyor(false); return }
+    const { data: { publicUrl } } = supabase.storage.from('site-medya').getPublicUrl(yol)
+    // Ayarlara kaydet
+    await supabase.from('site_ayarlar').upsert({ grup: 'genel', anahtar: 'favicon_url', deger: publicUrl }, { onConflict: 'grup,anahtar' })
+    setFaviconUrl(publicUrl)
+    set('genel', 'favicon_url', publicUrl)
+    toast.success('Favicon yüklendi ve kaydedildi!')
+    setFaviconYukleniyor(false)
+  }
+
+  const faviconSil = async () => {
+    if (!confirm('Favicon\'ı kaldırmak istediğinize emin misiniz?')) return
+    await supabase.from('site_ayarlar').upsert({ grup: 'genel', anahtar: 'favicon_url', deger: '' }, { onConflict: 'grup,anahtar' })
+    setFaviconUrl('')
+    set('genel', 'favicon_url', '')
+    toast.success('Favicon kaldırıldı')
+  }
+
   const TABS = [
     {k:'odeme',ad:'💳 PayTR Ödeme'},
-    {k:'kargo',ad:'🚚 Kargo'},
+    {k:'kargo',ad:'🛵 Kurye'},
     {k:'mail',ad:'✉️ SMTP Mail'},
     {k:'seo',ad:'🔍 SEO'},
     {k:'genel',ad:'⚙️ Genel'},
+    {k:'favicon',ad:'🌐 Favicon'},
+    {k:'whatsapp',ad:'💬 WhatsApp'},
     {k:'guvenlik',ad:'🔒 Güvenlik'},
   ]
 
@@ -91,13 +129,65 @@ export default function AyarlarPage() {
                   </div>
                 </div>
                 {inp('Taksit Seçenekleri (JSON)','odeme','taksit_secenekleri','text','[1,2,3,6,9,12]')}
+
+                {/* Ek Ödeme Yöntemleri */}
+                <div style={{borderTop:'1px solid #F0ECF5',paddingTop:'16px'}}>
+                  <h3 style={{fontSize:'13px',fontWeight:700,color:'#1C1B2E',marginBottom:'12px'}}>Ek Ödeme Yöntemleri</h3>
+                  <div style={{display:'flex',flexDirection:'column',gap:'10px'}}>
+
+                    {/* Kapıda Ödeme */}
+                    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',background:'#F8F7FC',borderRadius:'12px',padding:'14px 16px',border:'1px solid #F0ECF5'}}>
+                      <div>
+                        <p style={{fontSize:'13px',fontWeight:600,color:'#1C1B2E',margin:'0 0 2px'}}>🚪 Kapıda Ödeme</p>
+                        <p style={{fontSize:'11px',color:'#9CA3AF',margin:0}}>Müşteri kapıda nakit veya kart ile ödeme yapar</p>
+                      </div>
+                      <label style={{position:'relative',display:'inline-block',width:'44px',height:'24px',cursor:'pointer',flexShrink:0}}>
+                        <input type="checkbox" checked={get('odeme','kapida_odeme_aktif')==='1'} onChange={e=>set('odeme','kapida_odeme_aktif',e.target.checked?'1':'0')} style={{opacity:0,width:0,height:0}}/>
+                        <span style={{position:'absolute',inset:0,background:get('odeme','kapida_odeme_aktif')==='1'?'#E07090':'#D1D5DB',borderRadius:'24px',transition:'0.2s'}}>
+                          <span style={{position:'absolute',left:get('odeme','kapida_odeme_aktif')==='1'?'22px':'2px',top:'2px',width:'20px',height:'20px',background:'#fff',borderRadius:'50%',transition:'0.2s',boxShadow:'0 1px 4px rgba(0,0,0,0.2)'}}/>
+                        </span>
+                      </label>
+                    </div>
+
+                    {/* Kapıda Ödeme Ücreti */}
+                    {get('odeme','kapida_odeme_aktif')==='1' && (
+                      <div style={{paddingLeft:'16px'}}>
+                        {inp('Kapıda Ödeme Ücreti (₺, 0 = ücretsiz)','odeme','kapida_odeme_ucreti','number','0')}
+                      </div>
+                    )}
+
+                    {/* Havale/EFT */}
+                    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',background:'#F8F7FC',borderRadius:'12px',padding:'14px 16px',border:'1px solid #F0ECF5'}}>
+                      <div>
+                        <p style={{fontSize:'13px',fontWeight:600,color:'#1C1B2E',margin:'0 0 2px'}}>🏦 Havale / EFT</p>
+                        <p style={{fontSize:'11px',color:'#9CA3AF',margin:0}}>Müşteri banka hesabınıza havale/EFT ile ödeme yapar</p>
+                      </div>
+                      <label style={{position:'relative',display:'inline-block',width:'44px',height:'24px',cursor:'pointer',flexShrink:0}}>
+                        <input type="checkbox" checked={get('odeme','havale_aktif')==='1'} onChange={e=>set('odeme','havale_aktif',e.target.checked?'1':'0')} style={{opacity:0,width:0,height:0}}/>
+                        <span style={{position:'absolute',inset:0,background:get('odeme','havale_aktif')==='1'?'#3B9FCC':'#D1D5DB',borderRadius:'24px',transition:'0.2s'}}>
+                          <span style={{position:'absolute',left:get('odeme','havale_aktif')==='1'?'22px':'2px',top:'2px',width:'20px',height:'20px',background:'#fff',borderRadius:'50%',transition:'0.2s',boxShadow:'0 1px 4px rgba(0,0,0,0.2)'}}/>
+                        </span>
+                      </label>
+                    </div>
+
+                    {/* Havale Banka Bilgileri */}
+                    {get('odeme','havale_aktif')==='1' && (
+                      <div style={{paddingLeft:'16px',display:'flex',flexDirection:'column',gap:'10px'}}>
+                        {inp('Banka Adı','odeme','havale_banka','text','Ziraat Bankası')}
+                        {inp('Hesap Sahibi','odeme','havale_hesap_sahibi','text','Keba Gıda San. Tic. A.Ş.')}
+                        {inp('IBAN','odeme','havale_iban','text','TR00 0000 0000 0000 0000 0000 00')}
+                        {inp('Açıklama (opsiyonel)','odeme','havale_aciklama','text','Sipariş numaranızı açıklamaya yazmayı unutmayın')}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
             {aktifTab==='kargo' && (
               <div style={{display:'flex',flexDirection:'column',gap:'16px'}}>
-                <h2 style={{fontSize:'16px',fontWeight:700,color:'#1C1B2E',marginBottom:'4px'}}>Kargo Ayarları</h2>
-                {inp('Standart Kargo Ücreti (₺)','kargo','standart_kargo_ucreti','number','49.90')}
-                {inp('Ücretsiz Kargo Alt Tutarı (₺)','kargo','ucretsiz_kargo_tutari','number','500')}
+                <h2 style={{fontSize:'16px',fontWeight:700,color:'#1C1B2E',marginBottom:'4px'}}>Kurye Ayarları</h2>
+                {inp('Standart Kurye Ücreti (₺)','kargo','standart_kargo_ucreti','number','49.90')}
+                {inp('Ücretsiz Kurye Alt Tutarı (₺)','kargo','ucretsiz_kargo_tutari','number','500')}
               </div>
             )}
             {aktifTab==='mail' && (
@@ -128,6 +218,87 @@ export default function AyarlarPage() {
                 {inp('İletişim E-posta','genel','iletisim_email','email','bilgi@milgo.com.tr')}
                 {inp('İletişim Telefon','genel','iletisim_telefon','tel','02123521076')}
                 {inp('Adres','genel','adres','text','Etiler, Beşiktaş / İstanbul')}
+
+                {/* ETBİS Logo */}
+                <div style={{marginTop:'8px'}}>
+                  <label style={{display:'block',fontSize:'11px',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',color:'#6B7280',marginBottom:'8px'}}>ETBİS Logo</label>
+                  <div style={{display:'flex',gap:'8px',alignItems:'center',flexWrap:'wrap'}}>
+                    {get('genel','etbis_logo_url') ? (
+                      <img src={get('genel','etbis_logo_url')} alt="ETBİS Logo" style={{height:'60px',objectFit:'contain',borderRadius:'8px',border:'1px solid #F0ECF5',padding:'4px',background:'#F8F7FC'}}
+                        onError={e=>{(e.target as HTMLImageElement).style.display='none'}}/>
+                    ) : (
+                      <div style={{height:'60px',width:'120px',background:'#F8F7FC',border:'1px dashed #E0D8F0',borderRadius:'8px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'11px',color:'#9CA3AF'}}>Logo yok</div>
+                    )}
+                    <div style={{flex:1,minWidth:'200px'}}>
+                      <input type="text" value={get('genel','etbis_logo_url')} onChange={e=>set('genel','etbis_logo_url',e.target.value)}
+                        placeholder="https://... (logo URL veya Medya'dan kopyalayın)"
+                        style={{width:'100%',background:'#F8F7FC',border:'1px solid #F0ECF5',borderRadius:'10px',padding:'10px 14px',fontSize:'13px',color:'#1C1B2E',outline:'none',fontFamily:'inherit',boxSizing:'border-box' as const}}/>
+                      <p style={{fontSize:'11px',color:'#9CA3AF',marginTop:'4px'}}>Medya sayfasından logo yükleyip URL'sini buraya yapıştırabilirsiniz.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            {aktifTab==='favicon' && (
+              <div style={{display:'flex',flexDirection:'column',gap:'20px'}}>
+                <div>
+                  <h2 style={{fontSize:'16px',fontWeight:700,color:'#1C1B2E',marginBottom:'4px'}}>Favicon Ayarları</h2>
+                  <p style={{fontSize:'13px',color:'#9CA3AF',margin:'0'}}>Tarayıcı sekmesinde görünen küçük ikon. ICO, PNG veya SVG önerilir (ideal: 32x32 px).</p>
+                </div>
+                <div style={{background:'#F8F7FC',borderRadius:'16px',border:'1px solid #F0ECF5',padding:'24px',display:'flex',alignItems:'center',gap:'20px'}}>
+                  <div style={{width:'80px',height:'80px',borderRadius:'14px',border:'2px solid #E8E4F0',background:'#fff',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,overflow:'hidden'}}>
+                    {faviconUrl ? (
+                      <img src={faviconUrl} alt="Favicon" style={{width:'48px',height:'48px',objectFit:'contain'}} onError={e=>{(e.target as HTMLImageElement).style.display='none'}}/>
+                    ) : (
+                      <span style={{fontSize:'28px'}}>🌐</span>
+                    )}
+                  </div>
+                  <div style={{flex:1}}>
+                    <p style={{fontSize:'14px',fontWeight:600,color:'#1C1B2E',marginBottom:'4px'}}>
+                      {faviconUrl ? 'Mevcut Favicon' : 'Favicon Yüklenmemiş'}
+                    </p>
+                    <p style={{fontSize:'12px',color:'#9CA3AF',marginBottom:'12px',wordBreak:'break-all'}}>
+                      {faviconUrl || 'Henüz bir favicon yüklenmedi.'}
+                    </p>
+                    <div style={{display:'flex',gap:'8px',flexWrap:'wrap'}}>
+                      <button onClick={()=>faviconRef.current?.click()} disabled={faviconYukleniyor}
+                        style={{display:'flex',alignItems:'center',gap:'6px',background:'linear-gradient(135deg,#E07090,#3B9FCC)',color:'#fff',padding:'8px 16px',borderRadius:'50px',border:'none',fontSize:'12px',fontWeight:700,cursor:'pointer',fontFamily:'inherit',opacity:faviconYukleniyor?0.7:1}}>
+                        <Upload size={13}/>{faviconYukleniyor?'Yükleniyor...':'Yeni Favicon Yükle'}
+                      </button>
+                      {faviconUrl && (
+                        <button onClick={faviconSil}
+                          style={{display:'flex',alignItems:'center',gap:'6px',background:'#FEF2F2',color:'#EF4444',padding:'8px 16px',borderRadius:'50px',border:'none',fontSize:'12px',fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>
+                          <Trash2 size={13}/>Kaldır
+                        </button>
+                      )}
+                    </div>
+                    <input ref={faviconRef} type="file" accept=".ico,.png,.svg,.jpg,.jpeg,.webp" style={{display:'none'}} onChange={e=>faviconYukle(e.target.files)}/>
+                  </div>
+                </div>
+                <div
+                  onDragOver={e=>e.preventDefault()}
+                  onDrop={e=>{e.preventDefault();faviconYukle(e.dataTransfer.files)}}
+                  onClick={()=>faviconRef.current?.click()}
+                  style={{border:'2px dashed #E8E4F0',borderRadius:'16px',padding:'32px',textAlign:'center',cursor:'pointer',background:'#FAFAF9',transition:'all .2s'}}>
+                  <Upload size={28} style={{color:'#D1D5DB',margin:'0 auto 10px',display:'block'}}/>
+                  <p style={{fontSize:'13px',fontWeight:600,color:'#1C1B2E',marginBottom:'4px'}}>Sürükleyip bırakın veya tıklayın</p>
+                  <p style={{fontSize:'11px',color:'#9CA3AF'}}>ICO, PNG, SVG, WebP — maks. 1 MB</p>
+                </div>
+                <div style={{background:'#EBF7FC',border:'1px solid #BAE6FD',borderRadius:'12px',padding:'14px 16px',fontSize:'13px',color:'#075985'}}>
+                  💡 Favicon değişikliği sonrasında Next.js uygulamasının yeniden deploy edilmesi gerekebilir. Tarayıcınızı yenileyerek (Ctrl+F5) sonucu görebilirsiniz.
+                </div>
+              </div>
+            )}
+            {aktifTab==='whatsapp' && (
+              <div style={{display:'flex',flexDirection:'column',gap:'14px'}}>
+                <h2 style={{fontSize:'16px',fontWeight:700,color:'#1C1B2E',marginBottom:'4px'}}>WhatsApp Butonu</h2>
+                <p style={{fontSize:'13px',color:'#9CA3AF',margin:'0 0 8px'}}>Numara ve yazı girilince site genelinde WhatsApp butonu aktif olur.</p>
+                {inp('WhatsApp Numarası','whatsapp','numara','text','905321234567 (başında + olmadan)')}
+                {inp('Buton Yazısı','whatsapp','yazi','text','Sipariş için WhatsApp')}
+                {inp('Ön Mesaj','whatsapp','mesaj','text','Merhaba, sipariş vermek istiyorum.')}
+                <div style={{background:'#F0FDF4',border:'1px solid #BBF7D0',borderRadius:'12px',padding:'14px 16px',fontSize:'13px',color:'#166534'}}>
+                  ✅ Numara girildiğinde buton otomatik aktif olur, boşsa gizlenir.
+                </div>
               </div>
             )}
             {aktifTab==='guvenlik' && (

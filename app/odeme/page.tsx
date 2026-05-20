@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useSepet } from '@/lib/sepet'
@@ -17,8 +17,11 @@ export default function OdemePage() {
   const [yukleniyor, setYukleniyor] = useState(false)
   const [user, setUser] = useState<any>(null)
   const [hizmetHata, setHizmetHata] = useState('')
+  const [bolgeAdi, setBolgeAdi] = useState('')
   const [form, setForm] = useState({ ad:'', soyad:'', email:'', telefon:'', adres:'', ilce:'', sehir:'İstanbul', posta:'', notlar:'' })
   const [paytrToken, setPaytrToken] = useState('')
+  const [odemeYontemi, setOdemeYontemi] = useState<'kart'|'kapida'|'havale'>('kart')
+  const [odemeAyarlar, setOdemeAyarlar] = useState<any>({})
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -28,9 +31,18 @@ export default function OdemePage() {
     })
   }, [])
 
+  const siparisBasarili = useRef(false)
   useEffect(() => {
-    if (items.length === 0) router.push('/sepet')
+    if (items.length === 0 && !siparisBasarili.current) router.push('/sepet')
   }, [items, router])
+
+  useEffect(() => {
+    supabase.from('site_ayarlar').select('anahtar,deger').eq('grup','odeme').then(({data}) => {
+      const a: any = {}
+      data?.forEach((item: any) => { a[item.anahtar] = item.deger })
+      setOdemeAyarlar(a)
+    })
+  }, [])
 
   if (items.length === 0) return null
 
@@ -80,11 +92,19 @@ export default function OdemePage() {
           kupon_kod: kupon?.kod,
           indirim,
           notlar: form.notlar,
+          odeme_yontemi: odemeYontemi,
+          bolge_adi: bolgeAdi,
         })
       })
       const { data: siparis, error } = await r.json()
       if (!siparis || error) throw new Error(error || 'Sipariş oluşturulamadı')
 
+      if (odemeYontemi !== 'kart') {
+        siparisBasarili.current = true
+        router.push(`/siparis-onay?siparis=${siparis.siparis_no}`)
+        temizle()
+        return
+      }
       const paytrR = await fetch('/api/paytr', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -96,10 +116,12 @@ export default function OdemePage() {
       })
       const { token, error: paytrErr } = await paytrR.json()
       if (paytrErr || !token) {
-        temizle()
+        siparisBasarili.current = true
         router.push(`/siparis-onay?siparis=${siparis.siparis_no}`)
+        temizle()
         return
       }
+      siparisBasarili.current = true
       temizle()
       setPaytrToken(token)
     } catch (e: any) {
@@ -247,10 +269,59 @@ export default function OdemePage() {
                   <p style={{margin:'2px 0'}}>{form.adres}</p>
                   <p style={{margin:0}}>{form.ilce} / {form.sehir}</p>
                 </div>
-                <div style={{background:'#F0EEF8',borderRadius:'14px',padding:'14px 16px',marginBottom:'20px',display:'flex',alignItems:'center',gap:'8px'}}>
-                  <Lock size={14} style={{color:'#E07090',flexShrink:0}}/>
-                  <p style={{fontSize:'13px',color:'#6B7280',margin:0}}>Ödeme bilgileriniz PayTR güvencesiyle korunmaktadır.</p>
+                {/* Ödeme Yöntemi Seçimi */}
+                <div style={{marginBottom:'20px'}}>
+                  <p style={{fontSize:'12px',fontWeight:700,color:'#6B7280',letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:'10px'}}>Ödeme Yöntemi</p>
+                  <div style={{display:'flex',flexDirection:'column',gap:'8px'}}>
+                    {/* Kredi/Banka Kartı - her zaman aktif */}
+                    <label style={{display:'flex',alignItems:'center',gap:'12px',padding:'14px 16px',borderRadius:'14px',border:`2px solid ${odemeYontemi==='kart'?'#E07090':'#F0ECF5'}`,background:odemeYontemi==='kart'?'#FEF0F4':'#fff',cursor:'pointer',transition:'all 0.2s'}}>
+                      <input type="radio" name="odeme" value="kart" checked={odemeYontemi==='kart'} onChange={()=>setOdemeYontemi('kart')} style={{accentColor:'#E07090'}}/>
+                      <span style={{fontSize:'18px'}}>💳</span>
+                      <div>
+                        <p style={{fontSize:'13px',fontWeight:600,color:'#1C1B2E',margin:0}}>Kredi / Banka Kartı</p>
+                        <p style={{fontSize:'11px',color:'#9CA3AF',margin:0}}>PayTR güvencesiyle</p>
+                      </div>
+                    </label>
+                    {odemeAyarlar.kapida_odeme_aktif === '1' && (
+                      <label style={{display:'flex',alignItems:'center',gap:'12px',padding:'14px 16px',borderRadius:'14px',border:`2px solid ${odemeYontemi==='kapida'?'#E07090':'#F0ECF5'}`,background:odemeYontemi==='kapida'?'#FEF0F4':'#fff',cursor:'pointer',transition:'all 0.2s'}}>
+                        <input type="radio" name="odeme" value="kapida" checked={odemeYontemi==='kapida'} onChange={()=>setOdemeYontemi('kapida')} style={{accentColor:'#E07090'}}/>
+                        <span style={{fontSize:'18px'}}>🚪</span>
+                        <div>
+                          <p style={{fontSize:'13px',fontWeight:600,color:'#1C1B2E',margin:0}}>Kapıda Ödeme</p>
+                          <p style={{fontSize:'11px',color:'#9CA3AF',margin:0}}>
+                            {odemeAyarlar.kapida_odeme_ucreti && odemeAyarlar.kapida_odeme_ucreti !== '0' ? `+₺${odemeAyarlar.kapida_odeme_ucreti} ek ücret` : 'Ücretsiz'}
+                          </p>
+                        </div>
+                      </label>
+                    )}
+                    {odemeAyarlar.havale_aktif === '1' && (
+                      <label style={{display:'flex',alignItems:'center',gap:'12px',padding:'14px 16px',borderRadius:'14px',border:`2px solid ${odemeYontemi==='havale'?'#3B9FCC':'#F0ECF5'}`,background:odemeYontemi==='havale'?'#EBF7FC':'#fff',cursor:'pointer',transition:'all 0.2s'}}>
+                        <input type="radio" name="odeme" value="havale" checked={odemeYontemi==='havale'} onChange={()=>setOdemeYontemi('havale')} style={{accentColor:'#3B9FCC'}}/>
+                        <span style={{fontSize:'18px'}}>🏦</span>
+                        <div>
+                          <p style={{fontSize:'13px',fontWeight:600,color:'#1C1B2E',margin:0}}>Havale / EFT</p>
+                          <p style={{fontSize:'11px',color:'#9CA3AF',margin:0}}>{odemeAyarlar.havale_banka || 'Banka transferi'}</p>
+                        </div>
+                      </label>
+                    )}
+                  </div>
+                  {/* Havale bilgileri */}
+                  {odemeYontemi === 'havale' && odemeAyarlar.havale_aktif === '1' && (
+                    <div style={{marginTop:'12px',background:'#EBF7FC',borderRadius:'12px',padding:'14px 16px',fontSize:'13px',color:'#075985'}}>
+                      <p style={{fontWeight:700,marginBottom:'6px'}}>Hesap Bilgileri</p>
+                      <p style={{margin:'2px 0'}}>🏦 {odemeAyarlar.havale_banka}</p>
+                      <p style={{margin:'2px 0'}}>👤 {odemeAyarlar.havale_hesap_sahibi}</p>
+                      <p style={{margin:'2px 0',fontFamily:'monospace',fontWeight:700}}>{odemeAyarlar.havale_iban}</p>
+                      {odemeAyarlar.havale_aciklama && <p style={{margin:'6px 0 0',fontSize:'11px',color:'#0369a1'}}>⚠️ {odemeAyarlar.havale_aciklama}</p>}
+                    </div>
+                  )}
                 </div>
+                {odemeYontemi === 'kart' && (
+                  <div style={{background:'#F0EEF8',borderRadius:'14px',padding:'14px 16px',marginBottom:'20px',display:'flex',alignItems:'center',gap:'8px'}}>
+                    <Lock size={14} style={{color:'#E07090',flexShrink:0}}/>
+                    <p style={{fontSize:'13px',color:'#6B7280',margin:0}}>Ödeme bilgileriniz PayTR güvencesiyle korunmaktadır.</p>
+                  </div>
+                )}
                 <div style={{display:'flex',gap:'10px'}}>
                   <button onClick={()=>setAdim('adres')}
                     style={{padding:'14px 20px',background:'#fff',border:'2px solid #E8E4F0',borderRadius:'50px',fontSize:'13px',fontWeight:600,cursor:'pointer',color:'#6B7280',fontFamily:'inherit',whiteSpace:'nowrap'}}>
@@ -293,7 +364,7 @@ export default function OdemePage() {
                   <span style={{fontWeight:600}}>₺{araToplam().toFixed(2)}</span>
                 </div>
                 <div style={{display:'flex',justifyContent:'space-between',fontSize:'13px'}}>
-                  <span style={{color:'#6B7280'}}>Kargo</span>
+                  <span style={{color:'#6B7280'}}>Kurye</span>
                   <span style={{fontWeight:600}}>{kargoUcreti()===0?'Ücretsiz':`₺${kargoUcreti().toFixed(2)}`}</span>
                 </div>
                 {indirim > 0 && (
@@ -309,7 +380,7 @@ export default function OdemePage() {
               </div>
               {araToplam() < 500 && (
                 <div style={{marginTop:'12px',background:'#FEF0F4',borderRadius:'10px',padding:'10px 12px',fontSize:'12px',color:'#E07090',fontWeight:600}}>
-                  ₺{(500-araToplam()).toFixed(2)} daha alışveriş yap, kargo bedava!
+                  ₺{(500-araToplam()).toFixed(2)} daha alışveriş yap, kurye bedava!
                 </div>
               )}
             </div>

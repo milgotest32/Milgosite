@@ -39,7 +39,7 @@ export default function SiparisDetay() {
           </div>
         </div>
         <select value={siparis.durum} onChange={e=>durumGuncelle(e.target.value)} style={{background:'#fff',border:'1px solid #F0ECF5',borderRadius:'12px',padding:'10px 16px',fontSize:'13px',color:'#1C1B2E',outline:'none',fontFamily:'inherit',cursor:'pointer',fontWeight:600}}>
-          {['bekliyor','onaylandi','kargoda','teslim','iptal'].map(d=><option key={d} value={d}>{d}</option>)}
+          {['bekliyor','onaylandi','kuryede','teslim','iptal'].map(d=><option key={d} value={d}>{d}</option>)}
         </select>
       </div>
       <div style={{display:'grid',gridTemplateColumns:'1fr 300px',gap:'16px'}}>
@@ -56,7 +56,7 @@ export default function SiparisDetay() {
               </div>
             ))}
             <div style={{paddingTop:'12px',display:'flex',flexDirection:'column',gap:'6px'}}>
-              {[['Ara Toplam',`₺${siparis.ara_toplam?.toFixed(2)}`],['Kargo',siparis.kargo_ucreti===0?'Ücretsiz':`₺${siparis.kargo_ucreti?.toFixed(2)}`],[...(siparis.indirim>0?[['İndirim',`-₺${siparis.indirim?.toFixed(2)}`]]:[])]].flat(1).map((item,i)=>Array.isArray(item)&&(
+              {[['Ara Toplam',`₺${siparis.ara_toplam?.toFixed(2)}`],['Kurye',siparis.kargo_ucreti===0?'Ücretsiz':`₺${siparis.kargo_ucreti?.toFixed(2)}`],[...(siparis.indirim>0?[['İndirim',`-₺${siparis.indirim?.toFixed(2)}`]]:[])]].flat(1).map((item,i)=>Array.isArray(item)&&(
                 <div key={i} style={{display:'flex',justifyContent:'space-between',fontSize:'13px'}}><span style={{color:'#9CA3AF'}}>{item[0]}</span><span style={{fontWeight:600}}>{item[1]}</span></div>
               ))}
               <div style={{display:'flex',justifyContent:'space-between',paddingTop:'8px',borderTop:'1px solid #F0ECF5'}}>
@@ -77,15 +77,35 @@ export default function SiparisDetay() {
           </div>
           <div style={{background:'#fff',borderRadius:'16px',border:'1px solid #F0ECF5',padding:'20px'}}>
             <h3 style={{fontSize:'14px',fontWeight:700,color:'#1C1B2E',marginBottom:'12px'}}>Teslimat Adresi</h3>
+            {/* Bölge vurgusu */}
+            <div style={{background:'#EBF7FC',border:'1px solid #BAE6FD',borderRadius:'10px',padding:'10px 14px',marginBottom:'12px',display:'flex',alignItems:'center',gap:'8px'}}>
+              <span style={{fontSize:'16px'}}>📍</span>
+              <div>
+                {siparis.bolge_adi && <span style={{fontSize:'12px',fontWeight:700,color:'#3B9FCC',display:'block'}}>{siparis.bolge_adi}</span>}
+                <span style={{fontSize:'13px',fontWeight:700,color:'#1C1B2E'}}>{siparis.teslimat_ilce || '—'}</span>
+                <span style={{fontSize:'12px',color:'#6B7280',marginLeft:'6px'}}>{siparis.teslimat_sehir || ''}</span>
+              </div>
+            </div>
             <div style={{fontSize:'13px',color:'#6B7280',lineHeight:'1.6'}}>
-              <p>{siparis.teslimat_adres}</p>
-              <p>{siparis.teslimat_ilce} / {siparis.teslimat_sehir}</p>
+              <p>{siparis.teslimat_adres || siparis.adres?.adres}</p>
+              <p style={{fontSize:'11px',color:'#9CA3AF'}}>Posta: {siparis.teslimat_posta || siparis.adres?.posta || '—'}</p>
             </div>
           </div>
           <div style={{background:'#fff',borderRadius:'16px',border:'1px solid #F0ECF5',padding:'20px'}}>
             <h3 style={{fontSize:'14px',fontWeight:700,color:'#1C1B2E',marginBottom:'12px'}}>Ödeme</h3>
-            <div style={{display:'flex',flexDirection:'column',gap:'6px',fontSize:'13px',color:'#6B7280'}}>
-              <div style={{display:'flex',justifyContent:'space-between'}}><span>Ödeme</span><span style={{fontWeight:700,color:siparis.odeme_durumu==='odendi'?'#22C55E':'#F59E0B'}}>{siparis.odeme_durumu}</span></div>
+            <div style={{display:'flex',flexDirection:'column',gap:'8px',fontSize:'13px',color:'#6B7280'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                <span>Yöntem</span>
+                <span style={{fontWeight:700,color:'#1C1B2E'}}>
+                  {siparis.odeme_yontemi === 'kapida' ? '🚪 Kapıda Ödeme' : siparis.odeme_yontemi === 'havale' ? '🏦 Havale/EFT' : '💳 Kredi/Banka Kartı'}
+                </span>
+              </div>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                <span>Durum</span>
+                <span style={{fontWeight:700,color:siparis.odeme_durumu==='odendi'?'#22C55E':siparis.odeme_yontemi==='kapida'?'#F59E0B':'#F59E0B'}}>
+                  {siparis.odeme_durumu || (siparis.odeme_yontemi==='kapida' ? 'Kapıda Ödenecek' : 'Bekliyor')}
+                </span>
+              </div>
               {siparis.kupon_kod && <div style={{display:'flex',justifyContent:'space-between'}}><span>Kupon</span><span style={{fontWeight:600,fontFamily:'monospace'}}>{siparis.kupon_kod}</span></div>}
             </div>
           </div>

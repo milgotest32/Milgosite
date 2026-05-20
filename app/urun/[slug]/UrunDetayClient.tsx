@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useSepet } from '@/lib/sepet'
 import { supabase } from '@/lib/supabase/client'
 import type { Urun } from '@/lib/types'
-import { ShoppingBag, Heart, Star, Truck, ShieldCheck, RefreshCw, Plus, Minus, Check, ChevronRight, Package } from 'lucide-react'
+import { ShoppingBag, Heart, Star, Truck, ShieldCheck, Plus, Minus, Check, ChevronRight, Package } from 'lucide-react'
 import ProductCard from '@/components/product/ProductCard'
 import toast from 'react-hot-toast'
 
@@ -37,7 +37,7 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
     setTimeout(() => setEklendi(false), 2000)
   }
 
-  const ortPuan = yorumlar.length ? (yorumlar.reduce((t, y) => t + y.puan, 0) / yorumlar.length).toFixed(1) : '4.9'
+  const ortPuan = yorumlar.length ? (yorumlar.reduce((t, y) => t + y.puan, 0) / yorumlar.length).toFixed(1) : null
 
   return (
     <div style={{ minHeight: '100vh', background: '#FDFBF9' }}>
@@ -91,14 +91,16 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
 
             <h1 style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: 'clamp(26px,4vw,42px)', fontWeight: 400, color: '#1A0A12', lineHeight: 1.1, marginBottom: '14px' }}>{urun.name}</h1>
 
-            {/* Yıldızlar */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
-              <div style={{ display: 'flex', gap: '2px' }}>
-                {[1,2,3,4,5].map(s => <Star key={s} size={15} fill="#FBBF24" style={{ color: '#FBBF24' }} />)}
+            {/* Yıldızlar - sadece gerçek yorum varsa göster */}
+            {yorumlar.length > 0 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', gap: '2px' }}>
+                  {[1,2,3,4,5].map(s => <Star key={s} size={15} fill={s <= Math.round(Number(ortPuan)) ? '#FBBF24' : 'none'} style={{ color: '#FBBF24' }} />)}
+                </div>
+                <span style={{ fontSize: '13px', color: '#7A6070', fontWeight: 600 }}>{ortPuan}</span>
+                <span style={{ fontSize: '13px', color: '#7A6070' }}>({yorumlar.length} yorum)</span>
               </div>
-              <span style={{ fontSize: '13px', color: '#7A6070', fontWeight: 600 }}>{ortPuan}</span>
-              <span style={{ fontSize: '13px', color: '#7A6070' }}>({yorumlar.length || 48} yorum)</span>
-            </div>
+            )}
 
             {/* Fiyat */}
             <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px', marginBottom: '24px' }}>
@@ -115,7 +117,7 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
 
             {/* Sertifikalar */}
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '24px' }}>
-              {['🇪🇺 AB Onaylı', '🌿 %100 Doğal', '✓ Katkısız'].map(s => (
+              {['🇪🇺 AB Onaylı', '🌿 Doğal', '✓ Katkısız'].map(s => (
                 <span key={s} style={{ background: 'rgba(26,10,18,.05)', color: '#1A0A12', fontSize: '12px', fontWeight: 600, padding: '6px 14px', borderRadius: '50px', border: '1px solid rgba(26,10,18,.08)' }}>{s}</span>
               ))}
             </div>
@@ -146,16 +148,28 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
               </p>
             )}
 
+            {/* Çiğ Süt özel teslimat uyarısı */}
+            {(urun.site_kategoriler?.slug === 'cig-sut' || urun.site_kategoriler?.slug === 'cig-sut-2' || urun.name?.toLowerCase().includes('çiğ süt')) && (
+              <div style={{ background: 'linear-gradient(135deg,#FFF7ED,#FEF3C7)', border: '1px solid #FDE68A', borderRadius: '16px', padding: '16px 20px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                <span style={{ fontSize: '22px', flexShrink: 0 }}>🥛</span>
+                <div>
+                  <p style={{ fontSize: '12px', fontWeight: 800, color: '#92400E', marginBottom: '4px', letterSpacing: '0.05em', textTransform: 'uppercase' }}>Özel Teslimat Günleri</p>
+                  <p style={{ fontSize: '13px', color: '#78350F', lineHeight: 1.6 }}>
+                    Çiğ süt teslimatları yalnızca <strong>Cuma ve Cumartesi</strong> günleri yapılmaktadır. Siparişinizi haftanın herhangi bir günü verebilirsiniz, en yakın teslimat gününde teslim edilir.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Teslimat */}
             <div style={{ background: 'rgba(26,10,18,.04)', borderRadius: '20px', padding: '18px 20px', border: '1px solid rgba(26,10,18,.07)' }}>
               <p style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '.2em', textTransform: 'uppercase', color: '#7A6070', marginBottom: '12px' }}>Teslimat & İade</p>
               {[
-                { icon: <Truck size={13} />, t: 'İstanbul içi aynı gün teslimat' },
-                { icon: <RefreshCw size={13} />, t: '24 saat içinde iade kabul edilir' },
+                { icon: <Truck size={13} />, t: urun.site_kategoriler?.slug === 'cig-sut' || urun.name?.toLowerCase().includes('çiğ süt') ? 'Cuma & Cumartesi teslimat' : 'İstanbul içi aynı gün teslimat' },
                 { icon: <ShieldCheck size={13} />, t: 'Soğuk zincir ile güvenli taşıma' },
                 { icon: <Package size={13} />, t: 'Özel soğutucu ambalajla gönderim' },
               ].map((item, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: '#7A6070', marginBottom: i < 3 ? '8px' : 0 }}>
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: '#7A6070', marginBottom: i < 2 ? '8px' : 0 }}>
                   <span style={{ color: '#E8567A', flexShrink: 0 }}>{item.icon}</span>{item.t}
                 </div>
               ))}

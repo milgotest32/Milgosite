@@ -36,7 +36,7 @@ export default async function BlogDetayPage({ params }: { params: Promise<{ slug
               <span>{new Date(yazi.created_at).toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'})}</span>
               <span style={{display:'flex',alignItems:'center',gap:'4px'}}><Clock size={12}/>{yazi.okuma_suresi} dk</span>
             </div>
-            {yazi.icerik && <div style={{fontSize:'15px',lineHeight:'1.9',color:'#374151',whiteSpace:'pre-wrap'}} dangerouslySetInnerHTML={{__html:yazi.icerik}}/>}
+            {yazi.icerik && <div style={{fontSize:'15px',lineHeight:'1.9',color:'#374151',whiteSpace:'pre-wrap'}} dangerouslySetInnerHTML={{__html:yazi.icerik?.replace(/<script[^>]*>.*?<\/script>/gi,'').replace(/on\w+="[^"]*"/gi,'') || ''}}/>}
           </div>
         </div>
       </div>

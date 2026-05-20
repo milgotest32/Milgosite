@@ -17,7 +17,13 @@ export default function KonumModal() {
 
   useEffect(() => {
     const kayitli = localStorage.getItem('milgo_konum')
-    if (kayitli) { setKonum(kayitli); return }
+    const hizmet = localStorage.getItem('milgo_hizmet')
+    // Konum var ama hizmet durumu belirsizse modal'ı yeniden göster
+    if (kayitli && hizmet !== null) { setKonum(kayitli); return }
+    // Hizmet bilgisi yoksa temizle ve modal göster
+    localStorage.removeItem('milgo_konum')
+    localStorage.removeItem('milgo_bolge_id')
+    localStorage.removeItem('milgo_bolge_ad')
     const t = setTimeout(() => setGoster(true), 1500)
     return () => clearTimeout(t)
   }, [])
@@ -47,11 +53,12 @@ export default function KonumModal() {
       localStorage.setItem('milgo_hizmet', data.hizmet ? 'true' : 'false')
     } catch {
       // API hatası → herkese göster (güvenli taraf)
-      localStorage.setItem('milgo_hizmet', 'true')
+      localStorage.setItem('milgo_hizmet', 'false')
     }
 
     setKonum(ilceAdi)
     setDurum('tamam')
+    window.dispatchEvent(new Event('milgo_konum_degisti'))
     setTimeout(() => setGoster(false), 2000)
   }
 
@@ -60,54 +67,79 @@ export default function KonumModal() {
     if (!navigator.geolocation) { setDurum('manuel'); return }
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
+        const { latitude: lat, longitude: lng } = pos.coords
+        // Önce ilçe adını al, sonra KMZ kontrol et
+        let ilceAdi = 'Konumunuz'
         try {
-          const { latitude: lat, longitude: lng } = pos.coords
-          const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=tr`
-          )
-          const data = await res.json()
-          const ilce = data.address?.suburb || data.address?.town || data.address?.city_district || data.address?.city || 'İstanbul'
-          await koordinatKaydetVeKontrolEt(lat, lng, ilce)
-        } catch { setDurum('manuel') }
+          const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=tr`)
+          const d = await r.json()
+          ilceAdi = d.address?.suburb || d.address?.town || d.address?.city_district || d.address?.city || 'Konumunuz'
+        } catch { /* Nominatim çalışmazsa GPS koordinatıyla devam et */ }
+        await koordinatKaydetVeKontrolEt(lat, lng, ilceAdi)
       },
       () => setDurum('manuel'),
       { timeout: 8000 }
     )
   }
 
+  // İstanbul ilçe koordinatları (Nominatim'e gerek yok)
+  const ILCE_KOORDINAT: Record<string, [number, number]> = {
+    'Beşiktaş': [41.0422, 29.0067], 'Şişli': [41.0602, 28.9870],
+    'Kağıthane': [41.0782, 28.9703], 'Beyoğlu': [41.0333, 28.9771],
+    'Sarıyer': [41.1671, 29.0570], 'Kadıköy': [40.9927, 29.0277],
+    'Üsküdar': [41.0231, 29.0150], 'Ataşehir': [40.9923, 29.1244],
+    'Maltepe': [40.9353, 29.1331], 'Pendik': [40.8771, 29.2337],
+    'Bakırköy': [40.9822, 28.8720], 'Bahçelievler': [41.0000, 28.8500],
+    'Bağcılar': [41.0378, 28.8560], 'Gaziosmanpaşa': [41.0631, 28.9119],
+    'Fatih': [41.0186, 28.9397], 'Eyüpsultan': [41.0478, 28.9336],
+    'Zeytinburnu': [40.9972, 28.9008], 'Güngören': [41.0197, 28.8726],
+  }
+
   const manuelSec = async () => {
     if (!secilenIlce) return
     setDurum('aliniyor')
     try {
-      // İlçe adından koordinat al
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(secilenIlce + ', İstanbul, Türkiye')}&limit=1`
-      )
+      const coords = ILCE_KOORDINAT[secilenIlce]
+      if (!coords) { localStorage.setItem('milgo_hizmet', 'false'); setDurum('tamam'); return }
+      const [lat, lng] = coords
+      const res = await fetch('/api/kmz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lat, lng })
+      })
       const data = await res.json()
-      if (data[0]) {
-        const lat = parseFloat(data[0].lat)
-        const lng = parseFloat(data[0].lon)
-        await koordinatKaydetVeKontrolEt(lat, lng, secilenIlce)
-      } else {
-        // Koordinat bulunamazsa sadece ismi kaydet
-        localStorage.setItem('milgo_konum', secilenIlce)
-        localStorage.setItem('milgo_hizmet', 'true')
-        setKonum(secilenIlce)
-        setDurum('tamam')
-        setTimeout(() => setGoster(false), 1500)
-      }
-    } catch {
       localStorage.setItem('milgo_konum', secilenIlce)
-      localStorage.setItem('milgo_hizmet', 'true')
+      localStorage.setItem('milgo_hizmet', data.hizmet ? 'true' : 'false')
+      if (data.bolge?.id) {
+        localStorage.setItem('milgo_bolge_id', data.bolge.id)
+        localStorage.setItem('milgo_bolge_ad', data.bolge.name)
+      } else {
+        localStorage.removeItem('milgo_bolge_id')
+        localStorage.removeItem('milgo_bolge_ad')
+      }
       setKonum(secilenIlce)
       setDurum('tamam')
+      window.dispatchEvent(new Event('milgo_konum_degisti'))
+      setTimeout(() => setGoster(false), 1500)
+    } catch {
+      localStorage.setItem('milgo_konum', secilenIlce)
+      localStorage.setItem('milgo_hizmet', 'false')
+      localStorage.removeItem('milgo_bolge_id')
+      localStorage.removeItem('milgo_bolge_ad')
+      setKonum(secilenIlce)
+      setDurum('tamam')
+      window.dispatchEvent(new Event('milgo_konum_degisti'))
       setTimeout(() => setGoster(false), 1500)
     }
   }
 
   const kapat = () => {
-    localStorage.setItem('milgo_konum', 'İstanbul')
-    localStorage.setItem('milgo_hizmet', 'true')
+    // Kapatınca hizmet bilgisini silme - konum belirlenmemiş sayılır
+    // Ürünler sayfası bolge_id olmadığında ürün göstermez
+    localStorage.removeItem('milgo_konum')
+    localStorage.removeItem('milgo_hizmet')
+    localStorage.removeItem('milgo_bolge_id')
+    localStorage.removeItem('milgo_bolge_ad')
     setGoster(false)
   }
 

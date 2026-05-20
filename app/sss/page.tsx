@@ -7,7 +7,7 @@ const SORULAR = [
   {s:'Ürünlerim ne zaman teslim edilir?',c:'İstanbul içi siparişler aynı gün teslim edilir. Siparişinizi öğleden önce verirseniz akşam saatlerinde kapınızdadır.'},
   {s:'Abonelik sistemi nasıl çalışıyor?',c:'Haftalık abonelikle seçtiğiniz ürünler otomatik olarak kapınıza gelir. İstediğiniz zaman ürünleri, miktarı değiştirebilir veya aboneliği iptal edebilirsiniz.'},
   {s:'İade politikanız nedir?',c:'Ürünle ilgili herhangi bir sorun yaşarsanız 24 saat içinde bize bildirmeniz yeterlidir. Sorunuzu çözmeye çalışır, gerektiğinde tam iade yaparız.'},
-  {s:'Ürünlerinizde katkı maddesi var mı?',c:'Hayır, ürünlerimizin hiçbirinde katkı maddesi, koruyucu veya tatlandırıcı yoktur. %100 doğal ürünler sunuyoruz.'},
+  {s:'Ürünlerinizde katkı maddesi var mı?',c:'Hayır, ürünlerimizin hiçbirinde katkı maddesi, koruyucu veya tatlandırıcı yoktur. Tamamen doğal ürünler sunuyoruz.'},
   {s:'Hangi ödeme yöntemlerini kabul ediyorsunuz?',c:'Kredi kartı, banka kartı ve havale/EFT ile ödeme yapabilirsiniz. Tüm ödemeleriniz PayTR güvencesiyle işlenmektedir.'},
 ]
 
@@ -22,7 +22,7 @@ export default function SSSPage() {
         <div style={{display:'flex',flexDirection:'column',gap:'12px'}}>
           {SORULAR.map((item,i)=>(
             <details key={i} style={{background:'#fff',borderRadius:'16px',border:'1px solid #F0ECF5',overflow:'hidden'}}>
-              <summary style={{padding:'18px 20px',fontSize:'15px',fontWeight:600,color:'#1C1B2E',cursor:'none',listStyle:'none',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <summary style={{padding:'18px 20px',fontSize:'15px',fontWeight:600,color:'#1C1B2E',cursor:'pointer',listStyle:'none',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
                 {item.s}
                 <span style={{fontSize:'20px',color:'#E07090',flexShrink:0}}>+</span>
               </summary>

@@ -58,7 +58,7 @@ export default function AdreslerPage() {
         <Link href="/hesabim" style={{display:'flex',alignItems:'center',gap:'8px',fontSize:'13px',color:'#9CA3AF',textDecoration:'none',marginBottom:'24px'}}><ArrowLeft size={14}/>Hesabıma Dön</Link>
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'20px'}}>
           <h1 style={{fontFamily:'"Playfair Display",serif',fontSize:'28px',color:'#1C1B2E'}}>Adreslerim</h1>
-          <button onClick={()=>setForm({...form,goster:true})} style={{display:'flex',alignItems:'center',gap:'6px',background:'linear-gradient(135deg,#E07090,#3B9FCC)',color:'#fff',padding:'10px 18px',borderRadius:'50px',border:'none',fontSize:'13px',fontWeight:700,cursor:'none',fontFamily:'inherit'}}>
+          <button onClick={()=>setForm({...form,goster:true})} style={{display:'flex',alignItems:'center',gap:'6px',background:'linear-gradient(135deg,#E07090,#3B9FCC)',color:'#fff',padding:'10px 18px',borderRadius:'50px',border:'none',fontSize:'13px',fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>
             <Plus size={14}/>Adres Ekle
           </button>
         </div>
@@ -78,12 +78,12 @@ export default function AdreslerPage() {
               {inp('Şehir','sehir','text','İstanbul')}
               {inp('Posta Kodu','posta_kodu','text','34000')}
             </div>
-            <label style={{display:'flex',alignItems:'center',gap:'8px',fontSize:'13px',color:'#6B7280',marginBottom:'16px',cursor:'none'}}>
-              <input type="checkbox" checked={form.varsayilan} onChange={e=>setForm({...form,varsayilan:e.target.checked})} style={{cursor:'none'}}/> Varsayılan adres olarak ayarla
+            <label style={{display:'flex',alignItems:'center',gap:'8px',fontSize:'13px',color:'#6B7280',marginBottom:'16px',cursor:'pointer'}}>
+              <input type="checkbox" checked={form.varsayilan} onChange={e=>setForm({...form,varsayilan:e.target.checked})} style={{cursor:'pointer'}}/> Varsayılan adres olarak ayarla
             </label>
             <div style={{display:'flex',gap:'8px',justifyContent:'flex-end'}}>
-              <button onClick={()=>setForm({...form,goster:false})} style={{padding:'10px 20px',background:'#F8F7FC',border:'1px solid #F0ECF5',borderRadius:'50px',fontSize:'13px',color:'#6B7280',cursor:'none',fontFamily:'inherit'}}>İptal</button>
-              <button onClick={ekle} disabled={saving} style={{padding:'10px 20px',background:'linear-gradient(135deg,#E07090,#3B9FCC)',color:'#fff',border:'none',borderRadius:'50px',fontSize:'13px',fontWeight:700,cursor:'none',fontFamily:'inherit'}}>{saving?'Kaydediliyor...':'Kaydet'}</button>
+              <button onClick={()=>setForm({...form,goster:false})} style={{padding:'10px 20px',background:'#F8F7FC',border:'1px solid #F0ECF5',borderRadius:'50px',fontSize:'13px',color:'#6B7280',cursor:'pointer',fontFamily:'inherit'}}>İptal</button>
+              <button onClick={ekle} disabled={saving} style={{padding:'10px 20px',background:'linear-gradient(135deg,#E07090,#3B9FCC)',color:'#fff',border:'none',borderRadius:'50px',fontSize:'13px',fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>{saving?'Kaydediliyor...':'Kaydet'}</button>
             </div>
           </div>
         )}
@@ -109,7 +109,7 @@ export default function AdreslerPage() {
                     <p style={{fontSize:'13px',color:'#6B7280'}}>{a.ilce} / {a.sehir} {a.posta_kodu}</p>
                     {a.telefon && <p style={{fontSize:'13px',color:'#6B7280'}}>{a.telefon}</p>}
                   </div>
-                  <button onClick={()=>sil(a.id)} style={{width:'32px',height:'32px',borderRadius:'8px',background:'#FEF2F2',border:'none',color:'#EF4444',cursor:'none',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                  <button onClick={()=>sil(a.id)} style={{width:'32px',height:'32px',borderRadius:'8px',background:'#FEF2F2',border:'none',color:'#EF4444',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
                     <Trash2 size={13}/>
                   </button>
                 </div>

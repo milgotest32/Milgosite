@@ -28,13 +28,15 @@ export default function Navbar() {
   }, [])
 
   useEffect(() => {
-    const k = localStorage.getItem('milgo_konum')
-    setKonum(k)
-    const iv = setInterval(() => {
-      const k2 = localStorage.getItem('milgo_konum')
-      setKonum(k2)
-    }, 1000)
-    return () => clearInterval(iv)
+    const oku = () => setKonum(localStorage.getItem('milgo_konum'))
+    oku()
+    window.addEventListener('storage', oku)
+    // storage event sadece diğer tab'lardan tetiklenir, aynı tab için custom event
+    window.addEventListener('milgo_konum_degisti', oku)
+    return () => {
+      window.removeEventListener('storage', oku)
+      window.removeEventListener('milgo_konum_degisti', oku)
+    }
   }, [])
 
   useEffect(() => {
@@ -45,7 +47,8 @@ export default function Navbar() {
 
   const cikis = async () => { await supabase.auth.signOut(); router.push('/'); setUserDrop(false) }
 
-  const drop: React.CSSProperties = { position: 'absolute', top: 'calc(100% + 8px)', background: '#fff', borderRadius: '20px', boxShadow: '0 12px 40px rgba(26,10,18,0.15)', border: '1px solid rgba(232,86,122,0.08)', padding: '8px', minWidth: '190px', zIndex: 200 }
+  const drop: React.CSSProperties = { position: 'absolute', top: '100%', paddingTop: '8px', background: 'transparent', minWidth: '190px', zIndex: 200 }
+  const dropInner: React.CSSProperties = { background: '#fff', borderRadius: '20px', boxShadow: '0 12px 40px rgba(26,10,18,0.15)', border: '1px solid rgba(232,86,122,0.08)', padding: '8px' }
   const di: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '10px', fontSize: '13px', fontWeight: 500, color: '#1A0A12', textDecoration: 'none', background: 'none', border: 'none', width: '100%', cursor: 'none', fontFamily: 'Nunito, sans-serif' }
   const ico: React.CSSProperties = { width: '38px', height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '10px', color: '#7A6070', background: 'transparent', border: 'none', cursor: 'none', flexShrink: 0 }
 
@@ -79,14 +82,18 @@ export default function Navbar() {
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 clamp(16px,4vw,48px)', height: '60px', display: 'flex', alignItems: 'center', gap: '8px' }}>
 
           {/* Logo */}
-          <Link href="/" style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '26px', color: '#1A0A12', textDecoration: 'none', flexShrink: 0 }}>
-            milgo<span style={{ color: '#E8567A' }}>.</span>
+          <Link href="/" style={{ textDecoration: 'none', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+            <img
+              src="https://jxfegluntgssrgpnvscs.supabase.co/storage/v1/object/public/site-medya/medya/1779186053874-lpldyhy0u38.png"
+              alt="milgo."
+              style={{ height: '40px', width: 'auto', objectFit: 'contain' }}
+            />
           </Link>
 
           {/* Masaüstü menü */}
           {!isMobile && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '2px', flex: 1, marginLeft: '16px' }}>
-              <div style={{ position: 'relative' }}
+              <div style={{ position: 'relative', paddingBottom: '8px', marginBottom: '-8px' }}
                 onMouseEnter={() => setUrunDrop(true)}
                 onMouseLeave={() => setUrunDrop(false)}>
                 <button style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '7px 14px', fontSize: '13px', fontWeight: 500, color: '#7A6070', borderRadius: '10px', background: 'none', border: 'none', cursor: 'none', fontFamily: 'Nunito, sans-serif' }}>
@@ -94,16 +101,18 @@ export default function Navbar() {
                 </button>
                 {urunDrop && (
                   <div style={drop}>
+                    <div style={dropInner}>
                     {[{ e: '🥛', a: 'Çiğ Süt', h: '/kategoriler/cig-sut' }, { e: '🧀', a: 'Peynir', h: '/kategoriler/peynir' }, { e: '🧈', a: 'Tereyağı', h: '/kategoriler/tereyagi' }].map(k => (
                       <Link key={k.h} href={k.h} style={di as any}>{k.e} {k.a}</Link>
                     ))}
                     <div style={{ borderTop: '1px solid rgba(26,10,18,.06)', margin: '6px 0 0', paddingTop: '6px' }}>
                       <Link href="/kampanyalar" style={{ ...di, color: '#E8567A', fontWeight: 700 } as any}>🔥 Kampanyalar</Link>
                     </div>
+                    </div>
                   </div>
                 )}
               </div>
-              {[['Abonelik', '/abonelik'], ['Çiftliğimiz', '/ciftligimiz'], ['Blog', '/blog']].map(([a, h]) => (
+              {[['Abonelik', '/abonelik'], ['Çiftliğimiz', '/ciftligimiz'], ['Blog', '/blog'], ['Hakkımızda', '/hakkimizda']].map(([a, h]) => (
                 <Link key={h} href={h} style={{ padding: '7px 14px', fontSize: '13px', fontWeight: 500, color: '#7A6070', borderRadius: '10px', textDecoration: 'none' }}>{a}</Link>
               ))}
             </div>
@@ -118,6 +127,7 @@ export default function Navbar() {
               <button onClick={() => setUserDrop(!userDrop)} style={ico}><User size={17} strokeWidth={1.75} /></button>
               {userDrop && (
                 <div style={{ ...drop, right: 0, left: 'auto' }}>
+                  <div style={dropInner}>
                   {user ? (
                     <>
                       <div style={{ padding: '8px 12px 12px', borderBottom: '1px solid rgba(26,10,18,.06)', marginBottom: '6px' }}>
@@ -138,6 +148,7 @@ export default function Navbar() {
                       <Link href="/kayit" onClick={() => setUserDrop(false)} style={di as any}>Üye Ol</Link>
                     </>
                   )}
+                  </div>
                 </div>
               )}
             </div>
@@ -186,7 +197,7 @@ export default function Navbar() {
             <X size={20} color="#1A0A12" />
           </button>
           <div style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '24px', color: '#1A0A12', marginBottom: '24px' }}>
-            milgo<span style={{ color: '#E8567A' }}>.</span>
+            <img src="https://jxfegluntgssrgpnvscs.supabase.co/storage/v1/object/public/site-medya/medya/1779186053874-lpldyhy0u38.png" alt="milgo." style={{height:"36px",width:"auto",objectFit:"contain"}}/>
             {konum && <span style={{ fontSize: '12px', fontFamily: 'Nunito, sans-serif', fontWeight: 600, color: '#E8567A', marginLeft: '10px' }}>📍 {konum}</span>}
           </div>
           <div style={{ flex: 1 }}>

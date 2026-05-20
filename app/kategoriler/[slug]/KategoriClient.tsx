@@ -10,8 +10,18 @@ export default function KategoriClient({ kategori }: { kategori: any }) {
   const [urunler, setUrunler] = useState<Urun[]>([])
   const [loading, setLoading] = useState(true)
   useEffect(()=>{
+    const bolgeId = localStorage.getItem('milgo_bolge_id')
     supabase.from('site_products').select('*,site_product_images(*),site_kategoriler(name,slug)').eq('durum','active').eq('kategori_id',kategori.id).order('created_at',{ascending:false})
-      .then(({data}:any)=>{ setUrunler(data||[]); setLoading(false) })
+      .then(({data}:any)=>{
+        let tumUrunler = data || []
+        if (bolgeId) {
+          tumUrunler = tumUrunler.filter((u:any) => u.bolge_ids && u.bolge_ids.includes(bolgeId))
+        } else {
+          tumUrunler = []
+        }
+        setUrunler(tumUrunler)
+        setLoading(false)
+      })
   },[kategori.id])
   return (
     <div style={{minHeight:'100vh',background:'#F0EEF8'}}>

@@ -11,11 +11,31 @@ export const dynamic = 'force-dynamic'
 export default function AnaSayfa() {
   const [urunler, setUrunler] = useState<Urun[]>([])
 
-  useEffect(() => {
+  const urunleriYukle = () => {
+    const bolgeId = localStorage.getItem('milgo_bolge_id')
+    const hizmet = localStorage.getItem('milgo_hizmet')
+    if (hizmet === 'false') { setUrunler([]); return }
+
     supabase.from('site_products')
       .select('*, site_product_images(*), site_kategoriler(name,slug)')
       .eq('durum', 'active').order('created_at', { ascending: false }).limit(8)
-      .then(({ data }: any) => setUrunler(data || []))
+      .then(({ data }: any) => {
+        let tumUrunler = data || []
+        if (bolgeId) {
+          tumUrunler = tumUrunler.filter((u: any) =>
+            u.bolge_ids && u.bolge_ids.includes(bolgeId)
+          )
+        } else {
+          tumUrunler = []
+        }
+        setUrunler(tumUrunler)
+      })
+  }
+
+  useEffect(() => {
+    urunleriYukle()
+    window.addEventListener('milgo_konum_degisti', urunleriYukle)
+    return () => window.removeEventListener('milgo_konum_degisti', urunleriYukle)
   }, [])
 
   const featured = urunler.filter(u => u.featured).slice(0, 4)
@@ -46,7 +66,7 @@ export default function AnaSayfa() {
             </h1>
 
             <p style={{ fontSize: '15px', lineHeight: 1.8, color: '#7A6070', maxWidth: '380px', marginBottom: '32px' }}>
-              ATASANCAK Çiftliği'nden günlük toplanan çiğ süt, geleneksel yöntemlerle hazırlanan peynir ve tereyağı. %100 doğal, katkısız.
+              ATASANCAK Çiftliği'nden günlük toplanan çiğ süt, geleneksel yöntemlerle hazırlanan peynir ve tereyağı. Doğal, katkısız.
             </p>
 
             <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '40px' }}>
@@ -55,7 +75,7 @@ export default function AnaSayfa() {
             </div>
 
             <div style={{ display: 'flex', gap: '28px', paddingTop: '24px', borderTop: '1px solid rgba(26,10,18,.08)', flexWrap: 'wrap' }}>
-              {[['10.5K', 'Büyükbaş'], ['%100', 'Katkısız'], ['AB', 'Onaylı']].map(([n, l]) => (
+              {[['10.5K', 'Büyükbaş'], ['✓', 'Katkısız'], ['AB', 'Onaylı']].map(([n, l]) => (
                 <div key={l}>
                   <div style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '32px', color: '#E8567A', lineHeight: 1 }}>{n}</div>
                   <div style={{ fontSize: '11px', color: '#7A6070', marginTop: '4px', fontWeight: 500 }}>{l}</div>

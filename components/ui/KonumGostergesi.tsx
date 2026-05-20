@@ -6,14 +6,17 @@ export default function KonumGostergesi() {
   const [konum, setKonum] = useState<string | null>(null)
 
   useEffect(() => {
-    const k = localStorage.getItem('milgo_konum')
-    setKonum(k)
-    const interval = setInterval(() => {
-      const k2 = localStorage.getItem('milgo_konum')
-      if (k2 !== konum) setKonum(k2)
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [konum])
+    const guncelle = () => {
+      setKonum(localStorage.getItem('milgo_konum'))
+    }
+    guncelle()
+    window.addEventListener('milgo_konum_degisti', guncelle)
+    window.addEventListener('storage', guncelle)
+    return () => {
+      window.removeEventListener('milgo_konum_degisti', guncelle)
+      window.removeEventListener('storage', guncelle)
+    }
+  }, [])
 
   if (!konum) return null
 

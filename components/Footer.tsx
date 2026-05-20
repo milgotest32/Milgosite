@@ -1,5 +1,17 @@
 import Link from 'next/link'
-export default function Footer() {
+import { createServerClient } from '@/lib/supabase/server'
+
+async function getEtbisLogo() {
+  try {
+    const supabase = createServerClient()
+    const { data } = await supabase.from('site_ayarlar').select('deger').eq('grup', 'genel').eq('anahtar', 'etbis_logo_url').single()
+    return data?.deger || ''
+  } catch { return '' }
+}
+
+export default async function Footer() {
+  const etbisLogoUrl = await getEtbisLogo()
+
   return (
     <footer style={{background:'#ffffff', borderTop:'1px solid #F0ECF5'}}>
       <div style={{maxWidth:'1280px', margin:'0 auto', padding:'56px 24px 0'}}>
@@ -24,7 +36,7 @@ export default function Footer() {
           {/* Links */}
           {[
             {baslik:'Ürünler', linkler:[['Çiğ Süt','/urunler?kategori=sut'],['Peynir','/urunler?kategori=peynir'],['Tereyağı','/urunler?kategori=tereyag'],['Tüm Ürünler','/urunler']]},
-            {baslik:'Keşfet', linkler:[['Abonelik','/abonelik'],['Çiftliğimiz','/ciftligimiz'],['Tarifler','/tarifler'],['Hakkımızda','/hakkimizda']]},
+            {baslik:'Keşfet', linkler:[['Abonelik','/abonelik'],['Çiftliğimiz','/ciftligimiz'],['Hakkımızda','/hakkimizda']]},
           ].map(({baslik,linkler}) => (
             <div key={baslik}>
               <h4 style={{fontSize:'10px', letterSpacing:'0.3em', textTransform:'uppercase', color:'#E07090', fontWeight:'700', marginBottom:'20px'}}>{baslik}</h4>
@@ -34,6 +46,15 @@ export default function Footer() {
             </div>
           ))}
         </div>
+
+        {/* ETBİS Logo */}
+        {etbisLogoUrl && (
+          <div style={{borderTop:'1px solid #F0ECF5', padding:'20px 0', display:'flex', justifyContent:'center'}}>
+            <a href="https://www.eticaret.gov.tr" target="_blank" rel="noreferrer" title="ETBİS - E-Ticaret Bilgi Sistemi">
+              <img src={etbisLogoUrl} alt="ETBİS Logosu" style={{height:'80px', objectFit:'contain'}} />
+            </a>
+          </div>
+        )}
 
         <div style={{borderTop:'1px solid #F0ECF5', padding:'20px 0', display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:'12px'}}>
           <span style={{fontSize:'11px', color:'#9CA3AF'}}>© 2025 milgo. · Keba Gıda San. Tic. A.Ş.</span>

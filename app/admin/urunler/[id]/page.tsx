@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
-import { ArrowLeft, Save, MapPin } from 'lucide-react'
+import { ArrowLeft, Save, MapPin, Plus, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 export const dynamic = 'force-dynamic'
 
@@ -15,6 +15,8 @@ export default function UrunDuzenle() {
   const [bolgeler, setBolgeler] = useState<any[]>([])
   const [form, setForm] = useState<any>({})
   const [secilenBolgeler, setSecilenBolgeler] = useState<string[]>([])
+  // Özellikler: [{key, value}] dizisi
+  const [ozellikler, setOzellikler] = useState<{key: string; value: string}[]>([])
 
   useEffect(() => {
     supabase.from('site_kategoriler').select('id,name').eq('aktif',true).then(({data})=>setKategoriler(data||[]))
@@ -23,6 +25,10 @@ export default function UrunDuzenle() {
       if (data) {
         setForm(data)
         setSecilenBolgeler(data.bolge_ids || [])
+        // ozellikler alanını parse et
+        if (data.ozellikler && typeof data.ozellikler === 'object' && !Array.isArray(data.ozellikler)) {
+          setOzellikler(Object.entries(data.ozellikler).map(([key, value]) => ({ key, value: String(value) })))
+        }
       }
       setLoading(false)
     })
@@ -34,8 +40,19 @@ export default function UrunDuzenle() {
     setSecilenBolgeler(prev => prev.includes(bid) ? prev.filter(b=>b!==bid) : [...prev, bid])
   }
 
+  const ozellikEkle = () => setOzellikler(prev => [...prev, { key: '', value: '' }])
+  const ozellikSil = (i: number) => setOzellikler(prev => prev.filter((_, idx) => idx !== i))
+  const ozellikSet = (i: number, field: 'key'|'value', val: string) =>
+    setOzellikler(prev => prev.map((o, idx) => idx === i ? { ...o, [field]: val } : o))
+
   const kaydet = async () => {
     setSaving(true)
+    // ozellikler dizisini objeye çevir
+    const ozelliklerObj = ozellikler.reduce((acc, { key, value }) => {
+      if (key.trim()) acc[key.trim()] = value
+      return acc
+    }, {} as Record<string, string>)
+
     const { error } = await supabase.from('site_products').update({
       name: form.name, slug: form.slug, aciklama: form.aciklama,
       fiyat: parseFloat(form.fiyat), eski_fiyat: form.eski_fiyat ? parseFloat(form.eski_fiyat) : null,
@@ -43,6 +60,7 @@ export default function UrunDuzenle() {
       yeni: form.yeni, indirimli: form.indirimli, kategori_id: form.kategori_id || null,
       seo_title: form.seo_title, seo_description: form.seo_description,
       bolge_ids: secilenBolgeler,
+      ozellikler: Object.keys(ozelliklerObj).length > 0 ? ozelliklerObj : null,
       updated_at: new Date().toISOString()
     }).eq('id', id as string)
     if (error) { toast.error(error.message); setSaving(false); return }
@@ -91,6 +109,46 @@ export default function UrunDuzenle() {
           <div>
             <label style={{display:'block',fontSize:'11px',fontWeight:700,textTransform:'uppercase',color:'#6B7280',marginBottom:'6px'}}>SEO Açıklama</label>
             <textarea value={form.seo_description||''} onChange={e=>set('seo_description',e.target.value)} rows={2} style={{width:'100%',background:'#F8F7FC',border:'1px solid #F0ECF5',borderRadius:'10px',padding:'10px 14px',fontSize:'13px',color:'#1C1B2E',outline:'none',fontFamily:'inherit',resize:'none'}}/>
+          </div>
+
+          {/* ÖZELLİKLER */}
+          <div>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'10px'}}>
+              <label style={{fontSize:'11px',fontWeight:700,textTransform:'uppercase',color:'#6B7280'}}>
+                Ürün Özellikleri
+              </label>
+              <button onClick={ozellikEkle} style={{display:'flex',alignItems:'center',gap:'4px',background:'linear-gradient(135deg,#E07090,#3B9FCC)',color:'#fff',border:'none',borderRadius:'8px',padding:'5px 12px',fontSize:'12px',fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>
+                <Plus size={12}/> Özellik Ekle
+              </button>
+            </div>
+            {ozellikler.length === 0 ? (
+              <p style={{fontSize:'12px',color:'#9CA3AF',fontStyle:'italic'}}>
+                Henüz özellik eklenmedi. "Özellik Ekle" butonuna tıklayarak ekleyin.<br/>
+                <span style={{fontSize:'11px'}}>Örnek: Yağ Oranı → %4.5 &nbsp;|&nbsp; Hacim → 1 Litre &nbsp;|&nbsp; Üretim Yeri → İstanbul</span>
+              </p>
+            ) : (
+              <div style={{display:'flex',flexDirection:'column',gap:'8px'}}>
+                {ozellikler.map((o, i) => (
+                  <div key={i} style={{display:'grid',gridTemplateColumns:'1fr 1fr auto',gap:'8px',alignItems:'center'}}>
+                    <input
+                      placeholder="Özellik adı (ör: Yağ Oranı)"
+                      value={o.key}
+                      onChange={e => ozellikSet(i, 'key', e.target.value)}
+                      style={{background:'#F8F7FC',border:'1px solid #F0ECF5',borderRadius:'8px',padding:'8px 12px',fontSize:'13px',color:'#1C1B2E',outline:'none',fontFamily:'inherit'}}
+                    />
+                    <input
+                      placeholder="Değer (ör: %4.5)"
+                      value={o.value}
+                      onChange={e => ozellikSet(i, 'value', e.target.value)}
+                      style={{background:'#F8F7FC',border:'1px solid #F0ECF5',borderRadius:'8px',padding:'8px 12px',fontSize:'13px',color:'#1C1B2E',outline:'none',fontFamily:'inherit'}}
+                    />
+                    <button onClick={() => ozellikSil(i)} style={{width:'32px',height:'32px',background:'#FEF2F2',border:'1px solid #FECACA',borderRadius:'8px',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',color:'#EF4444',flexShrink:0}}>
+                      <Trash2 size={13}/>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

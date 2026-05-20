@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 import {
   LayoutDashboard, Package, Tag, ShoppingBag, Users, Percent, FileText,
-  Image, Globe, Map, Settings, BarChart2, LogOut, ChevronRight, Bell, Shield
+  Image, Globe, Map, Settings, BarChart2, LogOut, ChevronRight, Bell, Shield, Info
 } from 'lucide-react'
 
 const MENU = [
@@ -23,6 +23,8 @@ const MENU = [
     { href: '/admin/kuponlar', icon: <Percent size={16}/>, ad: 'Kuponlar' },
   ]},
   { grup: 'İçerik', items: [
+    { href: '/admin/hakkimizda', icon: <Info size={16}/>, ad: 'Hakkımızda' },
+    { href: '/admin/popup', icon: <Bell size={16}/>, ad: 'Popup' },
     { href: '/admin/blog', icon: <FileText size={16}/>, ad: 'Blog' },
     { href: '/admin/bannerlar', icon: <Image size={16}/>, ad: 'Bannerlar' },
     { href: '/admin/medya', icon: <Image size={16}/>, ad: 'Medya' },
@@ -30,6 +32,7 @@ const MENU = [
   { grup: 'Sistem', items: [
     { href: '/admin/seo', icon: <Globe size={16}/>, ad: 'SEO' },
     { href: '/admin/hizmet-bolgeleri', icon: <Map size={16}/>, ad: 'Hizmet Bölgeleri' },
+    { href: '/admin/bolge-bildirimler', icon: <Bell size={16}/>, ad: 'Bölge Bildirimleri' },
     { href: '/admin/roller', icon: <Shield size={16}/>, ad: 'Rol & Yetkiler' },
     { href: '/admin/ayarlar', icon: <Settings size={16}/>, ad: 'Ayarlar' },
   ]},
@@ -45,13 +48,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { router.push('/giris'); return }
-      // Rol kontrolü
-      const { data: profile } = await supabase.from('site_users').select('role').eq('id', data.session.user.id).single()
-      if (!profile || profile.role !== 'admin') {
+      // Rol kontrolü - SECURITY DEFINER RPC ile RLS bypass
+      const { data: role, error: roleError } = await supabase.rpc('get_my_role')
+      if (roleError || role !== 'admin') {
         router.push('/')
         return
       }
       setUser(data.session.user)
+      document.body.classList.add('admin-body')
       setYetkiKontrol(false)
     })
   }, [router])
