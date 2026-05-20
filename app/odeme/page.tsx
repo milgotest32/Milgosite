@@ -34,7 +34,6 @@ export default function OdemePage() {
       setBolgeAdi(b || '')
     }
     window.addEventListener('milgo_konum_degisti', bolgeGuncelle)
-    return () => window.removeEventListener('milgo_konum_degisti', bolgeGuncelle)
 
     supabase.auth.getSession().then(async ({ data }) => {
       const u = data.session?.user
@@ -65,6 +64,7 @@ export default function OdemePage() {
         }
       }
     })
+    return () => window.removeEventListener('milgo_konum_degisti', bolgeGuncelle)
   }, [])
 
   const siparisBasarili = useRef(false)
