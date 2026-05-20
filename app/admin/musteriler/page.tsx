@@ -8,6 +8,21 @@ export default function MusterilerPage() {
   const [loading, setLoading] = useState(true)
   const [arama, setArama] = useState('')
   const [filtre, setFiltre] = useState('hepsi')
+  const [syncing, setSyncing] = useState(false)
+
+  const shopifySync = async () => {
+    setSyncing(true)
+    try {
+      const r = await fetch('/api/admin/shopify-sync', { method: 'POST' })
+      const d = await r.json()
+      if (d.success) {
+        alert(`✅ ${d.synced} müşteri Shopify'dan aktarıldı!`)
+        // Listeyi yenile
+        fetch('/api/admin/users').then(r=>r.json()).then(d=>setMusteriler(d.data||[]))
+      }
+    } catch { alert('Hata oluştu') }
+    setSyncing(false)
+  }
 
   useEffect(() => {
     fetch('/api/admin/users')
