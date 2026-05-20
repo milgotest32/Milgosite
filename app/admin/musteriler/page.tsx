@@ -10,14 +10,22 @@ export default function MusterilerPage() {
   const [filtre, setFiltre] = useState('hepsi')
   const [syncing, setSyncing] = useState(false)
 
-  const shopifySync = async () => {
+  const shopifySync = async (tip: string) => {
     setSyncing(true)
     try {
-      const r = await fetch('/api/admin/shopify-sync', { method: 'POST' })
+      const r = await fetch('/api/admin/shopify-sync', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ tip })
+      })
       const d = await r.json()
       if (d.success) {
-        alert(`✅ ${d.synced} müşteri Shopify'dan aktarıldı!`)
-        // Listeyi yenile
+        const msg = tip === 'musteri'
+          ? `✅ ${d.musteriSynced} müşteri aktarıldı!`
+          : tip === 'siparis'
+          ? `✅ ${d.siparisSynced} sipariş, ${d.kalemSynced} kalem aktarıldı!`
+          : `✅ ${d.musteriSynced} müşteri, ${d.siparisSynced} sipariş aktarıldı!`
+        alert(msg)
         fetch('/api/admin/users').then(r=>r.json()).then(d=>setMusteriler(d.data||[]))
       }
     } catch { alert('Hata oluştu') }
