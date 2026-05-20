@@ -55,17 +55,22 @@ export default function KonumModal() {
   useEffect(() => {
     const kayitli = localStorage.getItem('milgo_konum')
     const hizmet = localStorage.getItem('milgo_hizmet')
-    // Konum var ama hizmet durumu belirsizse modal'ı yeniden göster
-    if (kayitli && hizmet !== null) { setKonum(kayitli); return }
+
+    // Dışarıdan tetiklenebilir - her zaman dinle (return'den önce)
+    const dis = () => { setDurum('bekliyor'); setSecilenIlce(''); setGoster(true) }
+    window.addEventListener('milgo_konum_modal_ac', dis)
+
+    // Konum zaten varsa modal'ı otomatik açma
+    if (kayitli && hizmet !== null) {
+      setKonum(kayitli)
+      return () => window.removeEventListener('milgo_konum_modal_ac', dis)
+    }
+
     // Hizmet bilgisi yoksa temizle ve modal göster
     localStorage.removeItem('milgo_konum')
     localStorage.removeItem('milgo_bolge_id')
     localStorage.removeItem('milgo_bolge_ad')
     const t = setTimeout(() => setGoster(true), 1500)
-
-    // Dışarıdan tetiklenebilir - Navbar'dan veya herhangi bir yerden
-    const dis = () => { setDurum('bekliyor'); setGoster(true) }
-    window.addEventListener('milgo_konum_modal_ac', dis)
     return () => { clearTimeout(t); window.removeEventListener('milgo_konum_modal_ac', dis) }
   }, [])
 
