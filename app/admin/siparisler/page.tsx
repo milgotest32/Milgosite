@@ -14,6 +14,11 @@ const DURUM_RENK: Record<string, any> = {
   iptal:     { bg: '#FEF2F2', tx: '#EF4444' },
 }
 
+const DURUM_AD: Record<string, string> = {
+  bekliyor: 'Bekliyor', onaylandi: 'Onaylandı', kargoda: 'Kargoda',
+  kuryede: 'Kuryede', teslim: 'Teslim Edildi', iptal: 'İptal',
+}
+
 export default function SiparislerPage() {
   const [siparisler, setSiparisler] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -102,7 +107,7 @@ export default function SiparislerPage() {
                   </td>
                   <td style={{ padding: '12px 16px' }}>
                     <span style={{ fontSize: '11px', fontWeight: 700, padding: '3px 10px', borderRadius: '50px', background: d.bg, color: d.tx }}>
-                      {s.durum || 'bekliyor'}
+                      {DURUM_AD[s.durum] || s.durum || 'Bekliyor'}
                     </span>
                   </td>
                   <td style={{ padding: '12px 16px', fontSize: '12px', color: '#6B7280' }}>

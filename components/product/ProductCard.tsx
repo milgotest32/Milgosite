@@ -53,10 +53,12 @@ export default function ProductCard({ urun }: { urun: Urun }) {
           {urun.name}
         </h3>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '2px', marginBottom: '12px' }}>
-          {[1,2,3,4,5].map(s => <Star key={s} size={11} fill="#FBBF24" style={{ color: '#FBBF24' }} />)}
-          <span style={{ fontSize: '10px', color: '#7A6070', marginLeft: '4px' }}>(48)</span>
-        </div>
+        {(urun.ortalama_puan || urun.yorum_sayisi) ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2px', marginBottom: '12px' }}>
+            {[1,2,3,4,5].map(s => <Star key={s} size={11} fill="#FBBF24" style={{ color: '#FBBF24' }} />)}
+            <span style={{ fontSize: '10px', color: '#7A6070', marginLeft: '4px' }}>({urun.yorum_sayisi || 0})</span>
+          </div>
+        ) : null}
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>

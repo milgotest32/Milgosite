@@ -50,7 +50,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       if (!data.session) { router.push('/giris'); return }
       // Rol kontrolü - SECURITY DEFINER RPC ile RLS bypass
       const { data: role, error: roleError } = await supabase.rpc('get_my_role')
-      if (roleError || role !== 'admin') {
+      if (roleError || (role !== 'admin' && role !== 'superadmin')) {
         router.push('/')
         return
       }

@@ -134,12 +134,8 @@ export default function KonumModal() {
   }
 
   const kapat = () => {
-    // Kapatınca hizmet bilgisini silme - konum belirlenmemiş sayılır
-    // Ürünler sayfası bolge_id olmadığında ürün göstermez
-    localStorage.removeItem('milgo_konum')
-    localStorage.removeItem('milgo_hizmet')
-    localStorage.removeItem('milgo_bolge_id')
-    localStorage.removeItem('milgo_bolge_ad')
+    // Modal kapatıldığında konum zaten seçilmediyse state boş kalır
+    // Daha önce seçilmiş bir konum varsa dokunma
     setGoster(false)
   }
 

@@ -26,6 +26,16 @@ export default function OdemePage() {
   const [seciliAdresId, setSeciliAdresId] = useState<string|null>(null)
 
   useEffect(() => {
+    // localStorage'dan bölge adını oku
+    const bad = localStorage.getItem('milgo_bolge_ad')
+    if (bad) setBolgeAdi(bad)
+    const bolgeGuncelle = () => {
+      const b = localStorage.getItem('milgo_bolge_ad')
+      setBolgeAdi(b || '')
+    }
+    window.addEventListener('milgo_konum_degisti', bolgeGuncelle)
+    return () => window.removeEventListener('milgo_konum_degisti', bolgeGuncelle)
+
     supabase.auth.getSession().then(async ({ data }) => {
       const u = data.session?.user
       setUser(u)

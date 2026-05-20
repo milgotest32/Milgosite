@@ -43,6 +43,7 @@ export default function KategorilerPage() {
     })
     toast.success('Kategori eklendi')
     setYeniForm({goster:false,name:'',slug:'',aciklama:'',sira:'0',seo_title:'',seo_description:'',seo_keywords:''})
+    setSekme('genel')
     yukle()
   }
 
@@ -59,6 +60,7 @@ export default function KategorilerPage() {
     }).eq('id',duzenlenen.id)
     toast.success('Kategori güncellendi')
     setDuzenlenen(null)
+    setSekme('genel')
     yukle()
   }
 
@@ -166,7 +168,7 @@ export default function KategorilerPage() {
         <div style={{background:'#fff',borderRadius:'16px',border:'2px solid #F4A7B9',padding:'24px',marginBottom:'16px'}}>
           <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'20px'}}>
             <h2 style={{fontSize:'15px',fontWeight:700,color:'#1C1B2E',margin:0}}>Yeni Kategori</h2>
-            <button onClick={()=>setYeniForm({...yeniForm,goster:false})} style={{background:'none',border:'none',cursor:'pointer',color:'#9CA3AF'}}><X size={18}/></button>
+            <button onClick={()=>{setYeniForm({...yeniForm,goster:false});setSekme('genel')}} style={{background:'none',border:'none',cursor:'pointer',color:'#9CA3AF'}}><X size={18}/></button>
           </div>
           <FormIcerik data={yeniForm} setData={(v)=>setYeniForm({...yeniForm,...v})}/>
           <div style={{display:'flex',gap:'8px',justifyContent:'flex-end',marginTop:'20px'}}>
@@ -183,7 +185,7 @@ export default function KategorilerPage() {
         <div style={{background:'#fff',borderRadius:'16px',border:'2px solid #3B9FCC',padding:'24px',marginBottom:'16px'}}>
           <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'20px'}}>
             <h2 style={{fontSize:'15px',fontWeight:700,color:'#1C1B2E',margin:0}}>✏️ {duzenlenen.name} — Düzenle</h2>
-            <button onClick={()=>setDuzenlenen(null)} style={{background:'none',border:'none',cursor:'pointer',color:'#9CA3AF'}}><X size={18}/></button>
+            <button onClick={()=>{setDuzenlenen(null);setSekme('genel')}} style={{background:'none',border:'none',cursor:'pointer',color:'#9CA3AF'}}><X size={18}/></button>
           </div>
           <FormIcerik data={duzenlenen} setData={setDuzenlenen}/>
           <div style={{display:'flex',gap:'8px',justifyContent:'flex-end',marginTop:'20px'}}>

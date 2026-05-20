@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useSepet } from '@/lib/sepet'
 import { supabase } from '@/lib/supabase/client'
 import type { Urun } from '@/lib/types'
-import { ShoppingBag, Heart, Star, Truck, ShieldCheck, Plus, Minus, Check, ChevronRight, Package } from 'lucide-react'
+import { ShoppingBag, Heart, Star, Truck, ShieldCheck, Plus, Minus, Check, ChevronRight, Package, MapPin } from 'lucide-react'
 import ProductCard from '@/components/product/ProductCard'
 import toast from 'react-hot-toast'
 
@@ -17,6 +17,7 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
   const [favori, setFavori] = useState(false)
   const [yorumlar, setYorumlar] = useState<any[]>([])
   const [aktifTab, setAktifTab] = useState<'aciklama'|'ozellikler'|'yorumlar'>('aciklama')
+  const [bolgdeVar, setBolgdeVar] = useState<boolean | null>(null)
   const ekle = useSepet(s => s.ekle)
 
   const gorseller = urun.site_product_images || []
@@ -25,9 +26,26 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
   const ozellikler = urun.ozellikler && typeof urun.ozellikler === 'object' ? urun.ozellikler : {}
 
   useEffect(() => {
-    supabase.from('site_yorumlar').select('*').eq('product_id', urun.id).eq('onaylı', true).order('created_at', { ascending: false })
+    supabase.from('site_yorumlar').select('*').eq('product_id', urun.id).eq('onayli', true).order('created_at', { ascending: false })
       .then(({ data }: any) => setYorumlar(data || []))
   }, [urun.id])
+
+  useEffect(() => {
+    const kontrol = () => {
+      const bolgeId = localStorage.getItem('milgo_bolge_id')
+      const hizmet = localStorage.getItem('milgo_hizmet')
+      if (hizmet === 'false') { setBolgdeVar(false); return }
+      if (!bolgeId) { setBolgdeVar(null); return }
+      if ((urun as any).bolge_ids && Array.isArray((urun as any).bolge_ids)) {
+        setBolgdeVar((urun as any).bolge_ids.includes(bolgeId))
+      } else {
+        setBolgdeVar(true) // bolge_ids yoksa göster
+      }
+    }
+    kontrol()
+    window.addEventListener('milgo_konum_degisti', kontrol)
+    return () => window.removeEventListener('milgo_konum_degisti', kontrol)
+  }, [urun])
 
   const sepeteEkle = () => {
     if (urun.stok_takip && urun.stok <= 0) { toast.error('Stok tükendi'); return }
@@ -130,10 +148,16 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
                 <button onClick={() => setAdet(adet + 1)} style={{ width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'none', border: 'none', cursor: 'none', color: '#1A0A12' }}><Plus size={15} /></button>
               </div>
 
-              <button onClick={sepeteEkle} disabled={urun.stok_takip && urun.stok <= 0}
-                style={{ flex: 1, minWidth: '180px', height: '44px', borderRadius: '50px', border: 'none', fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '13px', fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'none', transition: 'all .25s', background: eklendi ? '#22c55e' : '#1A0A12' }}>
-                {eklendi ? <><Check size={15} />Eklendi!</> : <><ShoppingBag size={15} />Sepete Ekle · ₺{(urun.fiyat * adet).toFixed(2)}</>}
-              </button>
+              {bolgdeVar === false ? (
+                <div style={{ flex: 1, minWidth: '180px', height: '44px', borderRadius: '50px', background: '#FEF2F2', border: '1px solid #FECACA', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontSize: '13px', fontWeight: 700, color: '#EF4444' }}>
+                  <MapPin size={15} />Bu bölgede mevcut değil
+                </div>
+              ) : (
+                <button onClick={sepeteEkle} disabled={(urun.stok_takip && urun.stok <= 0) || bolgdeVar === false}
+                  style={{ flex: 1, minWidth: '180px', height: '44px', borderRadius: '50px', border: 'none', fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '13px', fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'none', transition: 'all .25s', background: eklendi ? '#22c55e' : '#1A0A12' }}>
+                  {eklendi ? <><Check size={15} />Eklendi!</> : <><ShoppingBag size={15} />Sepete Ekle · ₺{(urun.fiyat * adet).toFixed(2)}</>}
+                </button>
+              )}
 
               <button onClick={() => setFavori(!favori)}
                 style={{ width: '44px', height: '44px', borderRadius: '14px', border: `1.5px solid ${favori ? '#E8567A' : 'rgba(26,10,18,.1)'}`, background: favori ? '#FEE8EF' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'none', transition: 'all .2s', flexShrink: 0 }}>

@@ -7,10 +7,7 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     return [
-      {
-        source: '/sitemap.xml',
-        destination: '/sitemap.xml',
-      },
+      // robots.txt → API route (sitemap.xml için rewrite YOK - route.ts kendisi halleder)
       {
         source: '/robots.txt',
         destination: '/api/robots',

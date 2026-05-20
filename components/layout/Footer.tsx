@@ -11,7 +11,7 @@ const LINKS = [
       ['Peynir', '/kategoriler/peynir'],
       ['Tereyağı', '/kategoriler/tereyagi'],
       
-      ['İndirimdekiler', '/indirimler'],
+      ['Tüm Ürünler', '/urunler'],
     ],
   },
   {
