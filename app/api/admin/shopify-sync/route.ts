@@ -207,3 +207,4 @@ export async function GET() {
   } catch (e: any) {
     return NextResponse.json({ ok: false, error: e.message, store: SHOPIFY_STORE, token_set: true })
   }
+}
