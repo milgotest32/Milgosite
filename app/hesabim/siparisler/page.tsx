@@ -3,17 +3,18 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
-import { ArrowLeft, Package } from 'lucide-react'
+import { ArrowLeft, Package, ChevronRight } from 'lucide-react'
 export const dynamic = 'force-dynamic'
+ 
 export default function SiparislerimPage() {
   const [siparisler, setSiparisler] = useState<any[]>([])
   const [yukleniyor, setYukleniyor] = useState(true)
   const router = useRouter()
+ 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { router.push('/giris'); return }
       const user = data.session.user
-      // musteri_id VEYA email ile eşleşen siparişleri getir
       const { data: sip } = await supabase
         .from('site_siparisler')
         .select('*, site_siparis_kalemleri(*)')
@@ -23,61 +24,94 @@ export default function SiparislerimPage() {
       setYukleniyor(false)
     })
   }, [router])
-  const DURUM: Record<string, string> = { bekliyor: 'Hazırlanıyor', onaylandi: 'Onaylandı', kargoda: 'Kuryede', kuryede: 'Kuryede', teslim: 'Teslim Edildi', iptal: 'İptal' }
-  const DURUM_RENK: Record<string, { bg: string; color: string }> = {
-    bekliyor:   { bg: '#FEF3C7', color: '#F59E0B' },
-    onaylandi:  { bg: '#EBF7FC', color: '#3B9FCC' },
-    kargoda:    { bg: '#F5F3FF', color: '#8B5CF6' },
-    kuryede:    { bg: '#F5F3FF', color: '#8B5CF6' },
-    teslim:     { bg: '#F0FDF4', color: '#22C55E' },
-    iptal:      { bg: '#FEF2F2', color: '#EF4444' },
+ 
+  const DURUM: Record<string, string> = {
+    bekliyor:  'Hazırlanıyor',
+    onaylandi: 'Onaylandı',
+    kargoda:   'Kuryede',
+    kuryede:   'Kuryede',
+    teslim:    'Teslim Edildi',
+    iptal:     'İptal',
   }
+  const DURUM_RENK: Record<string, { bg: string; color: string }> = {
+    bekliyor:  { bg: '#FEF3C7', color: '#D97706' },
+    onaylandi: { bg: '#EBF7FC', color: '#3B9FCC' },
+    kargoda:   { bg: '#F5F3FF', color: '#8B5CF6' },
+    kuryede:   { bg: '#F5F3FF', color: '#8B5CF6' },
+    teslim:    { bg: '#F0FDF4', color: '#16A34A' },
+    iptal:     { bg: '#FEF2F2', color: '#EF4444' },
+  }
+ 
   if (yukleniyor) return (
-    <div className="min-h-screen bg-lav flex items-center justify-center">
-      <div className="w-10 h-10 rounded-full border-2 border-pembe-koy border-t-transparent animate-spin" />
+    <div style={{ minHeight: '100vh', background: '#F8F5FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ width: 40, height: 40, borderRadius: '50%', border: '3px solid #E8567A', borderTopColor: 'transparent', animation: 'spin 0.8s linear infinite' }} />
+      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </div>
   )
+ 
   return (
-    <div className="min-h-screen bg-lav py-10 px-4">
-      <div className="max-w-2xl mx-auto">
-        <Link href="/hesabim" className="flex items-center gap-2 text-[13px] text-metin-2 hover:text-pembe-koy mb-6 transition-colors">
+    <div style={{ minHeight: '100vh', background: '#F8F5FF', padding: '40px 16px' }}>
+      <div style={{ maxWidth: 680, margin: '0 auto' }}>
+ 
+        {/* Geri butonu */}
+        <Link href="/hesabim" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#9CA3AF', textDecoration: 'none', marginBottom: 24, transition: 'color .2s' }}>
           <ArrowLeft size={14} /> Hesabıma Dön
         </Link>
-        <h1 className="font-display text-2xl text-metin mb-6">Siparişlerim</h1>
+ 
+        {/* Başlık */}
+        <h1 style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: 32, fontWeight: 600, color: '#1A0A12', marginBottom: 24 }}>
+          Siparişlerim
+        </h1>
+ 
         {siparisler.length === 0 ? (
-          <div className="card p-12 text-center">
-            <Package size={48} className="text-sinir mx-auto mb-4" />
-            <p className="text-[15px] font-semibold text-metin mb-2">Henüz sipariş yok</p>
-            <p className="text-[13px] text-metin-2 mb-6">İlk siparişinizi vermek ister misiniz?</p>
-            <Link href="/urunler" className="btn-primary px-8 py-3 inline-block">Alışverişe Başla</Link>
+          <div style={{ background: '#fff', borderRadius: 20, padding: '64px 24px', textAlign: 'center', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
+            <Package size={48} color="#D1C4D8" style={{ margin: '0 auto 16px' }} />
+            <p style={{ fontSize: 16, fontWeight: 700, color: '#1A0A12', marginBottom: 8 }}>Henüz sipariş yok</p>
+            <p style={{ fontSize: 13, color: '#9CA3AF', marginBottom: 24 }}>İlk siparişinizi vermek ister misiniz?</p>
+            <Link href="/urunler" style={{ background: '#E8567A', color: '#fff', padding: '12px 32px', borderRadius: 50, fontSize: 14, fontWeight: 700, textDecoration: 'none', display: 'inline-block' }}>
+              Alışverişe Başla
+            </Link>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {siparisler.map(s => {
               const durum = s.durum || 'bekliyor'
               const renk = DURUM_RENK[durum] || { bg: '#F8F7FC', color: '#9CA3AF' }
+              const kalemSayisi = Array.isArray(s.site_siparis_kalemleri) ? s.site_siparis_kalemleri.length : 0
+              const odemeIkon = s.odeme_yontemi === 'kapida' ? '🚪 Kapıda' : s.odeme_yontemi === 'havale' ? '🏦 Havale' : '💳 Kart'
+ 
               return (
-                <div key={s.id} className="card p-5">
-                  <div className="flex items-start justify-between mb-3">
+                <div key={s.id} style={{ background: '#fff', borderRadius: 18, padding: '20px 22px', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', border: '1px solid rgba(0,0,0,0.04)' }}>
+ 
+                  {/* Üst satır */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
                     <div>
-                      <div className="text-[12px] text-metin-2">Sipariş No</div>
-                      <div className="text-[13px] font-semibold text-metin font-mono">#{s.siparis_no}</div>
+                      <div style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 2 }}>Sipariş No</div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: '#1A0A12', fontFamily: 'monospace' }}>#{s.siparis_no}</div>
                     </div>
-                    <span style={{ background: renk.bg, color: renk.color, fontSize: '11px', fontWeight: 700, padding: '3px 10px', borderRadius: '50px' }}>
+                    <span style={{ background: renk.bg, color: renk.color, fontSize: 11, fontWeight: 700, padding: '4px 12px', borderRadius: 50 }}>
                       {DURUM[durum] || durum}
                     </span>
                   </div>
-                  <div className="text-[12px] text-metin-2 mb-3">
+ 
+                  {/* Tarih */}
+                  <div style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 14 }}>
                     {new Date(s.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}
                   </div>
-                  <div className="border-t border-sinir pt-3 flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                      <span className="text-[13px] text-metin-2">{s.site_siparis_kalemleri?.length || 0} ürün</span>
-                      <span style={{ fontSize: '11px', color: '#6B7280', background: '#F8F7FC', padding: '2px 8px', borderRadius: '6px' }}>
-                        {s.odeme_yontemi === 'kapida' ? '🚪 Kapıda' : s.odeme_yontemi === 'havale' ? '🏦 Havale' : '💳 Kart'}
+ 
+                  {/* Alt satır */}
+                  <div style={{ borderTop: '1px solid #F3F4F6', paddingTop: 14, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ fontSize: 13, color: '#6B7280' }}>
+                        {kalemSayisi > 0 ? `${kalemSayisi} ürün` : 'Sipariş'}
+                      </span>
+                      <span style={{ fontSize: 11, color: '#6B7280', background: '#F8F7FC', padding: '3px 9px', borderRadius: 8 }}>
+                        {odemeIkon}
                       </span>
                     </div>
-                    <span className="text-[15px] font-bold text-metin">₺{s.toplam?.toFixed(2)}</span>
+                    <span style={{ fontSize: 16, fontWeight: 800, color: '#1A0A12' }}>
+                      ₺{s.toplam?.toFixed(2)}
+                    </span>
                   </div>
                 </div>
               )
@@ -88,3 +122,4 @@ export default function SiparislerimPage() {
     </div>
   )
 }
+ 
