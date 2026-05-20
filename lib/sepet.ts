@@ -55,7 +55,12 @@ export const useSepet = create<SepetStore>()(
         return t + fiyat * i.adet
       }, 0),
 
-      kargoUcreti: () => get().araToplam() >= 500 ? 0 : 49.90,
+      kargoUcreti: () => {
+        // Kargo ayarlarını localStorage'dan oku (ayarlar sayfasında güncellenir)
+        const standart = parseFloat(localStorage.getItem('milgo_kargo_standart') || '49.90') || 49.90
+        const limit = parseFloat(localStorage.getItem('milgo_kargo_limit') || '500') || 500
+        return get().araToplam() >= limit ? 0 : standart
+      },
 
       genelToplam: () => get().araToplam() + get().kargoUcreti() - get().indirim,
 

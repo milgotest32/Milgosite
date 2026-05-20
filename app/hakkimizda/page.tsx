@@ -31,7 +31,7 @@ export default async function HakkimizdaPage() {
   const rozetler = [
     { emoji: '🇪🇺', label: 'AB Onaylı' },
     { emoji: '✅', label: 'Hastalıklardan Ari' },
-    { emoji: '🌿', label: '%100 Doğal' },
+    { emoji: '🌿', label: 'Doğal' },
     { emoji: '🐄', label: '10.500 Büyükbaş' },
     { emoji: '🏡', label: '24.000 Dekar' },
     { emoji: '🥛', label: '400 Ton/Gün Yem' },

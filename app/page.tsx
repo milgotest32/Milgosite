@@ -66,7 +66,7 @@ export default function AnaSayfa() {
             </h1>
 
             <p style={{ fontSize: '15px', lineHeight: 1.8, color: '#7A6070', maxWidth: '380px', marginBottom: '32px' }}>
-              ATASANCAK Çiftliği'nden günlük toplanan çiğ süt, geleneksel yöntemlerle hazırlanan peynir ve tereyağı. %100 doğal, katkısız.
+              ATASANCAK Çiftliği'nden günlük toplanan çiğ süt, geleneksel yöntemlerle hazırlanan peynir ve tereyağı. Doğal, katkısız.
             </p>
 
             <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '40px' }}>
@@ -75,7 +75,7 @@ export default function AnaSayfa() {
             </div>
 
             <div style={{ display: 'flex', gap: '28px', paddingTop: '24px', borderTop: '1px solid rgba(26,10,18,.08)', flexWrap: 'wrap' }}>
-              {[['10.5K', 'Büyükbaş'], ['%100', 'Katkısız'], ['AB', 'Onaylı']].map(([n, l]) => (
+              {[['10.5K', 'Büyükbaş'], ['✓', 'Katkısız'], ['AB', 'Onaylı']].map(([n, l]) => (
                 <div key={l}>
                   <div style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '32px', color: '#E8567A', lineHeight: 1 }}>{n}</div>
                   <div style={{ fontSize: '11px', color: '#7A6070', marginTop: '4px', fontWeight: 500 }}>{l}</div>

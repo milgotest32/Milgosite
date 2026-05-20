@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useSepet } from '@/lib/sepet'
 import { supabase } from '@/lib/supabase/client'
 import type { Urun } from '@/lib/types'
-import { ShoppingBag, Heart, Star, Truck, ShieldCheck, RefreshCw, Plus, Minus, Check, ChevronRight, Package } from 'lucide-react'
+import { ShoppingBag, Heart, Star, Truck, ShieldCheck, Plus, Minus, Check, ChevronRight, Package } from 'lucide-react'
 import ProductCard from '@/components/product/ProductCard'
 import toast from 'react-hot-toast'
 
@@ -117,7 +117,7 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
 
             {/* Sertifikalar */}
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '24px' }}>
-              {['🇪🇺 AB Onaylı', '🌿 %100 Doğal', '✓ Katkısız'].map(s => (
+              {['🇪🇺 AB Onaylı', '🌿 Doğal', '✓ Katkısız'].map(s => (
                 <span key={s} style={{ background: 'rgba(26,10,18,.05)', color: '#1A0A12', fontSize: '12px', fontWeight: 600, padding: '6px 14px', borderRadius: '50px', border: '1px solid rgba(26,10,18,.08)' }}>{s}</span>
               ))}
             </div>
@@ -166,11 +166,10 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
               <p style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '.2em', textTransform: 'uppercase', color: '#7A6070', marginBottom: '12px' }}>Teslimat & İade</p>
               {[
                 { icon: <Truck size={13} />, t: urun.site_kategoriler?.slug === 'cig-sut' || urun.name?.toLowerCase().includes('çiğ süt') ? 'Cuma & Cumartesi teslimat' : 'İstanbul içi aynı gün teslimat' },
-                { icon: <RefreshCw size={13} />, t: '24 saat içinde iade kabul edilir' },
                 { icon: <ShieldCheck size={13} />, t: 'Soğuk zincir ile güvenli taşıma' },
                 { icon: <Package size={13} />, t: 'Özel soğutucu ambalajla gönderim' },
               ].map((item, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: '#7A6070', marginBottom: i < 3 ? '8px' : 0 }}>
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: '#7A6070', marginBottom: i < 2 ? '8px' : 0 }}>
                   <span style={{ color: '#E8567A', flexShrink: 0 }}>{item.icon}</span>{item.t}
                 </div>
               ))}

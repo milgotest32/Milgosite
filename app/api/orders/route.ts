@@ -41,7 +41,11 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const db = createServerClient()
-  const { items, adres, kupon_kod, musteri_id, misafir_email, notlar, odeme_yontemi, bolge_adi } = await req.json()
+  const body = await req.json()
+  const { items, adres, kupon_kod, notlar, odeme_yontemi, bolge_adi } = body
+  // musteri_id must be null (not undefined/empty string) for guest orders to avoid FK constraint violation
+  const musteri_id: string | null = body.musteri_id || null
+  const misafir_email: string | null = body.misafir_email || null
 
   // Fiyatları DB'den doğrula - client'tan gelen fiyata güvenme
   let ara_toplam = 0
@@ -54,7 +58,19 @@ export async function POST(req: NextRequest) {
     }
     ara_toplam += (item.fiyat || 0) * item.adet
   }
-  const kargo_ucreti = ara_toplam >= 500 ? 0 : 49.90
+  // Kurye ücretini sistem ayarlarından oku
+  let standart_kargo = 49.90
+  let ucretsiz_limit = 500
+  try {
+    const { data: kargoAyar } = await db.from('site_ayarlar').select('anahtar,deger').eq('grup','kargo')
+    if (kargoAyar) {
+      const kargoMap: Record<string, string> = {}
+      kargoAyar.forEach((r: any) => { kargoMap[r.anahtar] = r.deger })
+      if (kargoMap.standart_kargo_ucreti) standart_kargo = parseFloat(kargoMap.standart_kargo_ucreti) || 49.90
+      if (kargoMap.ucretsiz_kargo_tutari) ucretsiz_limit = parseFloat(kargoMap.ucretsiz_kargo_tutari) || 500
+    }
+  } catch {}
+  const kargo_ucreti = ara_toplam >= ucretsiz_limit ? 0 : standart_kargo
 
   // İndirimi sunucuda hesapla - client'tan gelen değere güvenme
   let indirim = 0

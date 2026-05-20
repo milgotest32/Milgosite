@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
-import { ArrowLeft, Save, X, Plus, MapPin } from 'lucide-react'
+import { ArrowLeft, Save, X, Plus, MapPin, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 export const dynamic = 'force-dynamic'
 
@@ -17,6 +17,7 @@ export default function YeniUrunPage() {
   const [bolgeler, setBolgeler] = useState<any[]>([])
   const [gorseller, setGorseller] = useState<string[]>([''])
   const [secilenBolgeler, setSecilenBolgeler] = useState<string[]>([])
+  const [ozellikler, setOzellikler] = useState<{key: string; value: string}[]>([])
   const [form, setForm] = useState({
     name:'', slug:'', aciklama:'', icerik:'', kategori_id:'', marka_id:'',
     durum:'active', fiyat:'', eski_fiyat:'', sku:'', barkod:'',
@@ -36,9 +37,18 @@ export default function YeniUrunPage() {
     setSecilenBolgeler(prev => prev.includes(id) ? prev.filter(b=>b!==id) : [...prev, id])
   }
 
+  const ozellikEkle = () => setOzellikler(prev => [...prev, { key: '', value: '' }])
+  const ozellikSil = (i: number) => setOzellikler(prev => prev.filter((_, idx) => idx !== i))
+  const ozellikSet = (i: number, field: 'key'|'value', val: string) =>
+    setOzellikler(prev => prev.map((o, idx) => idx === i ? { ...o, [field]: val } : o))
+
   const kaydet = async () => {
     if (!form.name || !form.fiyat) { toast.error('Ad ve fiyat zorunludur'); return }
     setLoading(true)
+    const ozelliklerObj = ozellikler.reduce((acc, { key, value }) => {
+      if (key.trim()) acc[key.trim()] = value
+      return acc
+    }, {} as Record<string, string>)
     const { data: urun, error } = await supabase.from('site_products').insert({
       name: form.name, slug: form.slug || slugify(form.name),
       aciklama: form.aciklama, icerik: form.icerik,
@@ -53,7 +63,8 @@ export default function YeniUrunPage() {
       seo_description: form.seo_description || form.aciklama,
       seo_keywords: form.seo_keywords,
       etiketler: form.etiketler ? form.etiketler.split(',').map(t=>t.trim()) : [],
-      bolge_ids: secilenBolgeler
+      bolge_ids: secilenBolgeler,
+      ozellikler: Object.keys(ozelliklerObj).length > 0 ? ozelliklerObj : null,
     }).select().single()
 
     if (error) { toast.error(error.message); setLoading(false); return }
@@ -140,6 +151,35 @@ export default function YeniUrunPage() {
             <button onClick={()=>setGorseller([...gorseller,''])} style={{display:'flex',alignItems:'center',gap:'6px',background:'#F8F7FC',border:'1px dashed #F0ECF5',borderRadius:'10px',padding:'10px 16px',fontSize:'13px',color:'#6B7280',cursor:'pointer',fontFamily:'inherit',width:'100%',justifyContent:'center'}}>
               <Plus size={14}/>Görsel Ekle
             </button>
+          </div>
+
+          <div style={{background:'#fff',borderRadius:'16px',border:'1px solid #F0ECF5',padding:'24px'}}>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'16px'}}>
+              <h2 style={{fontSize:'15px',fontWeight:700,color:'#1C1B2E'}}>Ürün Özellikleri</h2>
+              <button onClick={ozellikEkle} style={{display:'flex',alignItems:'center',gap:'4px',background:'linear-gradient(135deg,#E07090,#3B9FCC)',color:'#fff',border:'none',borderRadius:'8px',padding:'5px 12px',fontSize:'12px',fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>
+                <Plus size={12}/> Ekle
+              </button>
+            </div>
+            {ozellikler.length === 0 ? (
+              <p style={{fontSize:'12px',color:'#9CA3AF',fontStyle:'italic'}}>
+                Özellik yok. Ekle butonuna tıklayın.<br/>
+                <span style={{fontSize:'11px'}}>Ör: Yağ Oranı → %4.5 · Hacim → 1 Litre</span>
+              </p>
+            ) : (
+              <div style={{display:'flex',flexDirection:'column',gap:'8px'}}>
+                {ozellikler.map((o, i) => (
+                  <div key={i} style={{display:'grid',gridTemplateColumns:'1fr 1fr auto',gap:'8px',alignItems:'center'}}>
+                    <input placeholder="Özellik (ör: Yağ Oranı)" value={o.key} onChange={e=>ozellikSet(i,'key',e.target.value)}
+                      style={{background:'#F8F7FC',border:'1px solid #F0ECF5',borderRadius:'8px',padding:'8px 12px',fontSize:'13px',color:'#1C1B2E',outline:'none',fontFamily:'inherit'}}/>
+                    <input placeholder="Değer (ör: %4.5)" value={o.value} onChange={e=>ozellikSet(i,'value',e.target.value)}
+                      style={{background:'#F8F7FC',border:'1px solid #F0ECF5',borderRadius:'8px',padding:'8px 12px',fontSize:'13px',color:'#1C1B2E',outline:'none',fontFamily:'inherit'}}/>
+                    <button onClick={()=>ozellikSil(i)} style={{width:'32px',height:'32px',background:'#FEF2F2',border:'1px solid #FECACA',borderRadius:'8px',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',color:'#EF4444',flexShrink:0}}>
+                      <Trash2 size={13}/>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div style={{background:'#fff',borderRadius:'16px',border:'1px solid #F0ECF5',padding:'24px'}}>

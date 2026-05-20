@@ -25,7 +25,7 @@ export default function WhatsAppButon() {
   return (
     <a href={url} target="_blank" rel="noreferrer"
       style={{
-        position: 'fixed', bottom: '24px', right: '24px', zIndex: 999,
+        position: 'fixed', bottom: '24px', left: '24px', zIndex: 999,
         display: 'flex', alignItems: 'center', gap: '10px',
         background: '#25D366', color: '#fff',
         borderRadius: '50px', padding: '12px 20px 12px 14px',

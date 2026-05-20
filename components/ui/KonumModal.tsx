@@ -119,6 +119,7 @@ export default function KonumModal() {
       }
       setKonum(secilenIlce)
       setDurum('tamam')
+      window.dispatchEvent(new Event('milgo_konum_degisti'))
       setTimeout(() => setGoster(false), 1500)
     } catch {
       localStorage.setItem('milgo_konum', secilenIlce)
@@ -127,6 +128,7 @@ export default function KonumModal() {
       localStorage.removeItem('milgo_bolge_ad')
       setKonum(secilenIlce)
       setDurum('tamam')
+      window.dispatchEvent(new Event('milgo_konum_degisti'))
       setTimeout(() => setGoster(false), 1500)
     }
   }
