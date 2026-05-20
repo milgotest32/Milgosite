@@ -17,7 +17,7 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
   const [favori, setFavori] = useState(false)
   const [yorumlar, setYorumlar] = useState<any[]>([])
   const [aktifTab, setAktifTab] = useState<'aciklama'|'ozellikler'|'yorumlar'>('aciklama')
-  const [bolgdeVar, setBolgdeVar] = useState<boolean | null>(null)
+  const [bolgdeVar, setBolgdeVar] = useState<'var' | 'yok' | 'belirsiz'>('belirsiz')
   const ekle = useSepet(s => s.ekle)
 
   const gorseller = urun.site_product_images || []
@@ -34,12 +34,12 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
     const kontrol = () => {
       const bolgeId = localStorage.getItem('milgo_bolge_id')
       const hizmet = localStorage.getItem('milgo_hizmet')
-      if (hizmet === 'false') { setBolgdeVar(false); return }
-      if (!bolgeId) { setBolgdeVar(null); return }
+      if (hizmet === 'false') { setBolgdeVar('yok'); return }
+      if (!bolgeId) { setBolgdeVar('belirsiz'); return }
       if ((urun as any).bolge_ids && Array.isArray((urun as any).bolge_ids)) {
         setBolgdeVar((urun as any).bolge_ids.includes(bolgeId))
       } else {
-        setBolgdeVar(true) // bolge_ids yoksa göster
+        setBolgdeVar('var') // bolge_ids yoksa göster
       }
     }
     kontrol()
@@ -148,12 +148,12 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
                 <button onClick={() => setAdet(adet + 1)} style={{ width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'none', border: 'none', cursor: 'none', color: '#1A0A12' }}><Plus size={15} /></button>
               </div>
 
-              {bolgdeVar === false ? (
+              {bolgdeVar === 'yok' ? (
                 <div style={{ flex: 1, minWidth: '180px', height: '44px', borderRadius: '50px', background: '#FEF2F2', border: '1px solid #FECACA', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontSize: '13px', fontWeight: 700, color: '#EF4444' }}>
                   <MapPin size={15} />Bu bölgede mevcut değil
                 </div>
               ) : (
-                <button onClick={sepeteEkle} disabled={(urun.stok_takip && urun.stok <= 0) || bolgdeVar === false}
+                <button onClick={sepeteEkle} disabled={(urun.stok_takip && urun.stok <= 0) || bolgdeVar === 'yok'}
                   style={{ flex: 1, minWidth: '180px', height: '44px', borderRadius: '50px', border: 'none', fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '13px', fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'none', transition: 'all .25s', background: eklendi ? '#22c55e' : '#1A0A12' }}>
                   {eklendi ? <><Check size={15} />Eklendi!</> : <><ShoppingBag size={15} />Sepete Ekle · ₺{(urun.fiyat * adet).toFixed(2)}</>}
                 </button>
