@@ -2,18 +2,55 @@
 import { useState, useEffect } from 'react'
 import { MapPin, X, Check } from 'lucide-react'
 
-const ISTANBUL_BOLGELER = [
-  'Beşiktaş', 'Şişli', 'Kağıthane', 'Beyoğlu', 'Sarıyer',
-  'Kadıköy', 'Üsküdar', 'Ataşehir', 'Maltepe', 'Pendik',
-  'Bakırköy', 'Bahçelievler', 'Bağcılar', 'Gaziosmanpaşa',
-  'Fatih', 'Eyüpsultan', 'Zeytinburnu', 'Güngören',
-]
+const ISTANBUL_ILCELER: Record<string, [number, number]> = {
+  'Adalar':        [40.8761, 29.0927],
+  'Arnavutköy':    [41.1836, 28.7394],
+  'Ataşehir':      [40.9923, 29.1244],
+  'Avcılar':       [40.9798, 28.7219],
+  'Bağcılar':      [41.0378, 28.8560],
+  'Bahçelievler':  [41.0000, 28.8500],
+  'Bakırköy':      [40.9822, 28.8720],
+  'Başakşehir':    [41.0921, 28.8019],
+  'Bayrampaşa':    [41.0464, 28.9139],
+  'Beşiktaş':      [41.0422, 29.0067],
+  'Beykoz':        [41.1233, 29.0978],
+  'Beylikdüzü':    [40.9822, 28.6419],
+  'Beyoğlu':       [41.0333, 28.9771],
+  'Büyükçekmece':  [41.0203, 28.5831],
+  'Çatalca':       [41.1436, 28.4606],
+  'Çekmeköy':      [41.0436, 29.1806],
+  'Esenler':       [41.0436, 28.8736],
+  'Esenyurt':      [41.0281, 28.6728],
+  'Eyüpsultan':    [41.0478, 28.9336],
+  'Fatih':         [41.0186, 28.9397],
+  'Gaziosmanpaşa': [41.0631, 28.9119],
+  'Güngören':      [41.0197, 28.8726],
+  'Kadıköy':       [40.9927, 29.0277],
+  'Kağıthane':     [41.0782, 28.9703],
+  'Kartal':        [40.9136, 29.1886],
+  'Küçükçekmece':  [41.0008, 28.7783],
+  'Maltepe':       [40.9353, 29.1331],
+  'Pendik':        [40.8771, 29.2337],
+  'Sancaktepe':    [41.0006, 29.2294],
+  'Sarıyer':       [41.1671, 29.0570],
+  'Silivri':       [41.0736, 28.2467],
+  'Sultanbeyli':   [40.9628, 29.2694],
+  'Sultangazi':    [41.1069, 28.8697],
+  'Şile':          [41.1753, 29.6106],
+  'Şişli':         [41.0602, 28.9870],
+  'Tuzla':         [40.8167, 29.3003],
+  'Ümraniye':      [41.0161, 29.1161],
+  'Üsküdar':       [41.0231, 29.0150],
+  'Zeytinburnu':   [40.9972, 28.9008],
+}
 
 export default function KonumModal() {
   const [goster, setGoster] = useState(false)
   const [durum, setDurum] = useState<'bekliyor' | 'aliniyor' | 'manuel' | 'tamam'>('bekliyor')
   const [konum, setKonum] = useState<string | null>(null)
   const [secilenIlce, setSecilenIlce] = useState('')
+  const [hizmetliIlceler, setHizmetliIlceler] = useState<Record<string,boolean>>({})
+  const [ilceYukleniyor, setIlceYukleniyor] = useState(false)
 
   useEffect(() => {
     const kayitli = localStorage.getItem('milgo_konum')
@@ -87,23 +124,35 @@ export default function KonumModal() {
   }
 
   // İstanbul ilçe koordinatları (Nominatim'e gerek yok)
-  const ILCE_KOORDINAT: Record<string, [number, number]> = {
-    'Beşiktaş': [41.0422, 29.0067], 'Şişli': [41.0602, 28.9870],
-    'Kağıthane': [41.0782, 28.9703], 'Beyoğlu': [41.0333, 28.9771],
-    'Sarıyer': [41.1671, 29.0570], 'Kadıköy': [40.9927, 29.0277],
-    'Üsküdar': [41.0231, 29.0150], 'Ataşehir': [40.9923, 29.1244],
-    'Maltepe': [40.9353, 29.1331], 'Pendik': [40.8771, 29.2337],
-    'Bakırköy': [40.9822, 28.8720], 'Bahçelievler': [41.0000, 28.8500],
-    'Bağcılar': [41.0378, 28.8560], 'Gaziosmanpaşa': [41.0631, 28.9119],
-    'Fatih': [41.0186, 28.9397], 'Eyüpsultan': [41.0478, 28.9336],
-    'Zeytinburnu': [40.9972, 28.9008], 'Güngören': [41.0197, 28.8726],
+  // Tüm ilçelerin hizmet durumunu paralel olarak kontrol et
+  const ilceleriKontrolEt = async () => {
+    if (ilceYukleniyor || Object.keys(hizmetliIlceler).length > 0) return
+    setIlceYukleniyor(true)
+    const sonuclar: Record<string, boolean> = {}
+    await Promise.all(
+      Object.entries(ISTANBUL_ILCELER).map(async ([ilce, [lat, lng]]) => {
+        try {
+          const res = await fetch('/api/kmz', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ lat, lng })
+          })
+          const data = await res.json()
+          sonuclar[ilce] = data.hizmet === true
+        } catch {
+          sonuclar[ilce] = false
+        }
+      })
+    )
+    setHizmetliIlceler(sonuclar)
+    setIlceYukleniyor(false)
   }
 
   const manuelSec = async () => {
     if (!secilenIlce) return
     setDurum('aliniyor')
     try {
-      const coords = ILCE_KOORDINAT[secilenIlce]
+      const coords = ISTANBUL_ILCELER[secilenIlce]
       if (!coords) { localStorage.setItem('milgo_hizmet', 'false'); setDurum('tamam'); return }
       const [lat, lng] = coords
       const res = await fetch('/api/kmz', {
@@ -197,7 +246,7 @@ export default function KonumModal() {
                 <button onClick={konumAl} style={{ ...btnBase, background: '#1A0A12', color: '#fff' }}>
                   <MapPin size={16} /> Konumumu Otomatik Algıla
                 </button>
-                <button onClick={() => setDurum('manuel')} style={{ ...btnBase, background: 'rgba(26,10,18,0.06)', color: '#7A6070' }}>
+                <button onClick={() => { setDurum('manuel'); ilceleriKontrolEt() }} style={{ ...btnBase, background: 'rgba(26,10,18,0.06)', color: '#7A6070' }}>
                   İlçe Seç
                 </button>
               </div>
@@ -216,21 +265,42 @@ export default function KonumModal() {
 
             {durum === 'manuel' && (
               <div>
-                <p style={{ fontSize: '12px', color: '#7A6070', marginBottom: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em' }}>İlçenizi seçin</p>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', maxHeight: '180px', overflowY: 'auto', marginBottom: '14px' }}>
-                  {ISTANBUL_BOLGELER.map(b => (
-                    <button key={b} onClick={() => setSecilenIlce(b)} style={{
-                      padding: '9px 6px', borderRadius: '10px',
-                      border: `1.5px solid ${secilenIlce === b ? '#E8567A' : 'rgba(26,10,18,0.1)'}`,
-                      background: secilenIlce === b ? '#FEE8EF' : 'transparent',
-                      color: secilenIlce === b ? '#E8567A' : '#1A0A12',
-                      fontSize: '12px', fontWeight: secilenIlce === b ? 700 : 500,
-                      cursor: 'pointer', fontFamily: 'Nunito, sans-serif',
-                      transition: 'all .15s', WebkitTapHighlightColor: 'transparent',
-                    }}>
-                      {b}
-                    </button>
-                  ))}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                  <p style={{ fontSize: '12px', color: '#7A6070', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', margin: 0 }}>İlçenizi seçin</p>
+                  {ilceYukleniyor && <span style={{ fontSize: '11px', color: '#9CA3AF' }}>Kontrol ediliyor...</span>}
+                  {!ilceYukleniyor && Object.keys(hizmetliIlceler).length > 0 && (
+                    <span style={{ fontSize: '11px', color: '#22C55E', fontWeight: 600 }}>
+                      ✓ {Object.values(hizmetliIlceler).filter(Boolean).length} ilçede hizmet var
+                    </span>
+                  )}
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', maxHeight: '220px', overflowY: 'auto', marginBottom: '14px' }}>
+                  {Object.keys(ISTANBUL_ILCELER).sort().map(b => {
+                    const hizmetVar = hizmetliIlceler[b]
+                    const yuklendi = Object.keys(hizmetliIlceler).length > 0
+                    const secili = secilenIlce === b
+                    return (
+                      <button key={b} onClick={() => hizmetVar !== false && setSecilenIlce(b)}
+                        disabled={yuklendi && hizmetVar === false}
+                        style={{
+                          padding: '9px 4px', borderRadius: '10px',
+                          border: secili ? '1.5px solid #E8567A' : hizmetVar ? '1.5px solid #22C55E33' : '1.5px solid rgba(26,10,18,0.08)',
+                          background: secili ? '#FEE8EF' : hizmetVar ? '#F0FDF4' : 'transparent',
+                          color: secili ? '#E8567A' : yuklendi && hizmetVar === false ? '#D1C4D8' : '#1A0A12',
+                          fontSize: '11px', fontWeight: secili ? 700 : 500,
+                          cursor: yuklendi && hizmetVar === false ? 'not-allowed' : 'pointer',
+                          fontFamily: 'Nunito, sans-serif',
+                          transition: 'all .15s', WebkitTapHighlightColor: 'transparent',
+                          opacity: yuklendi && hizmetVar === false ? 0.5 : 1,
+                          position: 'relative' as const,
+                        }}>
+                        {b}
+                        {yuklendi && hizmetVar === true && !secili && (
+                          <span style={{ position: 'absolute', top: '3px', right: '3px', width: '5px', height: '5px', borderRadius: '50%', background: '#22C55E', display: 'block' }}/>
+                        )}
+                      </button>
+                    )
+                  })}
                 </div>
                 <button onClick={manuelSec} disabled={!secilenIlce} style={{ ...btnBase, background: secilenIlce ? '#1A0A12' : 'rgba(26,10,18,0.15)', color: '#fff', opacity: secilenIlce ? 1 : 0.6 }}>
                   {secilenIlce ? `${secilenIlce} → Devam Et` : 'İlçe Seçin'}
