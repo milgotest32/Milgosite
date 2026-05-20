@@ -119,7 +119,7 @@ export default function OdemePage() {
           items: items.map(i => ({
             product_id: i.product_id, variant_id: i.variant_id,
             urun_ad: i.urun.name,
-            urun_gorsel: i.urun.site_product_images?.[0]?.url,
+            urun_gorsel: i.urun.site_product_images?.find((g:any) => g.ana)?.url || i.urun.site_product_images?.[0]?.url || null,
             fiyat: i.urun.fiyat, adet: i.adet
           })),
           adres: form,
@@ -129,7 +129,7 @@ export default function OdemePage() {
           indirim,
           notlar: form.notlar,
           odeme_yontemi: odemeYontemi,
-          bolge_adi: bolgeAdi,
+          bolge_adi: bolgeAdi || localStorage.getItem('milgo_bolge_ad') || '',
         })
       })
       const { data: siparis, error } = await r.json()

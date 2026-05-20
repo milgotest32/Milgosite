@@ -35,6 +35,14 @@ export default function SiparisDetayPage() {
         .or(`musteri_id.eq.${user.id},musteri_email.eq.${user.email}`)
         .single()
       if (!sip) { router.push('/hesabim/siparisler'); return }
+      // Kalemler join ile gelmemişse ayrıca çek
+      if (!sip.site_siparis_kalemleri || sip.site_siparis_kalemleri.length === 0) {
+        const { data: kalemler } = await supabase
+          .from('site_siparis_kalemleri')
+          .select('*')
+          .eq('siparis_id', sip.id)
+        if (kalemler) sip.site_siparis_kalemleri = kalemler
+      }
       setSiparis(sip)
       setLoading(false)
     })
@@ -73,6 +81,11 @@ export default function SiparisDetayPage() {
             <Clock size={12}/>
             {new Date(siparis.created_at).toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'})}
           </p>
+          {siparis.bolge_adi && (
+            <div style={{marginTop:10,display:'inline-flex',alignItems:'center',gap:6,background:'#EBF7FC',color:'#3B9FCC',fontSize:12,fontWeight:700,padding:'5px 12px',borderRadius:50}}>
+              📍 {siparis.bolge_adi} bölgesi
+            </div>
+          )}
           {siparis.kargo_takip_no && (
             <div style={{background:'#EBF7FC',border:'1px solid #BAE6FD',borderRadius:10,padding:'10px 14px',marginTop:12,fontSize:13,color:'#1C1B2E'}}>
               📦 Kargo Takip No: <strong style={{fontFamily:'monospace'}}>{siparis.kargo_takip_no}</strong>

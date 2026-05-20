@@ -54,7 +54,17 @@ export default function SiparisDetay() {
       .select('*, site_siparis_kalemleri(*)')
       .eq('id', id as string)
       .single()
-      .then(({ data }) => {
+      .then(async ({ data }) => {
+        // Eğer kalemler boşsa veya yüklenmediyse tekrar dene
+        if (data && (!data.site_siparis_kalemleri || data.site_siparis_kalemleri.length === 0)) {
+          const { data: kalemler } = await supabase
+            .from('site_siparis_kalemleri')
+            .select('*')
+            .eq('siparis_id', data.id)
+          if (kalemler && kalemler.length > 0) {
+            data.site_siparis_kalemleri = kalemler
+          }
+        }
         setSiparis(data)
         setKargoBilgisi(data?.kargo_takip_no || '')
         setLoading(false)
@@ -89,11 +99,16 @@ export default function SiparisDetay() {
             <ArrowLeft size={16}/>
           </Link>
           <div>
-            <div style={{display:'flex',alignItems:'center',gap:'10px'}}>
+            <div style={{display:'flex',alignItems:'center',gap:'10px',flexWrap:'wrap'}}>
               <h1 style={{fontSize:'18px',fontWeight:700,color:'#1C1B2E',fontFamily:'monospace',margin:0}}>#{siparis.siparis_no}</h1>
               <span style={{background:durumRenk.bg,color:durumRenk.color,fontSize:'11px',fontWeight:700,padding:'3px 10px',borderRadius:'50px'}}>
                 {DURUM_AD[durum] || durum}
               </span>
+              {siparis.bolge_adi && (
+                <span style={{background:'#EBF7FC',color:'#3B9FCC',fontSize:'11px',fontWeight:700,padding:'3px 10px',borderRadius:'50px',display:'flex',alignItems:'center',gap:'4px'}}>
+                  📍 {siparis.bolge_adi}
+                </span>
+              )}
             </div>
             <p style={{fontSize:'12px',color:'#9CA3AF',margin:'3px 0 0'}}>
               <Clock size={11} style={{display:'inline',marginRight:'4px'}}/>

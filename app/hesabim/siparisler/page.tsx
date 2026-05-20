@@ -20,7 +20,18 @@ export default function SiparislerimPage() {
         .select('*, site_siparis_kalemleri(*)')
         .or(`musteri_id.eq.${user.id},musteri_email.eq.${user.email}`)
         .order('created_at', { ascending: false })
-      setSiparisler(sip || [])
+      // Her sipariş için kalemler boşsa ayrıca çek
+      const siparisler = sip || []
+      for (const s of siparisler) {
+        if (!s.site_siparis_kalemleri || s.site_siparis_kalemleri.length === 0) {
+          const { data: kalemler } = await supabase
+            .from('site_siparis_kalemleri')
+            .select('*')
+            .eq('siparis_id', s.id)
+          if (kalemler) s.site_siparis_kalemleri = kalemler
+        }
+      }
+      setSiparisler(siparisler)
       setYukleniyor(false)
     })
   }, [router])
