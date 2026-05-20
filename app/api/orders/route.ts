@@ -21,6 +21,17 @@ export async function GET(req: NextRequest) {
   const db = createServerClient()
   const { searchParams } = new URL(req.url)
   const musteri_id = searchParams.get('musteri_id')
+  
+  // Kullanıcı kendi siparişlerini görebilir, admin hepsini
+  if (musteri_id) {
+    const { data: { user } } = await db.auth.getUser()
+    if (!user || (user.id !== musteri_id)) {
+      // Admin kontrolü
+      const { data: role } = await db.from('site_users').select('role').eq('id', user?.id || '').single()
+      if (role?.role !== 'admin') return NextResponse.json({ error: 'Yetkisiz' }, { status: 401 })
+    }
+  }
+  
   let q: any = db.from('site_siparisler').select('*, site_siparis_kalemleri(*)').order('created_at', { ascending: false }).limit(100)
   if (musteri_id) q = q.eq('musteri_id', musteri_id)
   const { data, error } = await q
