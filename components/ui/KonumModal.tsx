@@ -25,7 +25,11 @@ export default function KonumModal() {
     localStorage.removeItem('milgo_bolge_id')
     localStorage.removeItem('milgo_bolge_ad')
     const t = setTimeout(() => setGoster(true), 1500)
-    return () => clearTimeout(t)
+
+    // Dışarıdan tetiklenebilir - Navbar'dan veya herhangi bir yerden
+    const dis = () => { setDurum('bekliyor'); setGoster(true) }
+    window.addEventListener('milgo_konum_modal_ac', dis)
+    return () => { clearTimeout(t); window.removeEventListener('milgo_konum_modal_ac', dis) }
   }, [])
 
   // Koordinatı kaydet ve bölge kontrolü yap

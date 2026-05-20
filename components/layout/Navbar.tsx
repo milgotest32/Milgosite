@@ -58,14 +58,19 @@ export default function Navbar() {
       <div style={{ background: '#1A0A12', padding: '0 clamp(16px,4vw,48px)' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '36px' }}>
           {/* Konum - sol */}
-          {konum ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11px', fontWeight: 600, color: '#F4A7B9' }}>
-              <MapPin size={11} />
-              {konum}
-            </div>
-          ) : (
-            <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>📍 Konum belirleniyor...</div>
-          )}
+          <button
+            onClick={() => window.dispatchEvent(new Event('milgo_konum_modal_ac'))}
+            style={{ background:'none', border:'none', cursor:'pointer', padding:0, display:'flex', alignItems:'center', gap:'5px' }}>
+            {konum ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11px', fontWeight: 600, color: '#F4A7B9' }}>
+                <MapPin size={11} />
+                {konum}
+                <span style={{ fontSize:'10px', color:'rgba(255,255,255,0.4)', marginLeft:'2px' }}>· değiştir</span>
+              </div>
+            ) : (
+              <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>📍 Konum belirle</div>
+            )}
+          </button>
 
           {/* Orta mesaj */}
           <p style={{ fontSize: '11px', color: 'rgba(255,255,255,.6)', fontWeight: 500, margin: 0, textAlign: 'center', flex: 1, padding: '0 16px', display: isMobile ? 'none' : 'block' }}>
