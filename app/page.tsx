@@ -11,10 +11,10 @@ export const dynamic = 'force-dynamic'
 export default function AnaSayfa() {
   const [urunler, setUrunler] = useState<Urun[]>([])
 
-  useEffect(() => {
+  const urunleriYukle = () => {
     const bolgeId = localStorage.getItem('milgo_bolge_id')
     const hizmet = localStorage.getItem('milgo_hizmet')
-    if (hizmet === 'false') return // Hizmet bölgesi dışında, ürün gösterme
+    if (hizmet === 'false') { setUrunler([]); return }
 
     supabase.from('site_products')
       .select('*, site_product_images(*), site_kategoriler(name,slug)')
@@ -26,10 +26,16 @@ export default function AnaSayfa() {
             u.bolge_ids && u.bolge_ids.includes(bolgeId)
           )
         } else {
-          tumUrunler = [] // Konum seçilmemişse ürün gösterme
+          tumUrunler = []
         }
         setUrunler(tumUrunler)
       })
+  }
+
+  useEffect(() => {
+    urunleriYukle()
+    window.addEventListener('milgo_konum_degisti', urunleriYukle)
+    return () => window.removeEventListener('milgo_konum_degisti', urunleriYukle)
   }, [])
 
   const featured = urunler.filter(u => u.featured).slice(0, 4)
