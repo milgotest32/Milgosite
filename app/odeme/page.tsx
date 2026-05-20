@@ -22,12 +22,38 @@ export default function OdemePage() {
   const [paytrToken, setPaytrToken] = useState('')
   const [odemeYontemi, setOdemeYontemi] = useState<'kart'|'kapida'|'havale'>('kart')
   const [odemeAyarlar, setOdemeAyarlar] = useState<any>({})
+  const [kayitliAdresler, setKayitliAdresler] = useState<any[]>([])
+  const [seciliAdresId, setSeciliAdresId] = useState<string|null>(null)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(async ({ data }) => {
       const u = data.session?.user
       setUser(u)
-      if (u) setForm(f => ({ ...f, email: u.email || '' }))
+      if (u) {
+        setForm(f => ({ ...f, email: u.email || '' }))
+        // Kayıtlı adresleri yükle
+        const { data: adresler } = await supabase
+          .from('site_adresler')
+          .select('*')
+          .eq('user_id', u.id)
+          .order('varsayilan', { ascending: false })
+        if (adresler && adresler.length > 0) {
+          setKayitliAdresler(adresler)
+          // Varsayılan adresi otomatik seç
+          const varsayilan = adresler.find((a: any) => a.varsayilan) || adresler[0]
+          setSeciliAdresId(varsayilan.id)
+          setForm(f => ({
+            ...f,
+            ad: varsayilan.ad || '',
+            soyad: varsayilan.soyad || '',
+            telefon: varsayilan.telefon || '',
+            adres: varsayilan.adres || '',
+            ilce: varsayilan.ilce || '',
+            sehir: varsayilan.sehir || 'İstanbul',
+            posta: varsayilan.posta_kodu || '',
+          }))
+        }
+      }
     })
   }, [])
 
@@ -207,6 +233,37 @@ export default function OdemePage() {
                 <h2 style={{fontSize:'18px',fontWeight:700,color:'#1C1B2E',marginBottom:'20px',display:'flex',alignItems:'center',gap:'8px'}}>
                   <Truck size={17} style={{color:'#E07090'}}/>Teslimat Bilgileri
                 </h2>
+                {/* Kayıtlı Adresler */}
+                {kayitliAdresler.length > 0 && (
+                  <div style={{marginBottom:'20px'}}>
+                    <p style={{fontSize:'12px',fontWeight:700,textTransform:'uppercase',color:'#6B7280',marginBottom:'10px'}}>Kayıtlı Adresleriniz</p>
+                    <div style={{display:'flex',flexDirection:'column',gap:'8px'}}>
+                      {kayitliAdresler.map((a: any) => (
+                        <div key={a.id}
+                          onClick={() => {
+                            setSeciliAdresId(a.id)
+                            setForm(f => ({...f, ad:a.ad||'', soyad:a.soyad||'', telefon:a.telefon||'', adres:a.adres||'', ilce:a.ilce||'', sehir:a.sehir||'İstanbul', posta:a.posta_kodu||''}))
+                          }}
+                          style={{border:`2px solid ${seciliAdresId===a.id?'#E07090':'#F0ECF5'}`,borderRadius:'12px',padding:'12px 14px',cursor:'pointer',background:seciliAdresId===a.id?'#FEF0F4':'#fff',transition:'all 0.2s'}}>
+                          <div style={{display:'flex',alignItems:'center',gap:'8px'}}>
+                            <div style={{width:'16px',height:'16px',borderRadius:'50%',border:`2px solid ${seciliAdresId===a.id?'#E07090':'#D1C4D8'}`,background:seciliAdresId===a.id?'#E07090':'transparent',flexShrink:0}}/>
+                            <div>
+                              <div style={{fontSize:'13px',fontWeight:700,color:'#1C1B2E'}}>{a.baslik||'Adres'} — {a.ad} {a.soyad}</div>
+                              <div style={{fontSize:'12px',color:'#6B7280'}}>{a.adres}, {a.ilce} / {a.sehir}</div>
+                            </div>
+                            {a.varsayilan && <span style={{marginLeft:'auto',fontSize:'10px',background:'#FEE8EF',color:'#E07090',padding:'2px 8px',borderRadius:'50px',fontWeight:700}}>Varsayılan</span>}
+                          </div>
+                        </div>
+                      ))}
+                      <button
+                        onClick={() => { setSeciliAdresId(null); setForm(f => ({...f, ad:'', soyad:'', telefon:'', adres:'', ilce:'', sehir:'İstanbul', posta:''})) }}
+                        style={{border:`2px dashed ${!seciliAdresId?'#E07090':'#F0ECF5'}`,borderRadius:'12px',padding:'10px',cursor:'pointer',background:'transparent',fontSize:'12px',color:!seciliAdresId?'#E07090':'#9CA3AF',fontFamily:'inherit',textAlign:'center'}}>
+                        + Farklı adres kullan
+                      </button>
+                    </div>
+                    <div style={{height:'1px',background:'#F0ECF5',margin:'16px 0'}}/>
+                  </div>
+                )}
                 <div style={{display:'flex',flexDirection:'column',gap:'14px'}}>
                   <div className="form-row-2">
                     <div>

@@ -25,20 +25,24 @@ function Icerik() {
   const [hizmetYok, setHizmetYok] = useState(false)
   const arama = params.get('q') || ''
 
-  useEffect(() => {
-    // localStorage'dan direkt oku — KonumModal zaten kaydetmiş
+  const konumOku = () => {
     const hizmet = localStorage.getItem('milgo_hizmet')
     const bid = localStorage.getItem('milgo_bolge_id')
     const bad = localStorage.getItem('milgo_bolge_ad')
-
     if (hizmet === 'false') {
       setHizmetYok(true)
       setLoading(false)
       return
     }
+    setHizmetYok(false)
+    setBolgeId(bid || null)
+    setBolgeAd(bad || null)
+  }
 
-    if (bid) setBolgeId(bid)
-    if (bad) setBolgeAd(bad)
+  useEffect(() => {
+    konumOku()
+    window.addEventListener('milgo_konum_degisti', konumOku)
+    return () => window.removeEventListener('milgo_konum_degisti', konumOku)
   }, [])
 
   useEffect(() => {
