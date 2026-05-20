@@ -118,13 +118,23 @@ export async function POST(req: NextRequest) {
 
   if (error || !siparis) return NextResponse.json({ error: error?.message || 'Sipariş oluşturulamadı' }, { status: 400 })
 
+  if (!siparis?.id) return NextResponse.json({ error: 'Sipariş ID alınamadı' }, { status: 500 })
+
   const kalemler = items.map((i: any) => ({
-    siparis_id: siparis.id, product_id: i.product_id,
-    urun_ad: i.urun_ad, urun_gorsel: i.urun_gorsel,
-    birim_fiyat: i.fiyat, adet: i.adet, toplam: i.fiyat * i.adet,
+    siparis_id: siparis.id,
+    product_id: i.product_id || null,
+    urun_ad: i.urun_ad,
+    urun_gorsel: i.urun_gorsel || null,
+    birim_fiyat: Number(i.fiyat),
+    adet: Number(i.adet),
+    toplam: Number(i.fiyat) * Number(i.adet),
   }))
 
-  await db.from('site_siparis_kalemleri').insert(kalemler)
+  // Kalemleri kaydet
+  const { error: kalemHata } = await db.from('site_siparis_kalemleri').insert(kalemler)
+  if (kalemHata) {
+    console.error('KALEM HATA:', kalemHata.code, kalemHata.message)
+  }
 
   // Stok düş
   for (const item of items) {
