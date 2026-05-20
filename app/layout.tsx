@@ -22,6 +22,10 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
   title: 'Milgo | Çiftlikten Sofranıza',
   description: 'Taze ve doğal çiftlik ürünleri',
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
