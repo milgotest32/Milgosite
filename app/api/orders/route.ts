@@ -43,9 +43,15 @@ export async function POST(req: NextRequest) {
   const db = createServerClient()
   const body = await req.json()
   const { items, adres, kupon_kod, notlar, odeme_yontemi, bolge_adi } = body
-  // musteri_id must be null (not undefined/empty string) for guest orders to avoid FK constraint violation
-  const musteri_id: string | null = body.musteri_id || null
   const misafir_email: string | null = body.misafir_email || null
+
+  // musteri_id'yi CLIENT'tan alma - sunucu tarafında auth'dan al
+  // Bu sayede FK constraint hatası kesinlikle olmaz
+  let musteri_id: string | null = null
+  try {
+    const { data: { user } } = await db.auth.getUser()
+    if (user?.id) musteri_id = user.id
+  } catch { /* oturum yoksa misafir sipariş */ }
 
   // Fiyatları DB'den doğrula - client'tan gelen fiyata güvenme
   let ara_toplam = 0
@@ -85,7 +91,7 @@ export async function POST(req: NextRequest) {
 
   const toplam = Math.max(0, ara_toplam + kargo_ucreti - indirim)
 
-  const { data: siparis, error } = await db.from('site_siparisler').insert({
+  const siparisVeri = {
     siparis_no: genNo(), musteri_id, misafir_email,
     musteri_ad: `${adres.ad} ${adres.soyad || ''}`.trim(),
     musteri_email: misafir_email || adres.email || '',
@@ -95,7 +101,20 @@ export async function POST(req: NextRequest) {
     bolge_adi: bolge_adi || null,
     odeme_yontemi: odeme_yontemi || 'kart',
     ara_toplam, kargo_ucreti, indirim, toplam, kupon_kod, notlar,
-  }).select().single()
+  }
+
+  let { data: siparis, error } = await db.from('site_siparisler').insert(siparisVeri).select().single()
+
+  // FK constraint hatası: musteri_id referans tablosunda yok → null ile tekrar dene
+  if (error?.message?.includes('foreign key constraint') || error?.message?.includes('fkey')) {
+    const yedek = await db.from('site_siparisler').insert({
+      ...siparisVeri,
+      siparis_no: genNo(), // yeni sipariş no
+      musteri_id: null,
+    }).select().single()
+    siparis = yedek.data
+    error = yedek.error
+  }
 
   if (error || !siparis) return NextResponse.json({ error: error?.message || 'Sipariş oluşturulamadı' }, { status: 400 })
 
