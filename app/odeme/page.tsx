@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useSepet } from '@/lib/sepet'
@@ -31,8 +31,9 @@ export default function OdemePage() {
     })
   }, [])
 
+  const siparisBasarili = useRef(false)
   useEffect(() => {
-    if (items.length === 0) router.push('/sepet')
+    if (items.length === 0 && !siparisBasarili.current) router.push('/sepet')
   }, [items, router])
 
   useEffect(() => {
@@ -98,7 +99,12 @@ export default function OdemePage() {
       const { data: siparis, error } = await r.json()
       if (!siparis || error) throw new Error(error || 'Sipariş oluşturulamadı')
 
-      if (odemeYontemi !== 'kart') { temizle(); router.push(`/siparis-onay?siparis=${siparis.siparis_no}`); return }
+      if (odemeYontemi !== 'kart') {
+        siparisBasarili.current = true
+        router.push(`/siparis-onay?siparis=${siparis.siparis_no}`)
+        temizle()
+        return
+      }
       const paytrR = await fetch('/api/paytr', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -110,10 +116,12 @@ export default function OdemePage() {
       })
       const { token, error: paytrErr } = await paytrR.json()
       if (paytrErr || !token) {
-        temizle()
+        siparisBasarili.current = true
         router.push(`/siparis-onay?siparis=${siparis.siparis_no}`)
+        temizle()
         return
       }
+      siparisBasarili.current = true
       temizle()
       setPaytrToken(token)
     } catch (e: any) {
