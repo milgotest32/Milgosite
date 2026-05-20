@@ -153,7 +153,7 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
                   <MapPin size={15} />Bu bölgede mevcut değil
                 </div>
               ) : (
-                <button onClick={sepeteEkle} disabled={(urun.stok_takip && urun.stok <= 0) || bolgdeVar === 'yok'}
+                <button onClick={sepeteEkle} disabled={!!(urun.stok_takip && urun.stok <= 0)}
                   style={{ flex: 1, minWidth: '180px', height: '44px', borderRadius: '50px', border: 'none', fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '13px', fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'none', transition: 'all .25s', background: eklendi ? '#22c55e' : '#1A0A12' }}>
                   {eklendi ? <><Check size={15} />Eklendi!</> : <><ShoppingBag size={15} />Sepete Ekle · ₺{(urun.fiyat * adet).toFixed(2)}</>}
                 </button>
