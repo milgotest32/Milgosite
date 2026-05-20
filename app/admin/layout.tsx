@@ -32,6 +32,7 @@ const MENU = [
   { grup: 'Sistem', items: [
     { href: '/admin/seo', icon: <Globe size={16}/>, ad: 'SEO' },
     { href: '/admin/hizmet-bolgeleri', icon: <Map size={16}/>, ad: 'Hizmet Bölgeleri' },
+    { href: '/admin/bolge-bildirimler', icon: <Bell size={16}/>, ad: 'Bölge Bildirimleri' },
     { href: '/admin/roller', icon: <Shield size={16}/>, ad: 'Rol & Yetkiler' },
     { href: '/admin/ayarlar', icon: <Settings size={16}/>, ad: 'Ayarlar' },
   ]},

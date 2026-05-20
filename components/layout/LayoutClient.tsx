@@ -2,6 +2,7 @@
 import { usePathname } from 'next/navigation'
 import Navbar from '@/components/layout/Navbar'
 import Popup from '@/components/Popup'
+import BolgeYokPopup from '@/components/BolgeYokPopup'
 import Footer from '@/components/layout/Footer'
 import Cursor from '@/components/ui/Cursor'
 import KonumModal from '@/components/ui/KonumModal'
@@ -30,6 +31,7 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
       />
       {!isAdmin && <Navbar />}
       {!isAdmin && <Popup />}
+      {!isAdmin && <BolgeYokPopup />}
       <main>{children}</main>
       {!isAdmin && <Footer />}
     </>
