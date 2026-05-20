@@ -148,11 +148,24 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
               </p>
             )}
 
+            {/* Çiğ Süt özel teslimat uyarısı */}
+            {(urun.site_kategoriler?.slug === 'cig-sut' || urun.site_kategoriler?.slug === 'cig-sut-2' || urun.name?.toLowerCase().includes('çiğ süt')) && (
+              <div style={{ background: 'linear-gradient(135deg,#FFF7ED,#FEF3C7)', border: '1px solid #FDE68A', borderRadius: '16px', padding: '16px 20px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                <span style={{ fontSize: '22px', flexShrink: 0 }}>🥛</span>
+                <div>
+                  <p style={{ fontSize: '12px', fontWeight: 800, color: '#92400E', marginBottom: '4px', letterSpacing: '0.05em', textTransform: 'uppercase' }}>Özel Teslimat Günleri</p>
+                  <p style={{ fontSize: '13px', color: '#78350F', lineHeight: 1.6 }}>
+                    Çiğ süt teslimatları yalnızca <strong>Cuma ve Cumartesi</strong> günleri yapılmaktadır. Siparişinizi haftanın herhangi bir günü verebilirsiniz, en yakın teslimat gününde teslim edilir.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Teslimat */}
             <div style={{ background: 'rgba(26,10,18,.04)', borderRadius: '20px', padding: '18px 20px', border: '1px solid rgba(26,10,18,.07)' }}>
               <p style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '.2em', textTransform: 'uppercase', color: '#7A6070', marginBottom: '12px' }}>Teslimat & İade</p>
               {[
-                { icon: <Truck size={13} />, t: 'İstanbul içi aynı gün teslimat' },
+                { icon: <Truck size={13} />, t: urun.site_kategoriler?.slug === 'cig-sut' || urun.name?.toLowerCase().includes('çiğ süt') ? 'Cuma & Cumartesi teslimat' : 'İstanbul içi aynı gün teslimat' },
                 { icon: <RefreshCw size={13} />, t: '24 saat içinde iade kabul edilir' },
                 { icon: <ShieldCheck size={13} />, t: 'Soğuk zincir ile güvenli taşıma' },
                 { icon: <Package size={13} />, t: 'Özel soğutucu ambalajla gönderim' },
