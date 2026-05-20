@@ -16,7 +16,7 @@ export default function EtbisLogo() {
 
   return (
     <a href="https://www.eticaret.gov.tr" target="_blank" rel="noreferrer" title="ETBİS - E-Ticaret Bilgi Sistemi">
-      <img src={logoUrl} alt="ETBİS" style={{height:'40px',width:'auto',objectFit:'contain',borderRadius:'6px'}}/>
+      <img src={logoUrl} alt="ETBİS" style={{height:'64px',width:'auto',objectFit:'contain',borderRadius:'6px'}}/>
     </a>
   )
 }
