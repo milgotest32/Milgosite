@@ -62,6 +62,18 @@ export default function MusterilerPage() {
               {l}
             </button>
           ))}
+          <button onClick={()=>shopifySync('musteri')} disabled={syncing}
+            style={{ padding:'8px 16px', borderRadius:'50px', border:'none', background: syncing?'#F8F7FC':'linear-gradient(135deg,#E07090,#3B9FCC)', color: syncing?'#9CA3AF':'#fff', fontSize:'12px', fontWeight:700, cursor: syncing?'not-allowed':'pointer', whiteSpace:'nowrap' as const }}>
+            {syncing ? '⏳...' : '🔄 Müşteri Sync'}
+          </button>
+          <button onClick={()=>shopifySync('siparis')} disabled={syncing}
+            style={{ padding:'8px 16px', borderRadius:'50px', border:'none', background: syncing?'#F8F7FC':'linear-gradient(135deg,#3B9FCC,#6B5CF6)', color: syncing?'#9CA3AF':'#fff', fontSize:'12px', fontWeight:700, cursor: syncing?'not-allowed':'pointer', whiteSpace:'nowrap' as const }}>
+            {syncing ? '⏳...' : '📦 Sipariş Sync'}
+          </button>
+          <button onClick={()=>shopifySync('hepsi')} disabled={syncing}
+            style={{ padding:'8px 16px', borderRadius:'50px', border:'none', background: syncing?'#F8F7FC':'#1C1B2E', color: syncing?'#9CA3AF':'#fff', fontSize:'12px', fontWeight:700, cursor: syncing?'not-allowed':'pointer', whiteSpace:'nowrap' as const }}>
+            {syncing ? '⏳ Senkronize ediliyor...' : '⚡ Tümünü Sync'}
+          </button>
           <div style={{ position:'relative' }}>
             <Search size={14} style={{ position:'absolute', left:'12px', top:'50%', transform:'translateY(-50%)', color:'#9CA3AF' }} />
             <input value={arama} onChange={e => setArama(e.target.value)} placeholder="Ad, email, telefon..."
