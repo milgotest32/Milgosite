@@ -46,11 +46,7 @@ export default function BolgeYokPopup() {
   const bildirimKayit = async () => {
     if (!email || !email.includes('@')) return
     setYukleniyor(true)
-    await supabase.from('site_bolge_bildirim').insert({
-      email,
-      bolge_adi: bolgeAdi,
-      bolge_id: localStorage.getItem('milgo_bolge_id'),
-    }).catch(() => {})
+    try { await supabase.from('site_bolge_bildirim').insert({ email, bolge_adi: bolgeAdi, bolge_id: localStorage.getItem('milgo_bolge_id') }) } catch {}
     setGonderildi(true)
     setYukleniyor(false)
     setTimeout(kapat, 2000)
