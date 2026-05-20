@@ -41,11 +41,33 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const db = createServerClient()
-  const { items, adres, kupon_kod, indirim = 0, musteri_id, misafir_email, notlar, odeme_yontemi, bolge_adi } = await req.json()
+  const { items, adres, kupon_kod, musteri_id, misafir_email, notlar, odeme_yontemi, bolge_adi } = await req.json()
 
-  const ara_toplam = items.reduce((s: number, i: any) => s + i.fiyat * i.adet, 0)
+  // Fiyatları DB'den doğrula - client'tan gelen fiyata güvenme
+  let ara_toplam = 0
+  for (const item of items) {
+    if (item.product_id) {
+      const { data: urun } = await db.from('site_products').select('fiyat').eq('id', item.product_id).single()
+      if (urun) {
+        item.fiyat = urun.fiyat // DB fiyatını kullan
+      }
+    }
+    ara_toplam += (item.fiyat || 0) * item.adet
+  }
   const kargo_ucreti = ara_toplam >= 500 ? 0 : 49.90
-  const toplam = ara_toplam + kargo_ucreti - indirim
+
+  // İndirimi sunucuda hesapla - client'tan gelen değere güvenme
+  let indirim = 0
+  if (kupon_kod) {
+    const { data: kupon } = await db.from('site_kuponlar').select('*').eq('kod', kupon_kod.toUpperCase()).eq('aktif', true).single()
+    if (kupon && (!kupon.bitis || new Date(kupon.bitis) >= new Date()) && (!kupon.kullanim_limiti || kupon.kullanim_sayisi < kupon.kullanim_limiti)) {
+      indirim = kupon.tip === 'yuzde' ? ara_toplam * (kupon.deger / 100) : kupon.deger
+      if (kupon.max_indirim) indirim = Math.min(indirim, kupon.max_indirim)
+      indirim = Math.min(indirim, ara_toplam) // indirim sepeti aşamaz
+    }
+  }
+
+  const toplam = Math.max(0, ara_toplam + kargo_ucreti - indirim)
 
   const { data: siparis, error } = await db.from('site_siparisler').insert({
     siparis_no: genNo(), musteri_id, misafir_email,
