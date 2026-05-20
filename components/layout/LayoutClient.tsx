@@ -1,6 +1,7 @@
 'use client'
 import { usePathname } from 'next/navigation'
 import Navbar from '@/components/layout/Navbar'
+import Popup from '@/components/Popup'
 import Footer from '@/components/layout/Footer'
 import Cursor from '@/components/ui/Cursor'
 import KonumModal from '@/components/ui/KonumModal'
@@ -28,6 +29,7 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
         }}
       />
       {!isAdmin && <Navbar />}
+      {!isAdmin && <Popup />}
       <main>{children}</main>
       {!isAdmin && <Footer />}
     </>

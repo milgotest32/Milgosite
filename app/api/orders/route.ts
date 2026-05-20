@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const db = createServerClient()
-  const { items, adres, kupon_kod, indirim = 0, musteri_id, misafir_email, notlar } = await req.json()
+  const { items, adres, kupon_kod, indirim = 0, musteri_id, misafir_email, notlar, odeme_yontemi, bolge_adi } = await req.json()
 
   const ara_toplam = items.reduce((s: number, i: any) => s + i.fiyat * i.adet, 0)
   const kargo_ucreti = ara_toplam >= 500 ? 0 : 49.90
@@ -43,6 +43,8 @@ export async function POST(req: NextRequest) {
     musteri_telefon: adres.telefon || '',
     teslimat_adres: adres.adres, teslimat_ilce: adres.ilce,
     teslimat_sehir: adres.sehir || 'İstanbul',
+    bolge_adi: bolge_adi || null,
+    odeme_yontemi: odeme_yontemi || 'kart',
     ara_toplam, kargo_ucreti, indirim, toplam, kupon_kod, notlar,
   }).select().single()
 

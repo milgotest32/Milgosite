@@ -17,6 +17,7 @@ export default function OdemePage() {
   const [yukleniyor, setYukleniyor] = useState(false)
   const [user, setUser] = useState<any>(null)
   const [hizmetHata, setHizmetHata] = useState('')
+  const [bolgeAdi, setBolgeAdi] = useState('')
   const [form, setForm] = useState({ ad:'', soyad:'', email:'', telefon:'', adres:'', ilce:'', sehir:'İstanbul', posta:'', notlar:'' })
   const [paytrToken, setPaytrToken] = useState('')
   const [odemeYontemi, setOdemeYontemi] = useState<'kart'|'kapida'|'havale'>('kart')
@@ -91,6 +92,7 @@ export default function OdemePage() {
           indirim,
           notlar: form.notlar,
           odeme_yontemi: odemeYontemi,
+          bolge_adi: bolgeAdi,
         })
       })
       const { data: siparis, error } = await r.json()

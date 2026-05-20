@@ -24,6 +24,7 @@ const MENU = [
   ]},
   { grup: 'İçerik', items: [
     { href: '/admin/hakkimizda', icon: <Info size={16}/>, ad: 'Hakkımızda' },
+    { href: '/admin/popup', icon: <Bell size={16}/>, ad: 'Popup' },
     { href: '/admin/blog', icon: <FileText size={16}/>, ad: 'Blog' },
     { href: '/admin/bannerlar', icon: <Image size={16}/>, ad: 'Bannerlar' },
     { href: '/admin/medya', icon: <Image size={16}/>, ad: 'Medya' },

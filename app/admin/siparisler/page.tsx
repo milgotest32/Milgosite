@@ -57,8 +57,8 @@ export default function SiparislerPage() {
                       <p style={{ fontSize: '11px', color: '#9CA3AF', margin: 0 }}>{s.musteri_email}</p>
                     </td>
                     <td style={{ padding: '12px 16px' }}>
-                      <span style={{ fontSize: '12px', color: '#6B7280' }}>{s.teslimat_ilce || s.adres?.ilce || '—'}</span>
-                      {(s.teslimat_sehir || s.adres?.sehir) && <span style={{ fontSize: '11px', color: '#9CA3AF', display: 'block' }}>{s.teslimat_sehir || s.adres?.sehir}</span>}
+                      {s.bolge_adi && <span style={{ fontSize: '11px', fontWeight:700, color: '#3B9FCC', display: 'block' }}>{s.bolge_adi}</span>}
+                      <span style={{ fontSize: '12px', color: '#6B7280' }}>{s.teslimat_ilce || '—'}</span>
                     </td>
                     <td style={{ padding: '12px 16px', fontSize: '14px', fontWeight: 700, color: '#1C1B2E' }}>₺{s.toplam?.toFixed(2)}</td>
                     <td style={{ padding: '12px 16px' }}>

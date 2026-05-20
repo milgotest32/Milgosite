@@ -81,8 +81,9 @@ export default function SiparisDetay() {
             <div style={{background:'#EBF7FC',border:'1px solid #BAE6FD',borderRadius:'10px',padding:'10px 14px',marginBottom:'12px',display:'flex',alignItems:'center',gap:'8px'}}>
               <span style={{fontSize:'16px'}}>📍</span>
               <div>
-                <span style={{fontSize:'13px',fontWeight:700,color:'#1C1B2E'}}>{siparis.teslimat_ilce || siparis.adres?.ilce || '—'}</span>
-                <span style={{fontSize:'12px',color:'#6B7280',marginLeft:'6px'}}>{siparis.teslimat_sehir || siparis.adres?.sehir || ''}</span>
+                {siparis.bolge_adi && <span style={{fontSize:'12px',fontWeight:700,color:'#3B9FCC',display:'block'}}>{siparis.bolge_adi}</span>}
+                <span style={{fontSize:'13px',fontWeight:700,color:'#1C1B2E'}}>{siparis.teslimat_ilce || '—'}</span>
+                <span style={{fontSize:'12px',color:'#6B7280',marginLeft:'6px'}}>{siparis.teslimat_sehir || ''}</span>
               </div>
             </div>
             <div style={{fontSize:'13px',color:'#6B7280',lineHeight:'1.6'}}>
