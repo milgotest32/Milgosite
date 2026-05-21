@@ -68,6 +68,7 @@ export default function SepetPage() {
           Sepetim <span style={{color:'#9CA3AF',fontSize:'22px'}}>({items.length} ürün)</span>
         </h1>
 
+        <PaketOnerisi />
         <div className="sepet-grid" style={{display:'grid',gridTemplateColumns:'1fr 340px',gap:'20px',alignItems:'start'}}>
           {/* Ürünler */}
           <div style={{display:'flex',flexDirection:'column',gap:'12px'}}>

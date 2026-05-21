@@ -3,28 +3,33 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import { useSepet } from '@/lib/sepet'
 import { Package } from 'lucide-react'
-import Link from 'next/link'
 import toast from 'react-hot-toast'
 
 export default function PaketOnerisi() {
-  const { items, ekle } = useSepet()
+  const items = useSepet(s => s.items)
+  const ekle = useSepet(s => s.ekle)
   const [paket, setPaket] = useState<any>(null)
 
   useEffect(() => {
-    if (items.length === 0) return
+    if (items.length === 0) { setPaket(null); return }
     const productIds = items.map(i => i.product_id)
-    
-    // Sepetteki ürünlerden herhangi biri bir pakette mi?
+
     supabase
       .from('site_paket_urunleri')
-      .select('paket_id, site_paketler!inner(*, site_paket_urunleri(adet, site_products(id,name,fiyat,site_product_images(*))))')
+      .select('paket_id, site_paketler(id, name, fiyat, aktif, site_paket_urunleri(adet, site_products(id, name, fiyat)))')
       .in('product_id', productIds)
-      .eq('site_paketler.aktif', true)
-      .limit(1)
       .then(({ data }) => {
-        if (data && data.length > 0) {
-          setPaket((data[0] as any).site_paketler)
-        }
+        if (!data || data.length === 0) { setPaket(null); return }
+        const aktif = (data as any[]).find(d => d.site_paketler?.aktif)
+        if (!aktif) { setPaket(null); return }
+        const p = aktif.site_paketler
+        // Paketteki tüm ürünler zaten sepette mi?
+        const kalemler = p.site_paket_urunleri || []
+        const hepsinde = kalemler.every((k: any) =>
+          productIds.includes(k.site_products?.id)
+        )
+        if (hepsinde) { setPaket(null); return }
+        setPaket(p)
       })
   }, [items])
 
@@ -34,13 +39,6 @@ export default function PaketOnerisi() {
   const ayriToplam = kalemler.reduce((t: number, k: any) => t + (k.site_products?.fiyat || 0) * k.adet, 0)
   const tasarruf = ayriToplam - paket.fiyat
   const yuzde = ayriToplam > 0 ? Math.round((tasarruf / ayriToplam) * 100) : 0
-
-  // Sepette zaten bu paketin tüm ürünleri var mı?
-  const { items: sepetItems } = useSepet.getState()
-  const hepsinde = kalemler.every((k: any) =>
-    sepetItems.find(i => i.product_id === k.site_products?.id)
-  )
-  if (hepsinde) return null
 
   const paketeEkle = () => {
     kalemler.forEach((k: any) => {
