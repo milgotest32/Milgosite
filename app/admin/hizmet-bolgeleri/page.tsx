@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase/client'
-import { Plus, MapPin, Trash2, Upload, FileText } from 'lucide-react'
+import { Plus, MapPin, Trash2, Upload, FileText, Pencil, Save, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 export const dynamic = 'force-dynamic'
 
@@ -60,6 +60,8 @@ export default function HizmetBolgeleriPage() {
   const [kmzYukleniyor, setKmzYukleniyor] = useState(false)
   const [kmzBolgeId, setKmzBolgeId] = useState('')
   const [dragOver, setDragOver] = useState(false)
+  const [duzenlenen, setDuzenlenen] = useState<string | null>(null)
+  const [duzenleForm, setDuzenleForm] = useState({ name: '', kargo_ucreti: '', min_siparis: '', renk: '#E07090' })
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const yukle = () => {
@@ -93,6 +95,19 @@ export default function HizmetBolgeleriPage() {
     if (!confirm('Bu bölgeyi silmek istediğinizden emin misiniz?')) return
     await supabase.from('site_hizmet_bolgeleri').delete().eq('id', id)
     toast.success('Bölge silindi')
+    yukle()
+  }
+
+  const guncelle = async (id: string) => {
+    if (!duzenleForm.name) { toast.error('Bölge adı zorunludur'); return }
+    await supabase.from('site_hizmet_bolgeleri').update({
+      name: duzenleForm.name,
+      kargo_ucreti: parseFloat(duzenleForm.kargo_ucreti) || 0,
+      min_siparis: parseFloat(duzenleForm.min_siparis) || 0,
+      renk: duzenleForm.renk,
+    }).eq('id', id)
+    toast.success('Bölge güncellendi')
+    setDuzenlenen(null)
     yukle()
   }
 
@@ -223,27 +238,58 @@ export default function HizmetBolgeleriPage() {
           ) : bolgeler.map(b => (
             <div key={b.id} style={{ background: '#fff', borderRadius: '16px', border: `1px solid ${b.aktif ? b.renk + '40' : '#F0ECF5'}`, padding: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '14px', height: '14px', borderRadius: '50%', background: b.renk, flexShrink: 0 }} />
-                  <div>
-                    <div style={{ fontSize: '14px', fontWeight: 700, color: '#1C1B2E' }}>{b.name}</div>
-                    {b.aciklama && <div style={{ fontSize: '12px', color: '#9CA3AF' }}>{b.aciklama}</div>}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
+                  <div style={{ width: '14px', height: '14px', borderRadius: '50%', background: duzenlenen === b.id ? duzenleForm.renk : b.renk, flexShrink: 0 }} />
+                  <div style={{ flex: 1 }}>
+                    {duzenlenen === b.id ? (
+                      <input value={duzenleForm.name} onChange={e => setDuzenleForm({ ...duzenleForm, name: e.target.value })}
+                        style={{ width: '100%', background: '#F8F7FC', border: '1px solid #E07090', borderRadius: '8px', padding: '4px 8px', fontSize: '14px', fontWeight: 700, outline: 'none', fontFamily: 'inherit', color: '#1C1B2E' }} />
+                    ) : (
+                      <div style={{ fontSize: '14px', fontWeight: 700, color: '#1C1B2E' }}>{b.name}</div>
+                    )}
+                    {b.aciklama && !duzenlenen && <div style={{ fontSize: '12px', color: '#9CA3AF' }}>{b.aciklama}</div>}
                   </div>
+                  {duzenlenen !== b.id && (
+                    <button onClick={() => { setDuzenlenen(b.id); setDuzenleForm({ name: b.name, kargo_ucreti: String(b.kargo_ucreti || 0), min_siparis: String(b.min_siparis || 0), renk: b.renk || '#E07090' }) }}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF', padding: '2px', flexShrink: 0 }} title="Düzenle">
+                      <Pencil size={13} />
+                    </button>
+                  )}
                 </div>
                 <button onClick={() => aktifDegistir(b.id, !b.aktif)} style={{ padding: '4px 12px', borderRadius: '50px', border: 'none', fontSize: '11px', fontWeight: 700, cursor: 'pointer', background: b.aktif ? '#F0FDF4' : '#FEF2F2', color: b.aktif ? '#22C55E' : '#EF4444' }}>
                   {b.aktif ? 'Aktif' : 'Pasif'}
                 </button>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
-                <div style={{ background: '#F8F7FC', borderRadius: '8px', padding: '8px 12px' }}>
-                  <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Kurye</div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#1C1B2E' }}>{b.kargo_ucreti === 0 ? 'Ücretsiz' : `₺${b.kargo_ucreti}`}</div>
+              {duzenlenen === b.id ? (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
+                  <div>
+                    <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>Kurye (₺)</div>
+                    <input type="number" value={duzenleForm.kargo_ucreti} onChange={e => setDuzenleForm({ ...duzenleForm, kargo_ucreti: e.target.value })}
+                      style={{ width: '100%', background: '#F8F7FC', border: '1px solid #E07090', borderRadius: '8px', padding: '6px 10px', fontSize: '13px', outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' as const }} />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>Min. Sipariş (₺)</div>
+                    <input type="number" value={duzenleForm.min_siparis} onChange={e => setDuzenleForm({ ...duzenleForm, min_siparis: e.target.value })}
+                      style={{ width: '100%', background: '#F8F7FC', border: '1px solid #E07090', borderRadius: '8px', padding: '6px 10px', fontSize: '13px', outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' as const }} />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>Renk</div>
+                    <input type="color" value={duzenleForm.renk} onChange={e => setDuzenleForm({ ...duzenleForm, renk: e.target.value })}
+                      style={{ width: '100%', height: '34px', borderRadius: '8px', border: '1px solid #F0ECF5', padding: '2px', cursor: 'pointer' }} />
+                  </div>
                 </div>
-                <div style={{ background: '#F8F7FC', borderRadius: '8px', padding: '8px 12px' }}>
-                  <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Min. Sipariş</div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#1C1B2E' }}>{b.min_siparis === 0 ? 'Yok' : `₺${b.min_siparis}`}</div>
+              ) : (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
+                  <div style={{ background: '#F8F7FC', borderRadius: '8px', padding: '8px 12px' }}>
+                    <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Kurye</div>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: '#1C1B2E' }}>{b.kargo_ucreti === 0 ? 'Ücretsiz' : `₺${b.kargo_ucreti}`}</div>
+                  </div>
+                  <div style={{ background: '#F8F7FC', borderRadius: '8px', padding: '8px 12px' }}>
+                    <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Min. Sipariş</div>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: '#1C1B2E' }}>{b.min_siparis === 0 ? 'Yok' : `₺${b.min_siparis}`}</div>
+                  </div>
                 </div>
-              </div>
+              )}
               <div style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <FileText size={12} style={{ color: b.polygon_data ? '#22C55E' : '#9CA3AF' }} />
                 <span style={{ fontSize: '11px', color: b.polygon_data ? '#22C55E' : '#9CA3AF' }}>
@@ -251,7 +297,14 @@ export default function HizmetBolgeleriPage() {
                 </span>
               </div>
               <div style={{ display: 'flex', gap: '6px' }}>
-                <button onClick={() => sil(b.id)} style={{ flex: 1, padding: '8px', background: '#FEF2F2', border: 'none', borderRadius: '8px', color: '#EF4444', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}><Trash2 size={12} />Sil</button>
+                {duzenlenen === b.id ? (
+                  <>
+                    <button onClick={() => guncelle(b.id)} style={{ flex: 1, padding: '8px', background: 'linear-gradient(135deg,#E07090,#3B9FCC)', border: 'none', borderRadius: '8px', color: '#fff', fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}><Save size={12} />Kaydet</button>
+                    <button onClick={() => setDuzenlenen(null)} style={{ padding: '8px 12px', background: '#F8F7FC', border: '1px solid #F0ECF5', borderRadius: '8px', color: '#6B7280', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: '4px' }}><X size={12} />İptal</button>
+                  </>
+                ) : (
+                  <button onClick={() => sil(b.id)} style={{ flex: 1, padding: '8px', background: '#FEF2F2', border: 'none', borderRadius: '8px', color: '#EF4444', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}><Trash2 size={12} />Sil</button>
+                )}
               </div>
             </div>
           ))}
