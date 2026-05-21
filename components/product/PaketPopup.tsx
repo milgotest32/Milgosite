@@ -38,7 +38,13 @@ export default function PaketPopup({ urunId }: { urunId: string }) {
     kalemler.forEach((k: any) => {
       if (k.site_products) {
         const indirimlifiyat = Math.round(k.site_products.fiyat * oran * 100) / 100
-        ekle({ ...k.site_products, fiyat: indirimlifiyat, eski_fiyat: k.site_products.fiyat }, k.adet)
+        ekle({
+          tip: 'fiziksel', durum: 'active', featured: false, yeni: false, indirimli: true,
+          stok: 999, min_stok: 0, stok_takip: false, etiketler: [], ozellikler: {}, meta: {},
+          ...k.site_products,
+          fiyat: indirimlifiyat,
+          eski_fiyat: k.site_products.fiyat,
+        }, k.adet)
       }
     })
     toast.success(`🎁 ${paket.name} sepete eklendi!`)

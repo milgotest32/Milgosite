@@ -20,10 +20,9 @@ export default function PaketDetayPage() {
     supabase.from('site_paketler')
       .select('*, site_paket_urunleri(adet, site_products(id,name,slug,fiyat,eski_fiyat,site_product_images(*)))')
       .eq('slug', slug as string)
-      .eq('aktif', true)
       .single()
       .then(({ data }) => {
-        if (!data) { router.push('/'); return }
+        if (!data) { router.push('/404'); return }
         setPaket(data)
         setLoading(false)
       })
@@ -46,12 +45,13 @@ export default function PaketDetayPage() {
     const oran = ayriToplam > 0 ? paket.fiyat / ayriToplam : 1
     kalemler.forEach((k: any) => {
       if (k.site_products) {
-        const indirimliUrun = {
+        ekle({
+          tip: 'fiziksel', durum: 'active', featured: false, yeni: false, indirimli: true,
+          stok: 999, min_stok: 0, stok_takip: false, etiketler: [], ozellikler: {}, meta: {},
           ...k.site_products,
           fiyat: Math.round(k.site_products.fiyat * oran * 100) / 100,
           eski_fiyat: k.site_products.fiyat,
-        }
-        ekle(indirimliUrun, k.adet)
+        }, k.adet)
       }
     })
     setEklendi(true)

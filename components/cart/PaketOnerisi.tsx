@@ -44,12 +44,13 @@ export default function PaketOnerisi() {
     const oran = ayriToplam > 0 ? paket.fiyat / ayriToplam : 1
     kalemler.forEach((k: any) => {
       if (k.site_products) {
-        const indirimliUrun = {
+        ekle({
+          tip: 'fiziksel', durum: 'active', featured: false, yeni: false, indirimli: true,
+          stok: 999, min_stok: 0, stok_takip: false, etiketler: [], ozellikler: {}, meta: {},
           ...k.site_products,
           fiyat: Math.round(k.site_products.fiyat * oran * 100) / 100,
           eski_fiyat: k.site_products.fiyat,
-        }
-        ekle(indirimliUrun, k.adet)
+        }, k.adet)
       }
     })
     toast.success(`🎁 ${paket.name} sepete eklendi!`)
