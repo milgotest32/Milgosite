@@ -1,22 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
-import { requireAdmin } from '@/lib/supabase/admin-check'
 export const dynamic = 'force-dynamic'
 
-// next.config.ts'i GitHub'a push eden fonksiyon
 async function nextConfigGuncelle(redirectler: { eski_url: string; yeni_url: string }[]) {
   const token = process.env.GITHUB_TOKEN
-  const repo = process.env.GITHUB_REPO // 'milgotest32/Milgosite'
+  const repo = process.env.GITHUB_REPO
   if (!token || !repo) return { ok: false, error: 'GitHub token veya repo eksik' }
 
-  // Mevcut dosyayı al (SHA gerekiyor)
   const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/next.config.ts`, {
     headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' }
   })
   if (!getRes.ok) return { ok: false, error: 'next.config.ts alınamadı' }
   const { sha } = await getRes.json()
 
-  // Redirect listesini oluştur
   const redirectLines = redirectler.map(r =>
     `    { source: '${r.eski_url}', destination: '${r.yeni_url}', permanent: true },`
   ).join('\n')
@@ -62,9 +58,7 @@ export default nextConfig
   return { ok: true }
 }
 
-export async function GET(req: NextRequest) {
-  const auth = await requireAdmin(req)
-  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
+export async function GET() {
   const db = createServerClient()
   const { data, error } = await db.from('site_redirects').select('*').order('created_at', { ascending: false })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -72,8 +66,6 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const auth = await requireAdmin(req)
-  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
   const db = createServerClient()
   const { eski_url, yeni_url } = await req.json()
 
@@ -84,15 +76,12 @@ export async function POST(req: NextRequest) {
   const { error } = await db.from('site_redirects').upsert({ eski_url, yeni_url, aktif: true }, { onConflict: 'eski_url' })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  // Aktif redirectleri çek ve next.config.ts'i güncelle
   const { data: tumRedirektler } = await db.from('site_redirects').select('eski_url,yeni_url').eq('aktif', true)
   const sonuc = await nextConfigGuncelle(tumRedirektler || [])
   return NextResponse.json({ ok: true, deploy: sonuc })
 }
 
 export async function DELETE(req: NextRequest) {
-  const auth = await requireAdmin(req)
-  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
   const db = createServerClient()
   const { id } = await req.json()
 
@@ -105,8 +94,6 @@ export async function DELETE(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-  const auth = await requireAdmin(req)
-  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
   const db = createServerClient()
   const { id, aktif } = await req.json()
 
