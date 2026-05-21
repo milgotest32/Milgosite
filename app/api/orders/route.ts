@@ -91,6 +91,11 @@ export async function POST(req: NextRequest) {
 
   const toplam = Math.max(0, ara_toplam + kargo_ucreti - indirim)
 
+  // Kart ödemesinde sipariş PayTR onayına kadar 'bekliyor' kalır
+  // Diğer yöntemlerde (kapida, havale) hemen 'onaylandi'
+  const baslangic_durum = odeme_yontemi === 'kart' ? 'bekliyor' : 'onaylandi'
+  const baslangic_odeme_durum = odeme_yontemi === 'kart' ? 'bekliyor' : 'bekliyor'
+
   const siparisVeri = {
     siparis_no: genNo(), musteri_id, misafir_email,
     musteri_ad: `${adres.ad} ${adres.soyad || ''}`.trim(),
@@ -100,6 +105,8 @@ export async function POST(req: NextRequest) {
     teslimat_sehir: adres.sehir || 'İstanbul',
     bolge_adi: bolge_adi || null,
     odeme_yontemi: odeme_yontemi || 'kart',
+    durum: baslangic_durum,
+    odeme_durumu: baslangic_odeme_durum,
     ara_toplam, kargo_ucreti, indirim, toplam, kupon_kod, notlar,
   }
 
@@ -148,29 +155,31 @@ export async function POST(req: NextRequest) {
     try { await db.rpc('kupon_kullan', { p_kod: kupon_kod }) } catch {}
   }
 
-  // Mail gönder
+  // Mail gönder - kart ödemesinde PayTR callback'i bekle, diğerlerinde hemen gönder
   const baseUrl = req.headers.get('origin') || 'https://milgosite.vercel.app'
   const musteriEmail = siparis.musteri_email
-  
-  if (musteriEmail) {
-    await mailGonder(
-      musteriEmail,
-      `Siparişiniz Alındı - #${siparis.siparis_no}`,
-      siparisMail(siparis, kalemler),
-      baseUrl
-    )
-  }
 
-  // Admin bildirimi
-  const { data: adminMail } = await db.from('site_ayarlar').select('deger').eq('grup', 'genel').eq('anahtar', 'iletisim_email').single()
-  if (adminMail?.deger) {
-    await mailGonder(
-      adminMail.deger,
-      `🛍 Yeni Sipariş #${siparis.siparis_no} - ₺${toplam.toFixed(2)}`,
-      adminSiparisMail(siparis),
-      baseUrl
-    )
+  if (odeme_yontemi !== 'kart') {
+    if (musteriEmail) {
+      await mailGonder(
+        musteriEmail,
+        `Siparişiniz Alındı - #${siparis.siparis_no}`,
+        siparisMail(siparis, kalemler),
+        baseUrl
+      )
+    }
+    // Admin bildirimi
+    const { data: adminMail } = await db.from('site_ayarlar').select('deger').eq('grup', 'genel').eq('anahtar', 'iletisim_email').single()
+    if (adminMail?.deger) {
+      await mailGonder(
+        adminMail.deger,
+        `🛍 Yeni Sipariş #${siparis.siparis_no} - ₺${toplam.toFixed(2)}`,
+        adminSiparisMail(siparis),
+        baseUrl
+      )
+    }
   }
+  // Kart ödemesinde mail, PayTR callback (/api/paytr/callback) başarılı dönünce gönderilir
 
   return NextResponse.json({ data: siparis }, { status: 201 })
 }

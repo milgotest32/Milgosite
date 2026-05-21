@@ -152,9 +152,10 @@ export default function OdemePage() {
       })
       const { token, error: paytrErr } = await paytrR.json()
       if (paytrErr || !token) {
-        siparisBasarili.current = true
-        router.push(`/siparis-onay?siparis=${siparis.siparis_no}`)
-        temizle()
+        // PayTR başarısız → siparişi iptal et, kullanıcıya hata göster
+        await fetch('/api/orders/' + siparis.id + '/iptal', { method: 'POST' })
+        toast.error(paytrErr || 'Ödeme sistemi şu an kullanılamıyor. Lütfen tekrar deneyin.')
+        setYukleniyor(false)
         return
       }
       siparisBasarili.current = true
