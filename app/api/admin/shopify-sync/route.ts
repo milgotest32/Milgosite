@@ -35,8 +35,8 @@ const DURUM_MAP: any = {
   PENDING: 'bekliyor', AUTHORIZED: 'onaylandi', VOIDED: 'iptal',
 }
 
-export async function POST(req: Request) {
-  const auth = await requireAdmin()
+export async function POST(req: NextRequest) {
+  const auth = await requireAdmin(req)
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
   const db = createServerClient()
   const { tip = 'hepsi' } = await req.json().catch(() => ({}))
@@ -183,7 +183,7 @@ export async function POST(req: Request) {
 
 // Bağlantı test endpoint'i
 export async function GET(req: NextRequest) {
-  const auth = await requireAdmin()
+  const auth = await requireAdmin(req)
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
   
   if (!SHOPIFY_TOKEN) {
