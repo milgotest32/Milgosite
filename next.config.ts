@@ -27,6 +27,7 @@ const nextConfig: NextConfig = {
     { source: '/collections/peynir', destination: '/kategoriler/peynir', permanent: true },
     { source: '/collections/tereyagi', destination: '/kategoriler/tereyagi', permanent: true },
     { source: '/products/sarimsakli-kekikli', destination: '/urun/sade-surullebilir-peynir', permanent: true },
+    { source: '/blogs/tarifler', destination: '/blog', permanent: true },
     ]
   },
 }
