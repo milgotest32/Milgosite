@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
   if (!eski_url.startsWith('/')) return NextResponse.json({ error: 'Eski URL / ile başlamalı' }, { status: 400 })
   if (!yeni_url.startsWith('/')) return NextResponse.json({ error: 'Yeni URL / ile başlamalı' }, { status: 400 })
 
-  const { error } = await db.from('site_redirects').insert({ eski_url, yeni_url, aktif: true })
+  const { error } = await db.from('site_redirects').upsert({ eski_url, yeni_url, aktif: true }, { onConflict: 'eski_url' })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   // Aktif redirectleri çek ve next.config.ts'i güncelle
