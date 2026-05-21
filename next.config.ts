@@ -21,7 +21,6 @@ const nextConfig: NextConfig = {
     { source: '/products/milgo-taze-surulebilir-laktozsuz', destination: '/urun/laktozsuz-peynir', permanent: true },
     { source: '/products/sade-peynir', destination: '/urun/sade-surullebilir-peynir', permanent: true },
     { source: '/products/milgo-pulbiberli-kekikli-tereyagi', destination: '/urun/sarimsakli-biberiyeli-tereyagi', permanent: true },
-    { source: '/products/sarimsakli-kekikli', destination: '/urun/sade-surullebilir-peynir', permanent: true },
     { source: '/products/siyah-zeytinli-ve-kekikli', destination: '/urun/sade-surullebilir-peynir', permanent: true },
     { source: '/collections/all', destination: '/urunler', permanent: true },
     { source: '/collections/cig-sut', destination: '/kategoriler/cig-sut', permanent: true },
