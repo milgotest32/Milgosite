@@ -8,7 +8,7 @@ const SHOPIFY_TOKEN = process.env.SHOPIFY_ACCESS_TOKEN || ''
 
 async function shopifyQuery(query: string, variables: any = {}) {
   if (!SHOPIFY_TOKEN) {
-    throw new Error('SHOPIFY_ACCESS_TOKEN env değişkeni tanımlı değil. Vercel Dashboard > Settings > Environment Variables kısmını kontrol edin.')
+    throw new Error('SHOPIFY_ACCESS_TOKEN env değişkeni tanımlı değil.')
   }
   const res = await fetch(`https://${SHOPIFY_STORE}/admin/api/2024-01/graphql.json`, {
     method: 'POST',
@@ -37,18 +37,16 @@ const DURUM_MAP: any = {
 export async function POST(req: NextRequest) {
   const db = createServerClient()
   const { tip = 'hepsi' } = await req.json().catch(() => ({}))
-  
-  // Env kontrol
+
   if (!SHOPIFY_TOKEN) {
-    return NextResponse.json({ 
-      error: 'SHOPIFY_ACCESS_TOKEN tanımlı değil. Vercel Dashboard → Settings → Environment Variables bölümüne ekleyin ve redeployment yapın.',
+    return NextResponse.json({
+      error: 'SHOPIFY_ACCESS_TOKEN tanımlı değil.',
       env_missing: true
     }, { status: 500 })
   }
 
   let musteriSynced = 0, siparisSynced = 0, kalemSynced = 0
 
-  // ── MÜŞTERİLER ──────────────────────────────────────────
   if (tip === 'hepsi' || tip === 'musteri') {
     let cursor: string | null = null
     let hasNext = true
@@ -90,7 +88,6 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // ── SİPARİŞLER ──────────────────────────────────────────
   if (tip === 'hepsi' || tip === 'siparis') {
     let cursor: string | null = null
     let hasNext = true
@@ -156,7 +153,6 @@ export async function POST(req: NextRequest) {
 
         if (!error && siparis) {
           siparisSynced++
-          // Kalemler
           const kalemler = order.lineItems.nodes.map((li: any) => ({
             siparis_id: siparis.id,
             urun_ad: li.title,
@@ -166,7 +162,6 @@ export async function POST(req: NextRequest) {
             adet: li.quantity,
             toplam: parseFloat(li.originalUnitPriceSet.shopMoney.amount) * li.quantity,
           }))
-          // Önce mevcut kalemleri sil, sonra yeniden ekle
           await db.from('site_siparis_kalemleri').delete().eq('siparis_id', siparis.id)
           await db.from('site_siparis_kalemleri').insert(kalemler)
           kalemSynced += kalemler.length
@@ -178,21 +173,20 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ success: true, musteriSynced, siparisSynced, kalemSynced })
 }
 
-// Bağlantı test endpoint'i
 export async function GET(req: NextRequest) {
   if (!SHOPIFY_TOKEN) {
-    return NextResponse.json({ 
-      ok: false, 
+    return NextResponse.json({
+      ok: false,
       error: 'SHOPIFY_ACCESS_TOKEN env değişkeni eksik',
       store: SHOPIFY_STORE,
       token_set: false
     })
   }
-  
+
   try {
     const result = await shopifyQuery(`{ shop { name email myshopifyDomain } }`)
-    return NextResponse.json({ 
-      ok: true, 
+    return NextResponse.json({
+      ok: true,
       store: result.data?.shop?.name,
       domain: result.data?.shop?.myshopifyDomain,
       email: result.data?.shop?.email,
