@@ -1,4 +1,4 @@
-import { NextResponse, NextRequest } from 'next/server'
+import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
 import { requireAdmin } from '@/lib/supabase/admin-check'
 export const dynamic = 'force-dynamic'
@@ -35,8 +35,8 @@ const DURUM_MAP: any = {
   PENDING: 'bekliyor', AUTHORIZED: 'onaylandi', VOIDED: 'iptal',
 }
 
-export async function POST(req: NextRequest) {
-  const auth = await requireAdmin(req)
+export async function POST(req: Request) {
+  const auth = await requireAdmin()
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
   const db = createServerClient()
   const { tip = 'hepsi' } = await req.json().catch(() => ({}))
@@ -183,7 +183,7 @@ export async function POST(req: NextRequest) {
 
 // Bağlantı test endpoint'i
 export async function GET() {
-  const auth = await requireAdmin(req)
+  const auth = await requireAdmin()
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
   
   if (!SHOPIFY_TOKEN) {

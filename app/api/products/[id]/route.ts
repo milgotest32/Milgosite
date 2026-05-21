@@ -12,7 +12,7 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
   return NextResponse.json({ data })
 }
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const auth = await requireAdmin(req)
+  const auth = await requireAdmin()
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 403 })
   const { id } = await params
   const db = createServerClient()
@@ -22,7 +22,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   return NextResponse.json({ data })
 }
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const auth = await requireAdmin(req)
+  const auth = await requireAdmin()
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 403 })
   const { id } = await params
   const db = createServerClient()

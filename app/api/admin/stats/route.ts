@@ -4,7 +4,7 @@ import { createServerClient } from '@/lib/supabase/server'
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
-  const auth = await requireAdmin(req)
+  const auth = await requireAdmin()
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
   const db = createServerClient()
   const { data, error } = await db.rpc('get_admin_stats')

@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ data })
 }
 export async function POST(req: NextRequest) {
-  const auth = await requireAdmin(req)
+  const auth = await requireAdmin()
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 403 })
   const db = createServerClient()
   const body = await req.json()
