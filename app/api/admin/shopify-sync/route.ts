@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, NextRequest } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
 import { requireAdmin } from '@/lib/supabase/admin-check'
 export const dynamic = 'force-dynamic'
