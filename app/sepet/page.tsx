@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useSepet } from '@/lib/sepet'
 import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag, Tag, Truck, ChevronRight, Lock } from 'lucide-react'
 import toast from 'react-hot-toast'
+import PaketOnerisi from '@/components/cart/PaketOnerisi'
 export const dynamic = 'force-dynamic'
 
 export default function SepetPage() {

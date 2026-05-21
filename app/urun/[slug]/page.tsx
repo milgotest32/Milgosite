@@ -81,6 +81,7 @@ export default async function UrunDetayPage({ params }: { params: Promise<{ slug
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <UrunDetayClient urun={urun as any} benzerler={benzerler as any[] || []} />
+      <PaketPopup urunId={urun.id} />
     </>
   )
 }

@@ -176,6 +176,49 @@ export default function AnaSayfa() {
         </div>
       </section>
 
+      {/* Hazır Paketler */}
+      {paketler.length > 0 && (
+        <section style={{ padding: 'clamp(32px,5vw,72px) clamp(16px,4vw,64px)', maxWidth: '1400px', margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '28px' }}>
+            <div>
+              <span style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '.15em', textTransform: 'uppercase' as const, color: '#E8567A', display: 'block', marginBottom: '6px' }}>🎁 Özel Fırsatlar</span>
+              <h2 style={{ fontFamily: 'var(--font-cormorant),serif', fontSize: 'clamp(28px,4vw,44px)', color: '#1A0A12', margin: 0 }}>Hazır Paketlerimiz</h2>
+            </div>
+            <a href="/paketler" style={{ fontSize: '13px', fontWeight: 700, color: '#E8567A', textDecoration: 'none' }}>Tümünü Gör →</a>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: '16px' }}>
+            {paketler.slice(0,4).map((p: any) => {
+              const kalemler = p.site_paket_urunleri || []
+              const ayriToplam = kalemler.reduce((t: number, k: any) => t + (k.site_products?.fiyat||0)*k.adet, 0)
+              const tasarruf = ayriToplam - p.fiyat
+              const yuzde = ayriToplam > 0 ? Math.round((tasarruf/ayriToplam)*100) : 0
+              return (
+                <a key={p.id} href={`/paketler/${p.slug}`} style={{ textDecoration: 'none', background: '#fff', borderRadius: '24px', overflow: 'hidden', border: '1px solid #F0ECF5', display: 'block', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
+                  {p.gorsel_url ? (
+                    <img src={p.gorsel_url} alt={p.name} style={{ width: '100%', height: '180px', objectFit: 'cover' }}/>
+                  ) : (
+                    <div style={{ width: '100%', height: '180px', background: 'linear-gradient(135deg,#FEE8EF,#EBF5FC)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '48px' }}>🎁</div>
+                  )}
+                  <div style={{ padding: '16px' }}>
+                    <h3 style={{ fontFamily: 'var(--font-nunito),sans-serif', fontSize: '15px', fontWeight: 700, color: '#1A0A12', marginBottom: '6px' }}>{p.name}</h3>
+                    <div style={{ fontSize: '11px', color: '#9CA3AF', marginBottom: '10px' }}>
+                      {kalemler.map((k: any) => `${k.site_products?.name} ×${k.adet}`).join(' + ')}
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        {tasarruf > 0 && <span style={{ fontSize: '11px', color: '#9CA3AF', textDecoration: 'line-through', display: 'block' }}>₺{ayriToplam.toFixed(2)}</span>}
+                        <span style={{ fontSize: '20px', fontWeight: 800, color: '#1A0A12' }}>₺{p.fiyat.toFixed(2)}</span>
+                      </div>
+                      {yuzde > 0 && <span style={{ background: '#F0FDF4', color: '#22C55E', fontSize: '12px', fontWeight: 800, padding: '4px 10px', borderRadius: '50px' }}>%{yuzde} indirim</span>}
+                    </div>
+                  </div>
+                </a>
+              )
+            })}
+          </div>
+        </section>
+      )}
+
       {/* ===== ABONELİK ===== */}
       <section style={{ margin: '0 clamp(12px,3vw,48px) clamp(40px,6vw,72px)', borderRadius: '32px', overflow: 'hidden', background: 'linear-gradient(135deg,#FEE8EF,#EBF5FC)', position: 'relative' }}>
         <div className="blob blob-p" style={{ width: '280px', height: '280px', top: '-60px', right: '-40px', opacity: .4 }} />

@@ -8,10 +8,11 @@ export async function GET() {
   const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://milgo.com.tr'
   const now = new Date().toISOString()
 
-  const [{ data: products }, { data: kategoriler }, { data: bloglar }] = await Promise.all([
+  const [{ data: products }, { data: kategoriler }, { data: bloglar }, { data: paketler }] = await Promise.all([
     db.from('site_products').select('slug,updated_at').eq('durum', 'active'),
     db.from('site_kategoriler').select('slug,updated_at').eq('aktif', true),
     db.from('site_blog_yazilar').select('slug,updated_at').eq('durum', 'yayinda'),
+    db.from('site_paketler').select('slug,updated_at').eq('aktif', true),
   ])
 
   const staticPages = [
@@ -22,6 +23,7 @@ export async function GET() {
     { url: '/hakkimizda', priority: '0.7', changefreq: 'monthly' },
     { url: '/iletisim', priority: '0.6', changefreq: 'monthly' },
     { url: '/sss', priority: '0.6', changefreq: 'monthly' },
+    { url: '/paketler', priority: '0.8', changefreq: 'weekly' },
     { url: '/blog', priority: '0.7', changefreq: 'weekly' },
   ]
 
@@ -42,6 +44,12 @@ ${(products || []).map(p => `  <url>
 ${(kategoriler || []).map(k => `  <url>
     <loc>${base}/kategoriler/${k.slug}</loc>
     <lastmod>${k.updated_at || now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`).join('\n')}
+${(paketler || []).map((p: any) => `  <url>
+    <loc>${base}/paketler/${p.slug}</loc>
+    <lastmod>${p.updated_at || now}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>`).join('\n')}

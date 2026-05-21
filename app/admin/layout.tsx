@@ -15,6 +15,7 @@ const MENU = [
   ]},
   { grup: 'Katalog', items: [
     { href: '/admin/urunler', icon: <Package size={16}/>, ad: 'Ürünler' },
+    { href: '/admin/paketler', icon: <Package size={16}/>, ad: 'Paketler' },
     { href: '/admin/kategoriler', icon: <Tag size={16}/>, ad: 'Kategoriler' },
   ]},
   { grup: 'Satış', items: [
