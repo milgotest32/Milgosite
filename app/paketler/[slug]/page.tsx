@@ -43,8 +43,16 @@ export default function PaketDetayPage() {
   const yuzde = ayriToplam > 0 ? Math.round((tasarruf / ayriToplam) * 100) : 0
 
   const paketeEkle = () => {
+    const oran = ayriToplam > 0 ? paket.fiyat / ayriToplam : 1
     kalemler.forEach((k: any) => {
-      if (k.site_products) ekle(k.site_products, k.adet)
+      if (k.site_products) {
+        const indirimliUrun = {
+          ...k.site_products,
+          fiyat: Math.round(k.site_products.fiyat * oran * 100) / 100,
+          eski_fiyat: k.site_products.fiyat,
+        }
+        ekle(indirimliUrun, k.adet)
+      }
     })
     setEklendi(true)
     toast.success(`🎁 ${paket.name} sepete eklendi!`)

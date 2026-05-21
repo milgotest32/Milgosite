@@ -32,10 +32,13 @@ export default function PaketPopup({ urunId }: { urunId: string }) {
   const tasarrufYuzde = Math.round((tasarruf / ayriToplam) * 100)
 
   const sepeteEkle = () => {
-    // Paketteki tüm ürünleri ayrı ayrı sepete ekle
+    // Paket indirim oranını hesapla
+    const oran = ayriToplam > 0 ? paket.fiyat / ayriToplam : 1
+    // Ürünlerin fiyatını paket oranına göre düşür
     kalemler.forEach((k: any) => {
       if (k.site_products) {
-        ekle(k.site_products, k.adet)
+        const indirimlifiyat = Math.round(k.site_products.fiyat * oran * 100) / 100
+        ekle({ ...k.site_products, fiyat: indirimlifiyat, eski_fiyat: k.site_products.fiyat }, k.adet)
       }
     })
     toast.success(`🎁 ${paket.name} sepete eklendi!`)
