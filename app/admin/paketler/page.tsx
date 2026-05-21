@@ -32,7 +32,7 @@ export default function PaketlerPage() {
   const [saving, setSaving] = useState(false)
 
   const yukle = useCallback(async () => {
-    const { data: p } = await supabase.from('site_paketler').select('*, site_paket_urunleri(*, site_products(id,name,fiyat,site_product_images(*)))').order('created_at', {ascending:false})
+    const { data: p } = await supabase.from('site_paketler').select('*, site_paket_urunleri(*, site_products(id,name,slug,fiyat,site_product_images(*)))').order('created_at', {ascending:false})
     setPaketler(p || [])
     const { data: u } = await supabase.from('site_products').select('id,name,fiyat,site_product_images(*)').eq('durum','active').order('name')
     setUrunler(u || [])

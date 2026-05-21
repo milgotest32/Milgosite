@@ -37,7 +37,7 @@ export default function AnaSayfa() {
     urunleriYukle()
     window.addEventListener('milgo_konum_degisti', urunleriYukle)
     supabase.from('site_paketler')
-      .select('*, site_paket_urunleri(adet, site_products(id,name,fiyat,site_product_images(*)))')
+      .select('*, site_paket_urunleri(adet, site_products(id,name,slug,fiyat,site_product_images(*)))')
       .eq('aktif', true)
       .order('one_cikan', { ascending: false })
       .then(({ data }: any) => setPaketler(data || []))

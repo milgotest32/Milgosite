@@ -16,7 +16,7 @@ export default function PaketOnerisi() {
 
     supabase
       .from('site_paket_urunleri')
-      .select('paket_id, site_paketler(id, name, fiyat, aktif, site_paket_urunleri(adet, site_products(id, name, fiyat)))')
+      .select('paket_id, site_paketler(id, name, fiyat, aktif, site_paket_urunleri(adet, site_products(id, name, slug, fiyat)))')
       .in('product_id', productIds)
       .then(({ data }) => {
         if (!data || data.length === 0) { setPaket(null); return }
