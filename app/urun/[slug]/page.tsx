@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { createServerClient } from '@/lib/supabase/server'
 import UrunDetayClient from './UrunDetayClient'
+import PaketPopup from '@/components/product/PaketPopup'
 import { notFound } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
