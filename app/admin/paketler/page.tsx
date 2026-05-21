@@ -79,7 +79,7 @@ export default function PaketlerPage() {
     if (!form.fiyat || isNaN(Number(form.fiyat))) { toast.error('Fiyat zorunludur'); return }
     setSaving(true)
 
-    const slug = form.slug || slugify(form.name)
+    const slug = slugify(form.slug || form.name)
 
     if (duzenleId) {
       await supabase.from('site_paketler').update({ name:form.name, slug, aciklama:form.aciklama, gorsel_url:form.gorsel_url, fiyat:Number(form.fiyat), aktif:form.aktif, one_cikan:form.one_cikan, updated_at:new Date().toISOString() }).eq('id', duzenleId)
