@@ -182,7 +182,7 @@ export async function POST(req: Request) {
 }
 
 // Bağlantı test endpoint'i
-export async function GET() {
+export async function GET(req: NextRequest) {
   const auth = await requireAdmin()
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
   
