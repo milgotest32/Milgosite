@@ -36,7 +36,7 @@ const DURUM_MAP: any = {
 }
 
 export async function POST(req: Request) {
-  const auth = await requireAdmin()
+  const auth = await requireAdmin(req)
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
   const db = createServerClient()
   const { tip = 'hepsi' } = await req.json().catch(() => ({}))
@@ -183,7 +183,7 @@ export async function POST(req: Request) {
 
 // Bağlantı test endpoint'i
 export async function GET() {
-  const auth = await requireAdmin()
+  const auth = await requireAdmin(req)
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
   
   if (!SHOPIFY_TOKEN) {
