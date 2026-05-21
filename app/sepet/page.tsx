@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useSepet } from '@/lib/sepet'
 import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag, Tag, Truck, ChevronRight, Lock } from 'lucide-react'
 import toast from 'react-hot-toast'
+import PaketOnerisi from '@/components/cart/PaketOnerisi'
 export const dynamic = 'force-dynamic'
 
 export default function SepetPage() {
@@ -67,6 +68,7 @@ export default function SepetPage() {
           Sepetim <span style={{color:'#9CA3AF',fontSize:'22px'}}>({items.length} ürün)</span>
         </h1>
 
+        <PaketOnerisi />
         <div className="sepet-grid" style={{display:'grid',gridTemplateColumns:'1fr 340px',gap:'20px',alignItems:'start'}}>
           {/* Ürünler */}
           <div style={{display:'flex',flexDirection:'column',gap:'12px'}}>

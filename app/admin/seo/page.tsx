@@ -86,6 +86,23 @@ export default function SeoPage() {
             {inp('Facebook Pixel ID', 'fb_pixel_id')}
           </div>
 
+          <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #F0ECF5', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <h2 style={{ fontSize: '15px', fontWeight: 700, color: '#1C1B2E', marginBottom: '4px', display:'flex',alignItems:'center',gap:'8px' }}>🤖 robots.txt</h2>
+            <div style={{ background: '#EBF7FC', border: '1px solid #BAE6FD', borderRadius: '10px', padding: '10px 14px', fontSize: '12px', color: '#1C1B2E' }}>
+              robots.txt arama motorlarına hangi sayfaların indeksleneceğini söyler. Boş bırakılırsa varsayılan ayarlar kullanılır.
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: '#6B7280', marginBottom: '6px' }}>robots.txt İçeriği</label>
+              <textarea value={get('robots_txt')} onChange={e => set('robots_txt', e.target.value)} rows={8}
+                placeholder={`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /hesabim\n\nSitemap: https://milgo.com.tr/sitemap.xml`}
+                style={{ width: '100%', background: '#F8F7FC', border: '1px solid #F0ECF5', borderRadius: '10px', padding: '10px 14px', fontSize: '12px', color: '#1C1B2E', outline: 'none', fontFamily: 'monospace', resize: 'vertical', boxSizing: 'border-box' as const }} />
+            </div>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' as const }}>
+              <a href="/robots.txt" target="_blank" style={{ fontSize: '12px', color: '#3B9FCC', textDecoration: 'none', fontWeight: 600 }}>📄 robots.txt görüntüle →</a>
+              <a href="/sitemap.xml" target="_blank" style={{ fontSize: '12px', color: '#3B9FCC', textDecoration: 'none', fontWeight: 600 }}>🗺️ sitemap.xml görüntüle →</a>
+            </div>
+          </div>
+
           <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #F0ECF5', padding: '24px' }}>
             <h2 style={{ fontSize: '15px', fontWeight: 700, color: '#1C1B2E', marginBottom: '12px' }}>Hızlı Kontrol</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>

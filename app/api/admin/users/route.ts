@@ -1,42 +1,39 @@
-import { NextResponse } from 'next/server'
-import { createServerClient } from '@/lib/supabase/server'
+import { NextResponse, NextRequest } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
 import { requireAdmin } from '@/lib/supabase/admin-check'
 export const dynamic = 'force-dynamic'
-export async function GET() {
-  const auth = await requireAdmin()
+
+function serviceClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { auth: { persistSession: false } }
+  )
+}
+
+export async function GET(req: NextRequest) {
+  const auth = await requireAdmin(req)
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
-  const db = createServerClient()
-  
-  // Auth kullanıcıları
-  const { data: authData, error } = await db.rpc('get_all_users_admin')
-  
-  // site_musteriler (Shopify'dan aktarılan + yeni kayıtlar)
-  const { data: dbMusteriler } = await db
-    .from('site_musteriler')
-    .select('*')
+
+  const db = serviceClient()
+  const { data, error } = await db
+    .from('site_users')
+    .select('id, email, role, ad, soyad, created_at, aktif')
     .order('created_at', { ascending: false })
 
-  if (error && !dbMusteriler) return NextResponse.json({ error: error.message }, { status: 403 })
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ data: data || [] })
+}
 
-  // Auth users map
-  const authMap: any = {}
-  authData?.forEach((u: any) => { authMap[u.email] = u })
+export async function PATCH(req: NextRequest) {
+  const auth = await requireAdmin(req)
+  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
 
-  // Merge: önce DB müşterileri, auth bilgileriyle zenginleştir
-  const musteriler = (dbMusteriler || []).map((m: any) => ({
-    ...m,
-    role: authMap[m.email]?.role || 'musteri',
-    auth_id: authMap[m.email]?.id,
-    kaynak: m.shopify_id ? 'shopify' : 'site',
-  }))
+  const db = serviceClient()
+  const { id, role } = await req.json()
+  if (!id || !role) return NextResponse.json({ error: 'id ve role zorunlu' }, { status: 400 })
 
-  // Auth'da olup DB'de olmayan kullanıcılar
-  const dbEmails = new Set((dbMusteriler || []).map((m: any) => m.email))
-  authData?.forEach((u: any) => {
-    if (!dbEmails.has(u.email)) {
-      musteriler.push({ ...u, kaynak: 'auth', role: u.role })
-    }
-  })
-
-  return NextResponse.json({ data: musteriler })
+  const { error } = await db.from('site_users').update({ role }).eq('id', id)
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ ok: true })
 }

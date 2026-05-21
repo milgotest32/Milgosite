@@ -58,14 +58,19 @@ export default function Navbar() {
       <div style={{ background: '#1A0A12', padding: '0 clamp(16px,4vw,48px)' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '36px' }}>
           {/* Konum - sol */}
-          {konum ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11px', fontWeight: 600, color: '#F4A7B9' }}>
-              <MapPin size={11} />
-              {konum}
-            </div>
-          ) : (
-            <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>📍 Konum belirleniyor...</div>
-          )}
+          <button
+            onClick={() => window.dispatchEvent(new Event('milgo_konum_modal_ac'))}
+            style={{ background:'none', border:'none', cursor:'pointer', padding:0, display:'flex', alignItems:'center', gap:'5px' }}>
+            {konum ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11px', fontWeight: 600, color: '#F4A7B9' }}>
+                <MapPin size={11} />
+                {konum}
+                <span style={{ fontSize:'10px', color:'rgba(255,255,255,0.4)', marginLeft:'2px' }}>· değiştir</span>
+              </div>
+            ) : (
+              <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>📍 Konum belirle</div>
+            )}
+          </button>
 
           {/* Orta mesaj */}
           <p style={{ fontSize: '11px', color: 'rgba(255,255,255,.6)', fontWeight: 500, margin: 0, textAlign: 'center', flex: 1, padding: '0 16px', display: isMobile ? 'none' : 'block' }}>
@@ -112,7 +117,7 @@ export default function Navbar() {
                   </div>
                 )}
               </div>
-              {[['Abonelik', '/abonelik'], ['Çiftliğimiz', '/ciftligimiz'], ['Blog', '/blog'], ['Hakkımızda', '/hakkimizda']].map(([a, h]) => (
+              {[['Paketler', '/paketler'], ['Abonelik', '/abonelik'], ['Çiftliğimiz', '/ciftligimiz'], ['Blog', '/blog'], ['Hakkımızda', '/hakkimizda']].map(([a, h]) => (
                 <Link key={h} href={h} style={{ padding: '7px 14px', fontSize: '13px', fontWeight: 500, color: '#7A6070', borderRadius: '10px', textDecoration: 'none' }}>{a}</Link>
               ))}
             </div>
@@ -201,7 +206,7 @@ export default function Navbar() {
             {konum && <span style={{ fontSize: '12px', fontFamily: 'Nunito, sans-serif', fontWeight: 600, color: '#E8567A', marginLeft: '10px' }}>📍 {konum}</span>}
           </div>
           <div style={{ flex: 1 }}>
-            {[['🥛 Çiğ Süt', '/kategoriler/cig-sut'], ['🧀 Peynir', '/kategoriler/peynir'], ['🧈 Tereyağı', '/kategoriler/tereyagi'], ['🛍 Tüm Ürünler', '/urunler'], ['🔄 Abonelik', '/abonelik'], ['🌿 Çiftliğimiz', '/ciftligimiz'], ['📖 Blog', '/blog'], ['🔥 Kampanyalar', '/kampanyalar']].map(([a, h]) => (
+            {[['🥛 Çiğ Süt', '/kategoriler/cig-sut'], ['🧀 Peynir', '/kategoriler/peynir'], ['🧈 Tereyağı', '/kategoriler/tereyagi'], ['🛍 Tüm Ürünler', '/urunler'], ['🔄 Abonelik', '/abonelik'], ['🌿 Çiftliğimiz', '/ciftligimiz'], ['📖 Blog', '/blog'], ['🎁 Paketler', '/paketler'], ['🔥 Kampanyalar', '/kampanyalar']].map(([a, h]) => (
               <Link key={h} href={h} onClick={() => setMenuAcik(false)} style={{ display: 'block', padding: '14px 0', fontSize: '17px', fontWeight: 500, color: '#1A0A12', textDecoration: 'none', borderBottom: '1px solid rgba(26,10,18,.06)' }}>{a}</Link>
             ))}
           </div>

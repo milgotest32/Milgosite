@@ -1,6 +1,6 @@
 'use client'
 import { Suspense } from 'react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 import ProductCard from '@/components/product/ProductCard'
@@ -25,21 +25,32 @@ function Icerik() {
   const [hizmetYok, setHizmetYok] = useState(false)
   const arama = params.get('q') || ''
 
-  useEffect(() => {
-    // localStorage'dan direkt oku — KonumModal zaten kaydetmiş
+  const konumOku = useCallback(() => {
     const hizmet = localStorage.getItem('milgo_hizmet')
     const bid = localStorage.getItem('milgo_bolge_id')
     const bad = localStorage.getItem('milgo_bolge_ad')
-
     if (hizmet === 'false') {
       setHizmetYok(true)
       setLoading(false)
       return
     }
-
-    if (bid) setBolgeId(bid)
-    if (bad) setBolgeAd(bad)
+    if (!hizmet && !bid) {
+      // Konum henüz seçilmemiş - boş göster
+      setHizmetYok(false)
+      setUrunler([])
+      setLoading(false)
+      return
+    }
+    setHizmetYok(false)
+    setBolgeId(bid || null)
+    setBolgeAd(bad || null)
   }, [])
+
+  useEffect(() => {
+    konumOku()
+    window.addEventListener('milgo_konum_degisti', konumOku)
+    return () => window.removeEventListener('milgo_konum_degisti', konumOku)
+  }, [konumOku])
 
   useEffect(() => {
     if (hizmetYok) return

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { createServerClient } from '@/lib/supabase/server'
 import UrunDetayClient from './UrunDetayClient'
+import PaketPopup from '@/components/product/PaketPopup'
 import { notFound } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
@@ -74,13 +75,14 @@ export default async function UrunDetayPage({ params }: { params: Promise<{ slug
       availability: (urun.stok ?? 1) > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       seller: { '@type': 'Organization', name: 'milgo.' }
     },
-    aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', reviewCount: '48' }
+    ...(urun.ortalama_puan && urun.yorum_sayisi ? { aggregateRating: { '@type': 'AggregateRating', ratingValue: String(urun.ortalama_puan), reviewCount: String(urun.yorum_sayisi) } } : {})
   }
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <UrunDetayClient urun={urun as any} benzerler={benzerler as any[] || []} />
+      <PaketPopup urunId={urun.id} />
     </>
   )
 }
