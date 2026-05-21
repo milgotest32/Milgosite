@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, NextRequest } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireAdmin } from '@/lib/supabase/admin-check'
 export const dynamic = 'force-dynamic'
 
-// Service role client - RLS bypass eder
 function serviceClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -11,7 +11,10 @@ function serviceClient() {
   )
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const auth = await requireAdmin(req)
+  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
+
   const db = serviceClient()
   const { data, error } = await db
     .from('site_users')
@@ -22,7 +25,10 @@ export async function GET() {
   return NextResponse.json({ data: data || [] })
 }
 
-export async function PATCH(req: Request) {
+export async function PATCH(req: NextRequest) {
+  const auth = await requireAdmin(req)
+  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
+
   const db = serviceClient()
   const { id, role } = await req.json()
   if (!id || !role) return NextResponse.json({ error: 'id ve role zorunlu' }, { status: 400 })

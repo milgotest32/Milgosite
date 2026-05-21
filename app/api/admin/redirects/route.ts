@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
+import { requireAdmin } from '@/lib/supabase/admin-check'
 export const dynamic = 'force-dynamic'
 
 // next.config.ts'i GitHub'a push eden fonksiyon
@@ -61,7 +62,9 @@ export default nextConfig
   return { ok: true }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const auth = await requireAdmin(req)
+  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
   const db = createServerClient()
   const { data, error } = await db.from('site_redirects').select('*').order('created_at', { ascending: false })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -69,6 +72,8 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  const auth = await requireAdmin(req)
+  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
   const db = createServerClient()
   const { eski_url, yeni_url } = await req.json()
 
@@ -86,6 +91,8 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  const auth = await requireAdmin(req)
+  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
   const db = createServerClient()
   const { id } = await req.json()
 
@@ -98,6 +105,8 @@ export async function DELETE(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
+  const auth = await requireAdmin(req)
+  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
   const db = createServerClient()
   const { id, aktif } = await req.json()
 
