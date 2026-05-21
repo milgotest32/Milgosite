@@ -10,6 +10,7 @@ export const dynamic = 'force-dynamic'
 
 export default function AnaSayfa() {
   const [urunler, setUrunler] = useState<Urun[]>([])
+  const [paketler, setPaketler] = useState<any[]>([])
 
   const urunleriYukle = () => {
     const bolgeId = localStorage.getItem('milgo_bolge_id')
@@ -35,6 +36,11 @@ export default function AnaSayfa() {
   useEffect(() => {
     urunleriYukle()
     window.addEventListener('milgo_konum_degisti', urunleriYukle)
+    supabase.from('site_paketler')
+      .select('*, site_paket_urunleri(adet, site_products(id,name,fiyat,site_product_images(*)))')
+      .eq('aktif', true)
+      .order('one_cikan', { ascending: false })
+      .then(({ data }: any) => setPaketler(data || []))
     return () => window.removeEventListener('milgo_konum_degisti', urunleriYukle)
   }, [])
 
