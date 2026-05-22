@@ -208,14 +208,14 @@ export default function KonumModal() {
 
   return (
     <>
-      <div onClick={kapat} style={{ position: 'fixed', inset: 0, background: 'rgba(26,10,18,0.5)', zIndex: 998, backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)' }} />
+      <div onClick={kapat} style={{ position: 'fixed', inset: 0, background: 'rgba(26,10,18,0.5)', zIndex: 1001, backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)' }} />
 
       <div style={{
         position: 'fixed',
-        bottom: 'max(16px, env(safe-area-inset-bottom, 16px))',
+        bottom: 'max(86px, calc(70px + env(safe-area-inset-bottom, 16px)))',
         left: '16px', right: '16px',
         width: 'auto', maxWidth: '420px',
-        background: '#fff', borderRadius: '28px', zIndex: 999,
+        background: '#fff', borderRadius: '28px', zIndex: 1002,
         boxShadow: '0 24px 64px rgba(26,10,18,0.2)',
         padding: 'clamp(20px,4vw,28px)',
         fontFamily: 'Nunito, sans-serif',
