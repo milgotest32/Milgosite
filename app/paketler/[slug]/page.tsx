@@ -61,12 +61,18 @@ export default function PaketDetayPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#F8F5FF', fontFamily: 'Nunito,sans-serif' }}>
+      <style>{`
+        @media (max-width: 768px) {
+          .paket-grid { grid-template-columns: 1fr !important; }
+          .paket-sticky { position: static !important; }
+        }
+      `}</style>
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '32px 16px' }}>
         <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#9CA3AF', textDecoration: 'none', marginBottom: '24px' }}>
           <ArrowLeft size={14} />Ana Sayfaya Dön
         </Link>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '24px', alignItems: 'start' }}>
+        <div className="paket-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '24px', alignItems: 'start' }}>
           {/* Sol */}
           <div>
             {/* Görsel */}
@@ -113,7 +119,7 @@ export default function PaketDetayPage() {
           </div>
 
           {/* Sağ — Fiyat kartı */}
-          <div style={{ position: 'sticky' as const, top: '24px' }}>
+          <div className="paket-sticky" style={{ position: 'sticky' as const, top: '24px' }}>
             <div style={{ background: '#fff', borderRadius: '24px', padding: '24px', boxShadow: '0 4px 24px rgba(0,0,0,0.08)', border: '1px solid #F0ECF5' }}>
               <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#1A0A12', marginBottom: '16px' }}>Paket Özeti</h3>
 
