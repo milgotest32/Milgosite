@@ -96,6 +96,28 @@ export default function AnaSayfa() {
   const [urunler, setUrunler] = useState<Urun[]>([])
   const [paketler, setPaketler] = useState<any[]>([])
   const [ic, setIc] = useState<Record<string, string>>(VARSAYILAN)
+  const [bultenEmail, setBultenEmail] = useState('')
+  const [bultenDurum, setBultenDurum] = useState<'bos' | 'gonderiliyor' | 'basarili' | 'hata'>('bos')
+  const [yorumlar, setYorumlar] = useState<any[]>([])
+
+  const bultenGonder = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!bultenEmail || bultenDurum === 'gonderiliyor') return
+    setBultenDurum('gonderiliyor')
+    try {
+      const { error } = await supabase.from('site_bulten').insert({ email: bultenEmail })
+      if (error && error.code === '23505') {
+        // Unique constraint: zaten kayıtlı
+        setBultenDurum('basarili')
+      } else if (error) {
+        throw error
+      } else {
+        setBultenDurum('basarili')
+      }
+    } catch {
+      setBultenDurum('hata')
+    }
+  }
 
   const urunleriYukle = () => {
     const bolgeId = localStorage.getItem('milgo_bolge_id')
@@ -135,6 +157,17 @@ export default function AnaSayfa() {
       .eq('aktif', true)
       .order('one_cikan', { ascending: false })
       .then(({ data }: any) => setPaketler(data || []))
+
+    // Yorumları yükle (site_yorumlar tablosu varsa DB'den, yoksa varsayılanları kullan)
+    supabase.from('site_yorumlar')
+      .select('*')
+      .eq('aktif', true)
+      .order('sira', { ascending: true })
+      .limit(3)
+      .then(({ data, error }) => {
+        if (!error && data && data.length > 0) setYorumlar(data)
+      })
+
     return () => window.removeEventListener('milgo_konum_degisti', urunleriYukle)
   }, [])
 
@@ -389,11 +422,16 @@ export default function AnaSayfa() {
             <h2 style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: 'clamp(24px,4vw,44px)', color: '#fff' }}>{t('yorumlar_baslik')} <em style={{ fontStyle: 'italic', color: '#E8567A', fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif", fontWeight: '400', fontSize: '1.1em' }}>{t('yorumlar_baslik_italik')}</em></h2>
           </div>
           <div className="rev-grid">
-            {[
+            {(yorumlar.length > 0 ? yorumlar.map((y: any) => ({
+              h: (y.ad || 'M')[0].toUpperCase(),
+              a: y.ad || '',
+              l: y.lokasyon || '',
+              metin: y.metin || '',
+            })) : [
               { h: t('yorum_1_harf'), a: t('yorum_1_ad'), l: t('yorum_1_lokasyon'), metin: t('yorum_1_metin') },
               { h: t('yorum_2_harf'), a: t('yorum_2_ad'), l: t('yorum_2_lokasyon'), metin: t('yorum_2_metin') },
               { h: t('yorum_3_harf'), a: t('yorum_3_ad'), l: t('yorum_3_lokasyon'), metin: t('yorum_3_metin') },
-            ].map(y => (
+            ]).map(y => (
               <div key={y.a} style={{ background: 'rgba(255,255,255,.07)', border: '1px solid rgba(255,255,255,.1)', borderRadius: '24px', padding: '24px' }}>
                 <div style={{ display: 'flex', gap: '3px', marginBottom: '14px' }}>
                   {[1, 2, 3, 4, 5].map(s => <Star key={s} size={14} fill="#FBBF24" style={{ color: '#FBBF24' }} />)}
@@ -418,12 +456,31 @@ export default function AnaSayfa() {
           {t('bulten_baslik')} <em style={{ fontStyle: 'italic', color: '#E8567A', fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif", fontWeight: '400', fontSize: '1.1em' }}>{t('bulten_baslik_italik')}</em>
         </h2>
         <p style={{ fontSize: '14px', color: '#7A6070', marginBottom: '24px' }}>{t('bulten_aciklama')}</p>
-        <form onSubmit={e => e.preventDefault()}
-          style={{ display: 'flex', maxWidth: '420px', margin: '0 auto', background: 'rgba(26,10,18,.04)', border: '1.5px solid rgba(26,10,18,.1)', borderRadius: '16px', padding: '5px' }}>
-          <input type="email" placeholder={t('bulten_placeholder')}
-            style={{ flex: 1, background: 'transparent', border: 'none', padding: '12px 14px', fontSize: '14px', color: '#1A0A12', outline: 'none', fontFamily: 'Nunito, sans-serif', minWidth: 0 }} />
-          <button type="submit" className="btn-primary" style={{ borderRadius: '12px', padding: '10px 18px', flexShrink: 0, fontSize: '13px' }}>{t('bulten_btn')}</button>
-        </form>
+        {bultenDurum === 'basarili' ? (
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: '#F0FDF4', color: '#16a34a', borderRadius: '16px', padding: '14px 24px', fontSize: '14px', fontWeight: 600 }}>
+            ✓ Kaydınız alındı, teşekkürler!
+          </div>
+        ) : (
+          <form onSubmit={bultenGonder}
+            style={{ display: 'flex', maxWidth: '420px', margin: '0 auto', background: 'rgba(26,10,18,.04)', border: '1.5px solid rgba(26,10,18,.1)', borderRadius: '16px', padding: '5px' }}>
+            <input
+              type="email"
+              required
+              value={bultenEmail}
+              onChange={e => setBultenEmail(e.target.value)}
+              placeholder={t('bulten_placeholder')}
+              style={{ flex: 1, background: 'transparent', border: 'none', padding: '12px 14px', fontSize: '14px', color: '#1A0A12', outline: 'none', fontFamily: 'Nunito, sans-serif', minWidth: 0 }}
+            />
+            <button type="submit" className="btn-primary"
+              disabled={bultenDurum === 'gonderiliyor'}
+              style={{ borderRadius: '12px', padding: '10px 18px', flexShrink: 0, fontSize: '13px', opacity: bultenDurum === 'gonderiliyor' ? 0.7 : 1 }}>
+              {bultenDurum === 'gonderiliyor' ? '…' : t('bulten_btn')}
+            </button>
+          </form>
+        )}
+        {bultenDurum === 'hata' && (
+          <p style={{ fontSize: '12px', color: '#dc2626', marginTop: '8px' }}>Bir hata oluştu, lütfen tekrar deneyin.</p>
+        )}
       </section>
     </div>
   )
