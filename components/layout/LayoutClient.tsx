@@ -12,15 +12,64 @@ import WhatsAppButon from '@/components/ui/WhatsAppButon'
 import { Toaster, toast } from 'react-hot-toast'
 import { supabase } from '@/lib/supabase/client'
 import { useSepet } from '@/lib/sepet'
+import React from 'react'
 
 const HATIRLAMA_DISINDA = ['/sepet', '/odeme', '/siparis-onay', '/giris', '/kayit']
 
-const MOBİL_MENU = [
-  { href: '/',         icon: '🏠', label: 'Ana Sayfa' },
-  { href: '/urunler',  icon: '🛍', label: 'Ürünler'   },
-  { href: '/abonelik', icon: '🔄', label: 'Abonelik'  },
-  { href: '/sepet',    icon: '🛒', label: 'Sepet'     },
-  { href: '/hesabim',  icon: '👤', label: 'Hesabım'   },
+const NAV_ITEMS = [
+  {
+    href: '/',
+    label: 'Ana Sayfa',
+    icon: (a: boolean) => (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={a ? '#E8567A' : '#9CA3AF'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/>
+        <path d="M9 21V12h6v9"/>
+      </svg>
+    ),
+  },
+  {
+    href: '/urunler',
+    label: 'Ürünler',
+    icon: (a: boolean) => (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={a ? '#E8567A' : '#9CA3AF'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <path d="M16 10a4 4 0 01-8 0"/>
+      </svg>
+    ),
+  },
+  {
+    href: '/abonelik',
+    label: 'Abonelik',
+    icon: (a: boolean) => (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={a ? '#E8567A' : '#9CA3AF'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+        <line x1="12" y1="22.08" x2="12" y2="12"/>
+      </svg>
+    ),
+  },
+  {
+    href: '/sepet',
+    label: 'Sepet',
+    icon: (a: boolean) => (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={a ? '#E8567A' : '#9CA3AF'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <path d="M16 10a4 4 0 01-8 0"/>
+      </svg>
+    ),
+  },
+  {
+    href: '/hesabim',
+    label: 'Hesabım',
+    icon: (a: boolean) => (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={a ? '#E8567A' : '#9CA3AF'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+    ),
+  },
 ]
 
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
@@ -30,7 +79,6 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
   const adetToplam = useSepet(s => s.adetToplam)
   const sepetAdet = adetToplam()
 
-  // Kargo ayarlarını DB'den yükle
   useEffect(() => {
     supabase.from('site_ayarlar').select('anahtar,deger').eq('grup', 'kargo').then(({ data }) => {
       if (data) {
@@ -42,7 +90,6 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
     })
   }, [])
 
-  // Sepet hatırlatması — oturum boyunca sadece 1 kez
   useEffect(() => {
     if (isAdmin) return
     if (HATIRLAMA_DISINDA.some(p => pathname?.startsWith(p))) return
@@ -96,12 +143,12 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
       {!isAdmin && <Navbar />}
       {!isAdmin && <Popup />}
       {!isAdmin && <BolgeYokPopup />}
-      <main style={{ paddingBottom: isAdmin ? 0 : undefined }}>{children}</main>
+      <main>{children}</main>
       {!isAdmin && <Footer />}
 
       {/* Mobil Alt Navigasyon */}
       {!isAdmin && (
-        <nav style={{
+        <nav className="mobil-nav" style={{
           display: 'none',
           position: 'fixed',
           bottom: 0,
@@ -110,12 +157,10 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
           zIndex: 1000,
           background: '#fff',
           borderTop: '1px solid #F0ECF5',
-          boxShadow: '0 -4px 20px rgba(0,0,0,0.08)',
+          boxShadow: '0 -4px 20px rgba(0,0,0,0.06)',
           padding: '8px 0 env(safe-area-inset-bottom)',
-        }}
-          className="mobil-nav"
-        >
-          {MOBİL_MENU.map(({ href, icon, label }) => {
+        }}>
+          {NAV_ITEMS.map(({ href, label, icon }) => {
             const aktif = href === '/' ? pathname === '/' : pathname?.startsWith(href)
             const isSepet = href === '/sepet'
             return (
@@ -124,13 +169,13 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                gap: '3px',
+                gap: '4px',
                 textDecoration: 'none',
                 padding: '6px 4px',
                 position: 'relative',
               }}>
-                <span style={{ fontSize: '22px', lineHeight: 1, position: 'relative' }}>
-                  {icon}
+                <span style={{ position: 'relative', lineHeight: 1 }}>
+                  {icon(!!aktif)}
                   {isSepet && sepetAdet > 0 && (
                     <span style={{
                       position: 'absolute',
