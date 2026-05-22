@@ -137,7 +137,7 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
                 <div style={{ position: 'absolute', top: '16px', left: '16px', background: '#E8567A', color: '#fff', fontSize: '12px', fontWeight: 800, padding: '5px 12px', borderRadius: '50px' }}>-%{indirim}</div>
               )}
               {aktifUrl
-                ? <img src={aktifUrl} alt={urun.name} style={{ width: '100%', height: '100%', objectFit: 'contain', mixBlendMode: 'multiply', animation: 'float 6s ease-in-out infinite' }} />
+                ? <img src={aktifUrl} alt={urun.name} style={{ width: '100%', height: '100%', objectFit: 'contain', mixBlendMode: 'multiply' }} />
                 : <span style={{ fontSize: '96px' }}>🥛</span>}
             </div>
             {gorseller.length > 1 && (
