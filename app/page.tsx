@@ -11,12 +11,12 @@ export const dynamic = 'force-dynamic'
 // Ana sayfa varsayılan metinleri
 const VARSAYILAN: Record<string, string> = {
   // Hero
-  hero_rozet: 'Çiftliğimizden Sofranıza',
+  hero_rozet: 'ATASANCAK Çiftliği · İstanbul',
   hero_baslik_1: 'Mutluluğun',
   hero_baslik_2: 'Tadını',
   hero_baslik_3: 'Hissedin',
-  hero_aciklama: "ATASANCAK Çiftliği'nden günlük toplanan çiğ süt, geleneksel yöntemlerle hazırlanan peynir ve tereyağı. Doğal, katkısız.",
-  hero_btn_siparis: 'Hemen Sipariş Ver',
+  hero_aciklama: "Sabah sağılan süt, aynı gün kapınızda. Peynir ve tereyağımız geleneksel yöntemlerle, hiçbir katkı maddesi olmadan hazırlanıyor.",
+  hero_btn_siparis: 'Ürünleri Keşfet',
   hero_btn_abonelik: 'Abonelik',
   hero_stat_1_sayi: '10.5K',
   hero_stat_1_etiket: 'Büyükbaş',
@@ -29,24 +29,24 @@ const VARSAYILAN: Record<string, string> = {
   hero_kart_1_alt: '₺130',
   hero_kart_2_emoji: '⭐',
   hero_kart_2_ad: '4.9/5 Puan',
-  hero_kart_2_alt: '500+ Yorum',
+  hero_kart_2_alt: '800+ Mutlu Müşteri',
   hero_gorsel_url: 'https://market.milgo.com.tr/cdn/shop/files/Milgo_UrunGorselleri_CigSut_1260x1600px_1.jpg',
 
   // Ticker
-  ticker_1: 'Çiğ Süt',  ticker_1b: 'Günlük Taze',
-  ticker_2: 'Peynir',   ticker_2b: '5 Çeşit',
-  ticker_3: 'Tereyağı', ticker_3b: 'Katkısız',
-  ticker_4: 'Abonelik', ticker_4b: 'Her Cuma',
-  ticker_5: 'AB Onaylı',ticker_5b: 'Sertifikalı',
-  ticker_6: 'İstanbul', ticker_6b: 'Aynı Gün',
+  ticker_1: 'Çiğ Süt',   ticker_1b: 'Sabah Sağılır',
+  ticker_2: 'Peynir',    ticker_2b: '5 Çeşit',
+  ticker_3: 'Tereyağı',  ticker_3b: 'Geleneksel',
+  ticker_4: 'Abonelik',  ticker_4b: 'Her Cuma',
+  ticker_5: 'AB Onaylı', ticker_5b: 'Sertifikalı',
+  ticker_6: 'İstanbul',  ticker_6b: 'Aynı Gün',
 
   // Kategoriler
   kategoriler_tag: 'Kategoriler',
-  kategoriler_baslik: 'Doğallığı',
-  kategoriler_baslik_italik: 'Keşfedin',
+  kategoriler_baslik: 'Ne Arıyorsunuz',
+  kategoriler_baslik_italik: 'Bugün?',
   kat_1_etiket: 'En Çok Satan', kat_1_ad: 'Çiğ İnek Sütü',
   kat_2_etiket: 'Peynir',       kat_2_ad: 'Sürülebilir Peynir',
-  kat_3_etiket: 'Tereyağı',     kat_3_ad: 'Doğal Tereyağı',
+  kat_3_etiket: 'Tereyağı',     kat_3_ad: 'Köy Tereyağı',
   kat_4_etiket: 'Özel',         kat_4_ad: 'Abonelik',
 
   // Ürünler
@@ -57,17 +57,17 @@ const VARSAYILAN: Record<string, string> = {
 
   // Paketler
   paketler_tag: '🎁 Özel Fırsatlar',
-  paketler_baslik: 'Hazır Paketlerimiz',
+  paketler_baslik: 'Birlikte Daha Lezzetli',
   paketler_tumu: 'Tümünü Gör →',
 
   // Abonelik
   abonelik_tag: '⟳ Haftalık Abonelik',
-  abonelik_baslik: 'Her Hafta Taze,',
+  abonelik_baslik: 'Her Hafta Kapınızda,',
   abonelik_baslik_italik: 'Hiç Düşünmeden',
-  abonelik_madde_1: 'İstediğiniz zaman iptal',
-  abonelik_madde_2: 'Miktarı değiştirme',
-  abonelik_madde_3: 'Her Cuma teslimat',
-  abonelik_madde_4: 'Abonelere %10 indirim',
+  abonelik_madde_1: 'İstediğiniz zaman iptal edin',
+  abonelik_madde_2: 'Miktarı dilediğiniz gibi değiştirin',
+  abonelik_madde_3: 'Her Cuma taptaze teslimat',
+  abonelik_madde_4: 'Abonelere özel %10 indirim',
   abonelik_btn: 'Abonelik Başlat',
   abonelik_plan_1_ad: 'Başlangıç', abonelik_plan_1_detay: '2L · Haftada Bir', abonelik_plan_1_fiyat: '520',
   abonelik_plan_2_ad: 'Aile',      abonelik_plan_2_detay: '4L · Haftada Bir', abonelik_plan_2_fiyat: '980',
@@ -75,19 +75,19 @@ const VARSAYILAN: Record<string, string> = {
 
   // Yorumlar
   yorumlar_tag: 'Müşterilerimiz',
-  yorumlar_baslik: 'Sizden',
-  yorumlar_baslik_italik: 'Gelenler',
+  yorumlar_baslik: 'Onlar',
+  yorumlar_baslik_italik: 'Anlatsın',
   yorum_1_harf: 'E', yorum_1_ad: 'Ebru G.', yorum_1_lokasyon: 'Beşiktaş, İstanbul',
-  yorum_1_metin: '\"Sütün tadı gerçekten çok farklı. Marketten alışkanlığım gitti, artık sadece Milgo.\"',
+  yorum_1_metin: '\"Marketten aldığım sütü bir daha açamadım. Fark gerçekten bu kadar büyük.\"',
   yorum_2_harf: 'H', yorum_2_ad: 'Hatice B.', yorum_2_lokasyon: 'Kadıköy · Abonelik',
-  yorum_2_metin: '\"3 aydır aboneyim. Her Cuma taptaze geliyor. Peynirler de muhteşem!\"',
+  yorum_2_metin: '\"3 aydır aboneyim, bir kez bile geç gelmedi. Peynirler de ayrı bir lezzet.\"',
   yorum_3_harf: 'M', yorum_3_ad: 'Mehmet K.', yorum_3_lokasyon: 'Şişli, İstanbul',
-  yorum_3_metin: '\"Çocuklar için doğal süt arıyordum. AB onaylı olması güven veriyor.\"',
+  yorum_3_metin: '\"Çocuklarıma içireceğim sütün nereden geldiğini bilmek istiyordum. Milgo tam bu yüzden.\"',
 
   // Bülten
   bulten_baslik: 'İlk Siparişte',
   bulten_baslik_italik: '%10 İndirim',
-  bulten_aciklama: 'Bültene katılın, özel tekliflerden ilk siz haberdar olun.',
+  bulten_aciklama: 'E-posta listemize katılın, kampanyaları ve yeni ürünleri kaçırmayın.',
   bulten_placeholder: 'E-posta adresiniz',
   bulten_btn: 'Katıl',
 }
