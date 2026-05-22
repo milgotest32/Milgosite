@@ -297,7 +297,7 @@ export default function AnaSayfa() {
             },
             {
               bg: 'linear-gradient(135deg,#FFF7ED,#FED7AA)',
-              gorsel: null, emoji: '🔁',
+              gorsel: null, emoji: '📦',
               lbl: t('kat_4_etiket'), ad: t('kat_4_ad'), href: '/abonelik', first: false,
             },
           ].map((k: any) => (
@@ -310,14 +310,14 @@ export default function AnaSayfa() {
                     src={k.gorsel}
                     alt={k.ad}
                     style={{
-                      position: 'absolute', right: '-10px', bottom: '0',
-                      height: '90%', width: 'auto', objectFit: 'contain',
+                      position: 'absolute', right: '0px', bottom: '0',
+                      height: '88%', width: 'auto', objectFit: 'contain',
                       mixBlendMode: 'multiply', opacity: 0.92,
                       filter: 'drop-shadow(0 8px 24px rgba(26,10,18,0.12))',
                     }}
                   />
                 ) : (
-                  <div style={{ position: 'absolute', top: '16px', right: '16px', fontSize: '42px', lineHeight: 1 }}>{k.emoji}</div>
+                  <span style={{ position: 'absolute', top: '16px', right: '16px', fontSize: '42px', lineHeight: 1 }}>{k.emoji}</span>
                 )}
                 <div style={{ position: 'relative', zIndex: 1 }}>
                   <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.15em', textTransform: 'uppercase', color: '#7A6070', marginBottom: '4px' }}>{k.lbl}</div>
