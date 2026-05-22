@@ -91,7 +91,7 @@ export default function Navbar() {
             <img
               src="https://jxfegluntgssrgpnvscs.supabase.co/storage/v1/object/public/site-medya/medya/1779186053874-lpldyhy0u38.png"
               alt="milgo."
-              style={{ height: '40px', width: 'auto', objectFit: 'contain' }}
+              style={{ height: '52px', width: 'auto', objectFit: 'contain' }}
             />
           </Link>
 
