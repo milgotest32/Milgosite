@@ -19,7 +19,6 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
   const router = useRouter()
   const isAdmin = pathname?.startsWith('/admin')
   const adetToplam = useSepet(s => s.adetToplam)
-  const gosterildi = useRef(false)
 
   // Kargo ayarlarını DB'den yükle
   useEffect(() => {
