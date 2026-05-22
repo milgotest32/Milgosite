@@ -26,6 +26,14 @@ export const metadata: Metadata = {
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon.ico',
+    apple: '/icons/apple-touch-icon.png',
+  },
+  manifest: '/manifest.json',
+  themeColor: '#E8567A',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Milgo',
   },
   openGraph: {
     title: 'Milgo | Çiftlikten Sofranıza',

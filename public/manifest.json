@@ -1,0 +1,26 @@
+{
+  "name": "Milgo - Çiftlikten Sofranıza",
+  "short_name": "Milgo",
+  "description": "Taze çiğ süt, peynir ve tereyağı. Sabah sağılır, aynı gün kapınızda.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#E8567A",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["shopping", "food"],
+  "lang": "tr"
+}

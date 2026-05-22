@@ -77,7 +77,7 @@ const VARSAYILAN: Record<string, string> = {
   yorumlar_tag: 'Müşterilerimiz',
   yorumlar_baslik: 'Müşterilerimiz',
   yorumlar_baslik_italik: 'Konuşsun',
-  yorum_1_harf: 'E', yorum_1_ad: 'Ebru G.', yorum_1_lokasyon: 'Beşiktaş, İstanbul',
+  yorum_1_harf: 'E', yorum_1_ad: 'Ayşe G.', yorum_1_lokasyon: 'Beşiktaş, İstanbul',
   yorum_1_metin: '\"Marketten aldığım sütü bir daha açamadım. Fark gerçekten bu kadar büyük.\"',
   yorum_2_harf: 'H', yorum_2_ad: 'Hatice B.', yorum_2_lokasyon: 'Kadıköy · Abonelik',
   yorum_2_metin: '\"3 aydır aboneyim, bir kez bile geç gelmedi. Peynirler de ayrı bir lezzet.\"',
