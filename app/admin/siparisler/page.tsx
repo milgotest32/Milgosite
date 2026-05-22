@@ -5,18 +5,25 @@ import { supabase } from '@/lib/supabase/client'
 import { Search, Eye } from 'lucide-react'
 export const dynamic = 'force-dynamic'
 
+const AKIM = [
+  { key: 'bekliyor',  ad: 'Sipariş Alındı', emoji: '🕐', bg: '#FEF3C7', tx: '#F59E0B' },
+  { key: 'onaylandi', ad: 'Onaylandı',       emoji: '✅', bg: '#EBF7FC', tx: '#3B9FCC' },
+  { key: 'kuryede',   ad: 'Kurye Yolda',     emoji: '🛵', bg: '#FFF7ED', tx: '#EA7C2B' },
+  { key: 'teslim',    ad: 'Teslim Edildi',   emoji: '🎉', bg: '#F0FDF4', tx: '#22C55E' },
+]
+const IPTAL = { key: 'iptal', ad: 'İptal', emoji: '❌', bg: '#FEF2F2', tx: '#EF4444' }
+
 const DURUM_RENK: Record<string, any> = {
   bekliyor:  { bg: '#FEF3C7', tx: '#F59E0B' },
   onaylandi: { bg: '#EBF7FC', tx: '#3B9FCC' },
-  kargoda:   { bg: '#F5F3FF', tx: '#8B5CF6' },
-  kuryede:   { bg: '#F5F3FF', tx: '#8B5CF6' },
+  kuryede:   { bg: '#FFF7ED', tx: '#EA7C2B' },
   teslim:    { bg: '#F0FDF4', tx: '#22C55E' },
   iptal:     { bg: '#FEF2F2', tx: '#EF4444' },
 }
 
 const DURUM_AD: Record<string, string> = {
-  bekliyor: 'Bekliyor', onaylandi: 'Onaylandı', kargoda: 'Kargoda',
-  kuryede: 'Kuryede', teslim: 'Teslim Edildi', iptal: 'İptal',
+  bekliyor: 'Sipariş Alındı', onaylandi: 'Onaylandı',
+  kuryede: 'Kurye Yolda', teslim: 'Teslim Edildi', iptal: 'İptal',
 }
 
 export default function SiparislerPage() {
@@ -24,6 +31,14 @@ export default function SiparislerPage() {
   const [loading, setLoading] = useState(true)
   const [hata, setHata] = useState('')
   const [arama, setArama] = useState('')
+  const [guncelleniyor, setGuncelleniyor] = useState<string | null>(null)
+
+  const durumGuncelle = async (id: string, yeniDurum: string) => {
+    setGuncelleniyor(id + yeniDurum)
+    const { error } = await supabase.from('site_siparisler').update({ durum: yeniDurum }).eq('id', id)
+    if (!error) setSiparisler(prev => prev.map(s => s.id === id ? { ...s, durum: yeniDurum } : s))
+    setGuncelleniyor(null)
+  }
 
   useEffect(() => {
     supabase
@@ -113,11 +128,46 @@ export default function SiparislerPage() {
                   <td style={{ padding: '12px 16px', fontSize: '12px', color: '#6B7280' }}>
                     {s.created_at ? new Date(s.created_at).toLocaleDateString('tr-TR') : '—'}
                   </td>
-                  <td style={{ padding: '12px 16px' }}>
-                    <Link href={`/admin/siparisler/${s.id}`}
-                      style={{ width: '30px', height: '30px', background: '#F0EEF8', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', color: '#6B7280' }}>
-                      <Eye size={13} />
-                    </Link>
+                  <td style={{ padding: '8px 12px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '160px' }}>
+                      {/* Akım butonları */}
+                      <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                        {AKIM.map(a => (
+                          <button key={a.key} onClick={() => durumGuncelle(s.id, a.key)}
+                            disabled={s.durum === a.key || guncelleniyor === s.id + a.key}
+                            style={{
+                              fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '6px',
+                              border: `1.5px solid ${a.bg}`,
+                              background: s.durum === a.key ? a.bg : '#fff',
+                              color: s.durum === a.key ? a.tx : '#9CA3AF',
+                              cursor: s.durum === a.key ? 'default' : 'pointer',
+                              opacity: guncelleniyor === s.id + a.key ? 0.6 : 1,
+                              fontFamily: 'inherit',
+                              whiteSpace: 'nowrap',
+                            }}>
+                            {a.emoji} {a.ad}
+                          </button>
+                        ))}
+                      </div>
+                      <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                        <button onClick={() => durumGuncelle(s.id, 'iptal')}
+                          disabled={s.durum === 'iptal'}
+                          style={{
+                            fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '6px',
+                            border: '1.5px solid #FEE2E2',
+                            background: s.durum === 'iptal' ? '#FEF2F2' : '#fff',
+                            color: s.durum === 'iptal' ? '#EF4444' : '#9CA3AF',
+                            cursor: s.durum === 'iptal' ? 'default' : 'pointer',
+                            fontFamily: 'inherit',
+                          }}>
+                          ❌ İptal
+                        </button>
+                        <Link href={`/admin/siparisler/${s.id}`}
+                          style={{ width: '26px', height: '26px', background: '#F0EEF8', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', color: '#6B7280', flexShrink: 0 }}>
+                          <Eye size={12} />
+                        </Link>
+                      </div>
+                    </div>
                   </td>
                 </tr>
               )
