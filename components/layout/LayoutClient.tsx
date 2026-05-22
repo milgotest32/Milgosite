@@ -13,6 +13,7 @@ import { Toaster, toast } from 'react-hot-toast'
 import { supabase } from '@/lib/supabase/client'
 import { useSepet } from '@/lib/sepet'
 import React from 'react'
+import ServiceWorker from '@/components/ui/ServiceWorker'
 
 const HATIRLAMA_DISINDA = ['/sepet', '/odeme', '/siparis-onay', '/giris', '/kayit']
 
@@ -126,6 +127,7 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
 
   return (
     <>
+      <ServiceWorker />
       <Cursor />
       {!isAdmin && <KonumModal />}
       {!isAdmin && <WhatsAppButon />}
