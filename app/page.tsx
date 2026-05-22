@@ -280,17 +280,46 @@ export default function AnaSayfa() {
 
         <div className="cat-grid">
           {[
-            { bg: 'linear-gradient(135deg,#FEE8EF,#FBCFE8)', emoji: '🥛', lbl: t('kat_1_etiket'), ad: t('kat_1_ad'), href: '/kategoriler/cig-sut', first: true },
-            { bg: 'linear-gradient(135deg,#EBF5FC,#BFDBFE)', emoji: '🧀', lbl: t('kat_2_etiket'), ad: t('kat_2_ad'), href: '/kategoriler/peynir', first: false },
-            { bg: 'linear-gradient(135deg,#F0FDF4,#BBF7D0)', emoji: '🧈', lbl: t('kat_3_etiket'), ad: t('kat_3_ad'), href: '/kategoriler/tereyagi', first: false },
-            { bg: 'linear-gradient(135deg,#FFF7ED,#FED7AA)', emoji: '🔄', lbl: t('kat_4_etiket'), ad: t('kat_4_ad'), href: '/abonelik', first: false },
-          ].map((k) => (
+            {
+              bg: 'linear-gradient(135deg,#FEE8EF,#FBCFE8)',
+              gorsel: 'https://market.milgo.com.tr/cdn/shop/files/Milgo_UrunGorselleri_CigSut_1260x1600px_1.jpg',
+              lbl: t('kat_1_etiket'), ad: t('kat_1_ad'), href: '/kategoriler/cig-sut', first: true,
+            },
+            {
+              bg: 'linear-gradient(135deg,#EBF5FC,#BFDBFE)',
+              gorsel: 'https://market.milgo.com.tr/cdn/shop/files/Milgo_UrunGorselleri_Sade_1260x1600px_1_b55e51ff-60d1-487b-a7fc-75236cdb6702.jpg',
+              lbl: t('kat_2_etiket'), ad: t('kat_2_ad'), href: '/kategoriler/peynir', first: false,
+            },
+            {
+              bg: 'linear-gradient(135deg,#F0FDF4,#BBF7D0)',
+              gorsel: 'https://market.milgo.com.tr/cdn/shop/files/Milgo_UrunGorselleri_SadeTereyag_1260x1600px_1.jpg',
+              lbl: t('kat_3_etiket'), ad: t('kat_3_ad'), href: '/kategoriler/tereyagi', first: false,
+            },
+            {
+              bg: 'linear-gradient(135deg,#FFF7ED,#FED7AA)',
+              gorsel: null, emoji: '🔁',
+              lbl: t('kat_4_etiket'), ad: t('kat_4_ad'), href: '/abonelik', first: false,
+            },
+          ].map((k: any) => (
             <Link key={k.href} href={k.href}
               className={`card-2026${k.first ? ' cat-first' : ''}`}
               style={{ textDecoration: 'none', display: 'block' }}>
-              <div style={{ background: k.bg, minHeight: '180px', height: '100%', display: 'flex', alignItems: 'flex-end', padding: '20px', position: 'relative' }}>
-                <div style={{ position: 'absolute', top: '16px', right: '16px', fontSize: '36px' }}>{k.emoji}</div>
-                <div>
+              <div style={{ background: k.bg, minHeight: '180px', height: '100%', display: 'flex', alignItems: 'flex-end', padding: '20px', position: 'relative', overflow: 'hidden' }}>
+                {k.gorsel ? (
+                  <img
+                    src={k.gorsel}
+                    alt={k.ad}
+                    style={{
+                      position: 'absolute', right: '-10px', bottom: '0',
+                      height: '90%', width: 'auto', objectFit: 'contain',
+                      mixBlendMode: 'multiply', opacity: 0.92,
+                      filter: 'drop-shadow(0 8px 24px rgba(26,10,18,0.12))',
+                    }}
+                  />
+                ) : (
+                  <div style={{ position: 'absolute', top: '16px', right: '16px', fontSize: '42px', lineHeight: 1 }}>{k.emoji}</div>
+                )}
+                <div style={{ position: 'relative', zIndex: 1 }}>
                   <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.15em', textTransform: 'uppercase', color: '#7A6070', marginBottom: '4px' }}>{k.lbl}</div>
                   <div style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '20px', color: '#1A0A12', marginBottom: '12px' }}>{k.ad}</div>
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#1A0A12', color: '#fff', padding: '7px 16px', borderRadius: '50px', fontSize: '11px', fontWeight: 700 }}>İncele →</div>
