@@ -39,7 +39,7 @@ export default function AbonelikPage() {
 
     // n8n webhook bildirimi
     try {
-      await fetch('https://n8n.milgon8nwhat.org.tr/webhook/abonelik-bot', {
+      await fetch('https://n8n.milgon8nwhat.org.tr/webhook-test/abonelik-bot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
