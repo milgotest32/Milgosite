@@ -36,6 +36,25 @@ export default function AbonelikPage() {
       teslimat_adres: `${form.adres}, ${form.ilce}`,
       plan: secili, haftalik_litre: plan.litre, fiyat: plan.fiyat,
     })
+
+    // n8n webhook bildirimi
+    try {
+      await fetch('https://n8n.milgon8nwhat.org.tr/webhook/abonelik-bot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ad: form.ad,
+          email: form.email,
+          telefon: form.telefon,
+          adres: `${form.adres}, ${form.ilce}`,
+          plan: plan.ad,
+          haftalik_litre: plan.litre,
+          aylik_fiyat: plan.fiyat,
+          kayit_tarihi: new Date().toISOString(),
+        })
+      })
+    } catch { /* webhook hatası aboneliği engellemesin */ }
+
     setBasari(true)
     setYukleniyor(false)
   }
