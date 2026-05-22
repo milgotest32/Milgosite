@@ -158,8 +158,8 @@ export default function AnaSayfa() {
       .order('one_cikan', { ascending: false })
       .then(({ data }: any) => setPaketler(data || []))
 
-    // Yorumları yükle (site_yorumlar tablosu varsa DB'den, yoksa varsayılanları kullan)
-    supabase.from('site_yorumlar')
+    // Yorumları yükle
+    supabase.from('site_anasayfa_yorumlar')
       .select('*')
       .eq('aktif', true)
       .order('sira', { ascending: true })
