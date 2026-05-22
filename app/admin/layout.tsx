@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase/client'
 import {
   LayoutDashboard, Package, Tag, ShoppingBag, Users, Percent, FileText,
   Image, Globe, Map, Settings, BarChart2, LogOut, ChevronRight, Bell, Shield, Info, ArrowLeftRight, Store,
-  Star, MessageSquare, MapPin
+  Star, MessageSquare, MapPin, RefreshCw
 } from 'lucide-react'
 
 const MENU = [
@@ -25,6 +25,7 @@ const MENU = [
     { href: '/admin/kuponlar', icon: <Percent size={16}/>, ad: 'Kuponlar' },
     { href: '/admin/yorumlar', icon: <Star size={16}/>, ad: 'Yorumlar' },
     { href: '/admin/mesajlar', icon: <MessageSquare size={16}/>, ad: 'Mesajlar' },
+    { href: '/admin/abonelikler', icon: <RefreshCw size={16}/>, ad: 'Abonelikler' },
     { href: '/admin/raporlar/bolgeler', icon: <MapPin size={16}/>, ad: 'Bölge Raporu' },
   ]},
   { grup: 'İçerik', items: [
