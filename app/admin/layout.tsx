@@ -5,7 +5,8 @@ import { usePathname, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 import {
   LayoutDashboard, Package, Tag, ShoppingBag, Users, Percent, FileText,
-  Image, Globe, Map, Settings, BarChart2, LogOut, ChevronRight, Bell, Shield, Info, ArrowLeftRight, Store
+  Image, Globe, Map, Settings, BarChart2, LogOut, ChevronRight, Bell, Shield, Info, ArrowLeftRight, Store,
+  Star, MessageSquare, MapPin
 } from 'lucide-react'
 
 const MENU = [
@@ -22,6 +23,9 @@ const MENU = [
     { href: '/admin/siparisler', icon: <ShoppingBag size={16}/>, ad: 'Siparişler' },
     { href: '/admin/musteriler', icon: <Users size={16}/>, ad: 'Müşteriler' },
     { href: '/admin/kuponlar', icon: <Percent size={16}/>, ad: 'Kuponlar' },
+    { href: '/admin/yorumlar', icon: <Star size={16}/>, ad: 'Yorumlar' },
+    { href: '/admin/mesajlar', icon: <MessageSquare size={16}/>, ad: 'Mesajlar' },
+    { href: '/admin/raporlar/bolgeler', icon: <MapPin size={16}/>, ad: 'Bölge Raporu' },
   ]},
   { grup: 'İçerik', items: [
     { href: '/admin/hakkimizda', icon: <Info size={16}/>, ad: 'Hakkımızda' },
