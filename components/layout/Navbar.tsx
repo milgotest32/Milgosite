@@ -111,7 +111,7 @@ export default function Navbar() {
                       <Link key={k.h} href={k.h} style={di as any}>{k.e} {k.a}</Link>
                     ))}
                     <div style={{ borderTop: '1px solid rgba(26,10,18,.06)', margin: '6px 0 0', paddingTop: '6px' }}>
-                      <Link href="/kampanyalar" style={{ ...di, color: '#E8567A', fontWeight: 700 } as any}>🔥 Kampanyalar</Link>
+                      <Link href="/kampanyalar" style={{ ...di, color: '#E8567A', fontWeight: 700 } as any}>Tüm Ürünlerimiz</Link>
                     </div>
                     </div>
                   </div>
@@ -206,7 +206,7 @@ export default function Navbar() {
             {konum && <span style={{ fontSize: '12px', fontFamily: 'Nunito, sans-serif', fontWeight: 600, color: '#E8567A', marginLeft: '10px' }}>📍 {konum}</span>}
           </div>
           <div style={{ flex: 1 }}>
-            {[['🥛 Çiğ Süt', '/kategoriler/cig-sut'], ['🧀 Peynir', '/kategoriler/peynir'], ['🧈 Tereyağı', '/kategoriler/tereyagi'], ['🛍 Tüm Ürünler', '/urunler'], ['🔄 Abonelik', '/abonelik'], ['🌿 Çiftliğimiz', '/ciftligimiz'], ['📖 Blog', '/blog'], ['🎁 Paketler', '/paketler'], ['🔥 Kampanyalar', '/kampanyalar']].map(([a, h]) => (
+            {[['🥛 Çiğ Süt', '/kategoriler/cig-sut'], ['🧀 Peynir', '/kategoriler/peynir'], ['🧈 Tereyağı', '/kategoriler/tereyagi'], ['🛍 Tüm Ürünler', '/urunler'], ['🔄 Abonelik', '/abonelik'], ['🌿 Çiftliğimiz', '/ciftligimiz'], ['📖 Blog', '/blog'], ['🎁 Paketler', '/paketler'], ['Tüm Ürünlerimiz', '/urunler']].map(([a, h]) => (
               <Link key={h} href={h} onClick={() => setMenuAcik(false)} style={{ display: 'block', padding: '14px 0', fontSize: '17px', fontWeight: 500, color: '#1A0A12', textDecoration: 'none', borderBottom: '1px solid rgba(26,10,18,.06)' }}>{a}</Link>
             ))}
           </div>

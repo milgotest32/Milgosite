@@ -1,6 +1,6 @@
 'use client'
 import { usePathname, useRouter } from 'next/navigation'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import Navbar from '@/components/layout/Navbar'
 import Popup from '@/components/Popup'
 import BolgeYokPopup from '@/components/BolgeYokPopup'
@@ -33,16 +33,17 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
     })
   }, [])
 
-  // Sepet hatırlatması
+  // Sepet hatırlatması — oturum boyunca sadece 1 kez
   useEffect(() => {
     if (isAdmin) return
-    if (gosterildi.current) return
     if (HATIRLAMA_DISINDA.some(p => pathname?.startsWith(p))) return
+    if (sessionStorage.getItem('milgo_sepet_hatirlatildi')) return
+
     const adet = adetToplam()
     if (adet === 0) return
 
     const t = setTimeout(() => {
-      gosterildi.current = true
+      sessionStorage.setItem('milgo_sepet_hatirlatildi', '1')
       toast(
         (toastObj) => (
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -67,7 +68,7 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
     }, 2000)
 
     return () => clearTimeout(t)
-  }, [pathname, isAdmin])
+  }, [])
 
   return (
     <>
@@ -75,7 +76,7 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
       {!isAdmin && <KonumModal />}
       {!isAdmin && <WhatsAppButon />}
       <Toaster
-        position="top-right"
+        position="bottom-right"
         toastOptions={{
           duration: 3000,
           style: {
