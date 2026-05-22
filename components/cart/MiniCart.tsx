@@ -6,7 +6,7 @@ import { X, ShoppingBag } from 'lucide-react'
 export default function MiniCart({ onClose }: { onClose: () => void }) {
   const { items, cikar, araToplam, adetToplam } = useSepet()
   return (
-    <div style={{position:'fixed',top:0,right:0,bottom:0,width:'380px',background:'#fff',zIndex:200,boxShadow:'-4px 0 32px rgba(0,0,0,0.12)',display:'flex',flexDirection:'column'}}>
+    <div style={{position:'fixed',top:0,right:0,bottom:0,width:'min(380px, 100vw)',background:'#fff',zIndex:1001,boxShadow:'-4px 0 32px rgba(0,0,0,0.12)',display:'flex',flexDirection:'column'}}>
       <div style={{padding:'20px 24px',borderBottom:'1px solid #F0ECF5',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
         <h2 style={{fontSize:'18px',fontWeight:700,color:'#1C1B2E'}}>Sepetim ({adetToplam()})</h2>
         <button onClick={onClose} style={{background:'none',border:'none',cursor:'pointer',color:'#6B7280'}}><X size={20}/></button>
@@ -37,7 +37,12 @@ export default function MiniCart({ onClose }: { onClose: () => void }) {
               )
             })}
           </div>
-          <div style={{padding:'20px 24px',borderTop:'1px solid #F0ECF5'}}>
+          <div style={{padding:'20px 24px',paddingBottom:'calc(20px + env(safe-area-inset-bottom, 0px))',borderTop:'1px solid #F0ECF5'}} className="minicart-bottom">
+            <style>{`
+              @media (max-width: 768px) {
+                .minicart-bottom { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important; }
+              }
+            `}</style>
             <div style={{display:'flex',justifyContent:'space-between',marginBottom:'16px'}}>
               <span style={{fontWeight:600,color:'#1C1B2E'}}>Toplam</span>
               <span style={{fontSize:'20px',fontWeight:700,color:'#1C1B2E'}} className="font-display">₺{araToplam().toFixed(2)}</span>
