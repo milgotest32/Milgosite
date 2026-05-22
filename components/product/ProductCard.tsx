@@ -1,10 +1,19 @@
 'use client'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Heart, Star } from 'lucide-react'
 import { useSepet } from '@/lib/sepet'
 import type { Urun } from '@/lib/types'
 import toast from 'react-hot-toast'
+
+const DEPO_KEY = 'milgo_favoriler'
+
+function favoriOku(): string[] {
+  try { return JSON.parse(localStorage.getItem(DEPO_KEY) || '[]') } catch { return [] }
+}
+function favoriYaz(ids: string[]) {
+  localStorage.setItem(DEPO_KEY, JSON.stringify(ids))
+}
 
 export default function ProductCard({ urun }: { urun: Urun }) {
   const [favori, setFavori] = useState(false)
@@ -12,6 +21,28 @@ export default function ProductCard({ urun }: { urun: Urun }) {
   const ekle = useSepet(s => s.ekle)
   const gorsel = urun.site_product_images?.find(g => g.ana)?.url || urun.site_product_images?.[0]?.url
   const indirim = urun.eski_fiyat ? Math.round((1 - urun.fiyat / urun.eski_fiyat) * 100) : 0
+
+  // Sayfa açılınca localStorage'dan favori durumunu oku
+  useEffect(() => {
+    setFavori(favoriOku().includes(urun.id))
+  }, [urun.id])
+
+  const favoriToggle = (e: React.MouseEvent) => {
+    e.preventDefault()
+    const ids = favoriOku()
+    let yeni: string[]
+    if (ids.includes(urun.id)) {
+      yeni = ids.filter(id => id !== urun.id)
+      toast('Favorilerden çıkarıldı', { icon: '🤍' })
+    } else {
+      yeni = [...ids, urun.id]
+      toast('Favorilere eklendi!', { icon: '❤️' })
+    }
+    favoriYaz(yeni)
+    setFavori(!favori)
+    // Favoriler sayfası açıksa haberdar et
+    window.dispatchEvent(new Event('milgo_favori_degisti'))
+  }
 
   const sepeteEkle = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -35,12 +66,12 @@ export default function ProductCard({ urun }: { urun: Urun }) {
           {urun.stok_takip && urun.stok <= 0 && <span style={{ background: '#7A6070', color: '#fff', fontSize: '9px', fontWeight: 800, padding: '3px 10px', borderRadius: '50px' }}>TÜKENDI</span>}
         </div>
 
-        {/* Favori */}
-        <button onClick={e => { e.preventDefault(); setFavori(!favori) }} style={{ position: 'absolute', top: '12px', right: '12px', width: '30px', height: '30px', borderRadius: '50%', background: '#fff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'none', boxShadow: '0 2px 8px rgba(26,10,18,.1)', opacity: favori ? 1 : 0, transition: 'opacity .2s', zIndex: 2 }} className="fav-btn">
+        {/* Favori butonu */}
+        <button onClick={favoriToggle}
+          style={{ position: 'absolute', top: '12px', right: '12px', width: '30px', height: '30px', borderRadius: '50%', background: '#fff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'none', boxShadow: '0 2px 8px rgba(26,10,18,.1)', opacity: favori ? 1 : 0, transition: 'opacity .2s', zIndex: 2 }}
+          className="fav-btn">
           <Heart size={13} style={{ color: favori ? '#E8567A' : '#7A6070' }} fill={favori ? '#E8567A' : 'none'} />
         </button>
-
-        {/* hover'da favori göster — CSS ile */}
         <style>{`.card-2026:hover .fav-btn { opacity: 1 !important; }`}</style>
       </div>
 

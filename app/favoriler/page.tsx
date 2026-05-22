@@ -1,56 +1,46 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { Heart, ShoppingBag } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
-import { useSepet } from '@/lib/sepet'
 import type { Urun } from '@/lib/types'
 import ProductCard from '@/components/product/ProductCard'
 
 const DEPO_KEY = 'milgo_favoriler'
 
+function favoriOku(): string[] {
+  try { return JSON.parse(localStorage.getItem(DEPO_KEY) || '[]') } catch { return [] }
+}
+
 export default function FavorilerPage() {
-  const [favoriIdler, setFavoriIdler] = useState<string[]>([])
   const [urunler, setUrunler] = useState<Urun[]>([])
   const [yukleniyor, setYukleniyor] = useState(true)
 
-  // localStorage'dan favori id'lerini oku
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(DEPO_KEY)
-      const ids: string[] = raw ? JSON.parse(raw) : []
-      setFavoriIdler(ids)
-    } catch {
-      setFavoriIdler([])
-    }
-  }, [])
-
-  // Favori ürünleri Supabase'den çek
-  useEffect(() => {
-    if (favoriIdler.length === 0) { setUrunler([]); setYukleniyor(false); return }
-    setYukleniyor(true)
-    supabase
+  const yukle = useCallback(async () => {
+    const ids = favoriOku()
+    if (ids.length === 0) { setUrunler([]); setYukleniyor(false); return }
+    const { data } = await supabase
       .from('site_products')
       .select('*, site_product_images(*), site_kategoriler(name,slug)')
-      .in('id', favoriIdler)
+      .in('id', ids)
       .eq('durum', 'active')
-      .then(({ data }) => {
-        setUrunler(data || [])
-        setYukleniyor(false)
-      })
-  }, [favoriIdler])
+    // localStorage sırasını koru
+    const sirali = ids.map(id => (data || []).find((u: any) => u.id === id)).filter(Boolean) as Urun[]
+    setUrunler(sirali)
+    setYukleniyor(false)
+  }, [])
 
-  const favoriKaldir = (id: string) => {
-    const yeni = favoriIdler.filter(f => f !== id)
-    setFavoriIdler(yeni)
-    setUrunler(prev => prev.filter(u => u.id !== id))
-    localStorage.setItem(DEPO_KEY, JSON.stringify(yeni))
-  }
+  useEffect(() => {
+    yukle()
+    // ProductCard'dan gelen favori değişiklik eventi
+    window.addEventListener('milgo_favori_degisti', yukle)
+    return () => window.removeEventListener('milgo_favori_degisti', yukle)
+  }, [yukle])
 
   const tumunuTemizle = () => {
-    setFavoriIdler([])
-    setUrunler([])
     localStorage.removeItem(DEPO_KEY)
+    setUrunler([])
+    window.dispatchEvent(new Event('milgo_favori_degisti'))
   }
 
   return (
@@ -66,7 +56,7 @@ export default function FavorilerPage() {
               Favorilerim
             </h1>
           </div>
-          {favoriIdler.length > 0 && (
+          {urunler.length > 0 && (
             <button onClick={tumunuTemizle}
               style={{ fontSize: '13px', color: '#7A6070', background: 'none', border: '1px solid #E5E7EB', borderRadius: '10px', padding: '8px 16px', cursor: 'pointer' }}>
               Tümünü Temizle
@@ -81,7 +71,7 @@ export default function FavorilerPage() {
           <div style={{ textAlign: 'center', padding: '80px 24px' }}>
             <div style={{ fontSize: '64px', marginBottom: '16px' }}>🤍</div>
             <h2 style={{ fontFamily: 'var(--font-nunito),sans-serif', fontSize: '22px', color: '#1A0A12', marginBottom: '8px' }}>Henüz favori eklemediniz</h2>
-            <p style={{ color: '#7A6070', fontSize: '14px', marginBottom: '28px' }}>Beğendiğiniz ürünleri kaydetmek için kalp ikonuna tıklayın.</p>
+            <p style={{ color: '#7A6070', fontSize: '14px', marginBottom: '28px' }}>Ürün kartlarındaki kalp ikonuna tıklayarak favorilere ekleyebilirsiniz.</p>
             <Link href="/urunler"
               style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#1A0A12', color: '#fff', padding: '12px 24px', borderRadius: '14px', textDecoration: 'none', fontSize: '14px', fontWeight: 700 }}>
               <ShoppingBag size={16} /> Ürünlere Göz At
@@ -91,23 +81,7 @@ export default function FavorilerPage() {
           <>
             <p style={{ fontSize: '13px', color: '#7A6070', marginBottom: '24px' }}>{urunler.length} ürün kaydedildi</p>
             <div className="prod-grid">
-              {urunler.map(u => (
-                <div key={u.id} style={{ position: 'relative' }}>
-                  <ProductCard urun={u} />
-                  <button
-                    onClick={() => favoriKaldir(u.id)}
-                    title="Favoriden çıkar"
-                    style={{
-                      position: 'absolute', top: '12px', right: '12px', zIndex: 10,
-                      width: '30px', height: '30px', borderRadius: '50%',
-                      background: '#fff', border: 'none', cursor: 'pointer',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      boxShadow: '0 2px 8px rgba(26,10,18,.15)'
-                    }}>
-                    <Heart size={13} fill="#E8567A" style={{ color: '#E8567A' }} />
-                  </button>
-                </div>
-              ))}
+              {urunler.map(u => <ProductCard key={u.id} urun={u} />)}
             </div>
           </>
         )}

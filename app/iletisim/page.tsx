@@ -20,10 +20,11 @@ export default function IletisimPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
       })
-      if (!r.ok) throw new Error('Gönderim başarısız')
+      const d = await r.json()
+      if (!r.ok) throw new Error(d.error || 'Gönderim başarısız')
       setGonderildi(true)
-    } catch {
-      setHata('Mesaj gönderilemedi. Lütfen tekrar deneyin.')
+    } catch (err: any) {
+      setHata(err.message || 'Mesaj gönderilemedi. Lütfen tekrar deneyin.')
     }
     setYukleniyor(false)
   }

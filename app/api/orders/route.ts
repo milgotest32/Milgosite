@@ -21,17 +21,15 @@ export async function GET(req: NextRequest) {
   const db = createServerClient()
   const { searchParams } = new URL(req.url)
   const musteri_id = searchParams.get('musteri_id')
-  
-  // Kullanıcı kendi siparişlerini görebilir, admin hepsini
+
   if (musteri_id) {
     const { data: { user } } = await db.auth.getUser()
     if (!user || (user.id !== musteri_id)) {
-      // Admin kontrolü
       const { data: role } = await db.from('site_users').select('role').eq('id', user?.id || '').single()
       if (role?.role !== 'admin') return NextResponse.json({ error: 'Yetkisiz' }, { status: 401 })
     }
   }
-  
+
   let q: any = db.from('site_siparisler').select('*, site_siparis_kalemleri(*)').order('created_at', { ascending: false }).limit(100)
   if (musteri_id) q = q.eq('musteri_id', musteri_id)
   const { data, error } = await q
@@ -45,56 +43,77 @@ export async function POST(req: NextRequest) {
   const { items, adres, kupon_kod, notlar, odeme_yontemi, bolge_adi } = body
   const misafir_email: string | null = body.misafir_email || null
 
-  // musteri_id'yi CLIENT'tan alma - sunucu tarafında auth'dan al
-  // Bu sayede FK constraint hatası kesinlikle olmaz
   let musteri_id: string | null = null
   try {
     const { data: { user } } = await db.auth.getUser()
     if (user?.id) musteri_id = user.id
-  } catch { /* oturum yoksa misafir sipariş */ }
+  } catch {}
 
-  // Fiyatları DB'den doğrula - client'tan gelen fiyata güvenme
+  // Fiyatları DB'den doğrula + stok kontrolü — her ürün için tek sorguda
+  const dogrulanmisItems: Array<{ product_id: string; urun_ad: string; urun_gorsel: string | null; fiyat: number; adet: number }> = []
   let ara_toplam = 0
+
   for (const item of items) {
-    if (item.product_id) {
-      const { data: urun } = await db.from('site_products').select('fiyat').eq('id', item.product_id).single()
-      if (urun) {
-        item.fiyat = urun.fiyat // DB fiyatını kullan
-      }
+    if (!item.product_id) continue
+    const { data: urun } = await db
+      .from('site_products')
+      .select('fiyat, name, stok, stok_takip')
+      .eq('id', item.product_id)
+      .eq('durum', 'active')
+      .single()
+
+    if (!urun) return NextResponse.json({ error: `Ürün bulunamadı: ${item.urun_ad}` }, { status: 400 })
+
+    // Stok kontrolü
+    if (urun.stok_takip && urun.stok < item.adet) {
+      return NextResponse.json({
+        error: `"${urun.name}" için yeterli stok yok. Mevcut: ${urun.stok} adet.`
+      }, { status: 400 })
     }
-    ara_toplam += (item.fiyat || 0) * item.adet
+
+    const fiyat = urun.fiyat // DB'den gelen doğrulanmış fiyat
+    ara_toplam += fiyat * item.adet
+    dogrulanmisItems.push({
+      product_id: item.product_id,
+      urun_ad: urun.name,
+      urun_gorsel: item.urun_gorsel || null,
+      fiyat,
+      adet: Number(item.adet),
+    })
   }
-  // Kurye ücretini sistem ayarlarından oku
+
+  if (dogrulanmisItems.length === 0) {
+    return NextResponse.json({ error: 'Sepet boş' }, { status: 400 })
+  }
+
+  // Kargo ücretini DB'den oku
   let standart_kargo = 49.90
   let ucretsiz_limit = 500
   try {
     const { data: kargoAyar } = await db.from('site_ayarlar').select('anahtar,deger').eq('grup','kargo')
     if (kargoAyar) {
-      const kargoMap: Record<string, string> = {}
-      kargoAyar.forEach((r: any) => { kargoMap[r.anahtar] = r.deger })
-      if (kargoMap.standart_kargo_ucreti) standart_kargo = parseFloat(kargoMap.standart_kargo_ucreti) || 49.90
-      if (kargoMap.ucretsiz_kargo_tutari) ucretsiz_limit = parseFloat(kargoMap.ucretsiz_kargo_tutari) || 500
+      const m: Record<string, string> = {}
+      kargoAyar.forEach((r: any) => { m[r.anahtar] = r.deger })
+      if (m.standart_kargo_ucreti) standart_kargo = parseFloat(m.standart_kargo_ucreti) || 49.90
+      if (m.ucretsiz_kargo_tutari) ucretsiz_limit = parseFloat(m.ucretsiz_kargo_tutari) || 500
     }
   } catch {}
   const kargo_ucreti = ara_toplam >= ucretsiz_limit ? 0 : standart_kargo
 
-  // İndirimi sunucuda hesapla - client'tan gelen değere güvenme
+  // İndirimi sunucuda hesapla
   let indirim = 0
   if (kupon_kod) {
     const { data: kupon } = await db.from('site_kuponlar').select('*').eq('kod', kupon_kod.toUpperCase()).eq('aktif', true).single()
     if (kupon && (!kupon.bitis || new Date(kupon.bitis) >= new Date()) && (!kupon.kullanim_limiti || kupon.kullanim_sayisi < kupon.kullanim_limiti)) {
       indirim = kupon.tip === 'yuzde' ? ara_toplam * (kupon.deger / 100) : kupon.deger
       if (kupon.max_indirim) indirim = Math.min(indirim, kupon.max_indirim)
-      indirim = Math.min(indirim, ara_toplam) // indirim sepeti aşamaz
+      indirim = Math.min(indirim, ara_toplam)
     }
   }
 
   const toplam = Math.max(0, ara_toplam + kargo_ucreti - indirim)
-
-  // Kart ödemesinde sipariş PayTR onayına kadar 'bekliyor' kalır
-  // Diğer yöntemlerde (kapida, havale) hemen 'onaylandi'
   const baslangic_durum = odeme_yontemi === 'kart' ? 'bekliyor' : 'onaylandi'
-  const baslangic_odeme_durum = odeme_yontemi === 'kart' ? 'bekliyor' : 'bekliyor'
+  const baslangic_odeme_durum = 'bekliyor'
 
   const siparisVeri = {
     siparis_no: genNo(), musteri_id, misafir_email,
@@ -112,11 +131,10 @@ export async function POST(req: NextRequest) {
 
   let { data: siparis, error } = await db.from('site_siparisler').insert(siparisVeri).select().single()
 
-  // FK constraint hatası: musteri_id referans tablosunda yok → null ile tekrar dene
   if (error?.message?.includes('foreign key constraint') || error?.message?.includes('fkey')) {
     const yedek = await db.from('site_siparisler').insert({
       ...siparisVeri,
-      siparis_no: genNo(), // yeni sipariş no
+      siparis_no: genNo(),
       musteri_id: null,
     }).select().single()
     siparis = yedek.data
@@ -124,30 +142,25 @@ export async function POST(req: NextRequest) {
   }
 
   if (error || !siparis) return NextResponse.json({ error: error?.message || 'Sipariş oluşturulamadı' }, { status: 400 })
-
   if (!siparis?.id) return NextResponse.json({ error: 'Sipariş ID alınamadı' }, { status: 500 })
 
-  const kalemler = items.map((i: any) => ({
+  // Kalemleri DB'den doğrulanmış fiyatlarla kaydet
+  const kalemler = dogrulanmisItems.map(i => ({
     siparis_id: siparis.id,
-    product_id: i.product_id || null,
+    product_id: i.product_id,
     urun_ad: i.urun_ad,
-    urun_gorsel: i.urun_gorsel || null,
-    birim_fiyat: Number(i.fiyat),
-    adet: Number(i.adet),
-    toplam: Number(i.fiyat) * Number(i.adet),
+    urun_gorsel: i.urun_gorsel,
+    birim_fiyat: i.fiyat,       // DB'den gelen doğrulanmış fiyat
+    adet: i.adet,
+    toplam: i.fiyat * i.adet,
   }))
 
-  // Kalemleri kaydet
   const { error: kalemHata } = await db.from('site_siparis_kalemleri').insert(kalemler)
-  if (kalemHata) {
-    console.error('KALEM HATA:', kalemHata.code, kalemHata.message)
-  }
+  if (kalemHata) console.error('KALEM HATA:', kalemHata.code, kalemHata.message)
 
   // Stok düş
-  for (const item of items) {
-    if (item.product_id) {
-      try { await db.rpc('stok_dus', { p_id: item.product_id, p_adet: item.adet }) } catch {}
-    }
+  for (const item of dogrulanmisItems) {
+    try { await db.rpc('stok_dus', { p_id: item.product_id, p_adet: item.adet }) } catch {}
   }
 
   // Kupon sayacı
@@ -155,31 +168,17 @@ export async function POST(req: NextRequest) {
     try { await db.rpc('kupon_kullan', { p_kod: kupon_kod }) } catch {}
   }
 
-  // Mail gönder - kart ödemesinde PayTR callback'i bekle, diğerlerinde hemen gönder
+  // Mail gönder
   const baseUrl = req.headers.get('origin') || 'https://milgosite.vercel.app'
-  const musteriEmail = siparis.musteri_email
-
   if (odeme_yontemi !== 'kart') {
-    if (musteriEmail) {
-      await mailGonder(
-        musteriEmail,
-        `Siparişiniz Alındı - #${siparis.siparis_no}`,
-        siparisMail(siparis, kalemler),
-        baseUrl
-      )
+    if (siparis.musteri_email) {
+      await mailGonder(siparis.musteri_email, `Siparişiniz Alındı - #${siparis.siparis_no}`, siparisMail(siparis, kalemler), baseUrl)
     }
-    // Admin bildirimi
     const { data: adminMail } = await db.from('site_ayarlar').select('deger').eq('grup', 'genel').eq('anahtar', 'iletisim_email').single()
     if (adminMail?.deger) {
-      await mailGonder(
-        adminMail.deger,
-        `🛍 Yeni Sipariş #${siparis.siparis_no} - ₺${toplam.toFixed(2)}`,
-        adminSiparisMail(siparis),
-        baseUrl
-      )
+      await mailGonder(adminMail.deger, `🛍 Yeni Sipariş #${siparis.siparis_no} - ₺${toplam.toFixed(2)}`, adminSiparisMail(siparis), baseUrl)
     }
   }
-  // Kart ödemesinde mail, PayTR callback (/api/paytr/callback) başarılı dönünce gönderilir
 
   return NextResponse.json({ data: siparis }, { status: 201 })
 }
