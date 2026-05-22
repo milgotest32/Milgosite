@@ -39,20 +39,24 @@ export default function AbonelikPage() {
 
     // n8n webhook bildirimi
     try {
-      await fetch('https://n8n.milgon8nwhat.org.tr/webhook/abonelik-bot', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ad: form.ad,
-          email: form.email,
-          telefon: form.telefon,
-          adres: `${form.adres}, ${form.ilce}`,
-          plan: plan.ad,
-          haftalik_litre: plan.litre,
-          aylik_fiyat: plan.fiyat,
-          kayit_tarihi: new Date().toISOString(),
+      const { data: whData } = await supabase.from('site_ayarlar').select('deger').eq('grup','webhook').eq('anahtar','abonelik_webhook_url').single()
+      const webhookUrl = whData?.deger
+      if (webhookUrl) {
+        await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ad: form.ad,
+            email: form.email,
+            telefon: form.telefon,
+            adres: `${form.adres}, ${form.ilce}`,
+            plan: plan.ad,
+            haftalik_litre: plan.litre,
+            aylik_fiyat: plan.fiyat,
+            kayit_tarihi: new Date().toISOString(),
+          })
         })
-      })
+      }
     } catch { /* webhook hatası aboneliği engellemesin */ }
 
     setBasari(true)

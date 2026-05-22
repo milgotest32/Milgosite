@@ -180,5 +180,25 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Sipariş webhook
+  try {
+    const { data: whData } = await db.from('site_ayarlar').select('deger').eq('grup','webhook').eq('anahtar','siparis_webhook_url').single()
+    if (whData?.deger) {
+      await fetch(whData.deger, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          siparis_no: siparis.siparis_no,
+          musteri_ad: siparis.musteri_ad,
+          musteri_telefon: siparis.musteri_telefon,
+          musteri_email: siparis.musteri_email,
+          toplam_tutar: toplam,
+          adres: siparis.teslimat_adres,
+          tarih: new Date().toISOString(),
+        })
+      })
+    }
+  } catch { /* webhook hatası siparişi engellemesin */ }
+
   return NextResponse.json({ data: siparis }, { status: 201 })
 }

@@ -79,6 +79,7 @@ export default function AyarlarPage() {
     {k:'favicon',ad:'🌐 Favicon'},
     {k:'whatsapp',ad:'💬 WhatsApp'},
     {k:'guvenlik',ad:'🔒 Güvenlik'},
+    {k:'webhook',ad:'🔗 Webhook'},
   ]
 
   const inp = (label:string, grup:string, k:string, type='text', placeholder='') => (
@@ -479,6 +480,47 @@ export default function AyarlarPage() {
                   <input type="checkbox" checked={get('guvenlik','rate_limit_enabled')==='1'} onChange={e=>set('guvenlik','rate_limit_enabled',e.target.checked?'1':'0')} style={{cursor:'pointer'}}/>
                   Rate Limit Aktif
                 </label>
+              </div>
+            )}
+            {aktifTab==='webhook' && (
+              <div style={{display:'flex',flexDirection:'column',gap:'24px'}}>
+                <div>
+                  <h2 style={{fontSize:'16px',fontWeight:700,color:'#1C1B2E',marginBottom:'4px'}}>Webhook Entegrasyonları</h2>
+                  <p style={{fontSize:'13px',color:'#6B7280',margin:'0 0 20px'}}>Yeni sipariş veya abonelik oluştuğunda bu adreslere otomatik bildirim gönderilir.</p>
+                </div>
+
+                {/* Sipariş Webhook */}
+                <div style={{background:'#F8F7FC',borderRadius:'16px',padding:'20px',border:'1px solid #F0ECF5'}}>
+                  <div style={{display:'flex',alignItems:'center',gap:'10px',marginBottom:'16px'}}>
+                    <span style={{fontSize:'20px'}}>🛒</span>
+                    <div>
+                      <p style={{margin:0,fontSize:'14px',fontWeight:700,color:'#1C1B2E'}}>Sipariş Webhook</p>
+                      <p style={{margin:0,fontSize:'12px',color:'#6B7280'}}>Yeni sipariş oluştuğunda tetiklenir</p>
+                    </div>
+                  </div>
+                  {inp('Webhook URL','webhook','siparis_webhook_url','url','https://n8n.example.com/webhook/siparis')}
+                  <div style={{marginTop:'12px',background:'#EBF7FC',borderRadius:'10px',padding:'12px',fontSize:'12px',color:'#4B7FA3'}}>
+                    <p style={{margin:'0 0 6px',fontWeight:700}}>Gönderilen veriler:</p>
+                    <code style={{fontSize:'11px',color:'#2D5E7D'}}>siparis_no, musteri_ad, musteri_telefon, musteri_email, toplam_tutar, urunler, adres, tarih</code>
+                  </div>
+                </div>
+
+                {/* Abonelik Webhook */}
+                <div style={{background:'#F8F7FC',borderRadius:'16px',padding:'20px',border:'1px solid #F0ECF5'}}>
+                  <div style={{display:'flex',alignItems:'center',gap:'10px',marginBottom:'16px'}}>
+                    <span style={{fontSize:'20px'}}>🔄</span>
+                    <div>
+                      <p style={{margin:0,fontSize:'14px',fontWeight:700,color:'#1C1B2E'}}>Abonelik Webhook</p>
+                      <p style={{margin:0,fontSize:'12px',color:'#6B7280'}}>Yeni abonelik başlatıldığında tetiklenir</p>
+                    </div>
+                  </div>
+                  {inp('Webhook URL','webhook','abonelik_webhook_url','url','https://n8n.example.com/webhook/abonelik')}
+                  <div style={{marginTop:'12px',background:'#EBF7FC',borderRadius:'10px',padding:'12px',fontSize:'12px',color:'#4B7FA3'}}>
+                    <p style={{margin:'0 0 6px',fontWeight:700}}>Gönderilen veriler:</p>
+                    <code style={{fontSize:'11px',color:'#2D5E7D'}}>ad, email, telefon, adres, plan, haftalik_litre, aylik_fiyat, kayit_tarihi</code>
+                  </div>
+                </div>
+
               </div>
             )}
             </>
