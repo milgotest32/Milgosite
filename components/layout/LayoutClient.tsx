@@ -12,7 +12,6 @@ import { Toaster, toast } from 'react-hot-toast'
 import { supabase } from '@/lib/supabase/client'
 import { useSepet } from '@/lib/sepet'
 
-// Sepet hatırlatması gösterilmesin gereken sayfalar
 const HATIRLAMA_DISINDA = ['/sepet', '/odeme', '/siparis-onay', '/giris', '/kayit']
 
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
@@ -34,16 +33,14 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
     })
   }, [])
 
-  // Sepet hatırlatması — sadece bir kez, uygun sayfada
+  // Sepet hatırlatması
   useEffect(() => {
     if (isAdmin) return
     if (gosterildi.current) return
     if (HATIRLAMA_DISINDA.some(p => pathname?.startsWith(p))) return
-
     const adet = adetToplam()
     if (adet === 0) return
 
-    // Kısa gecikme — sayfa yüklendikten sonra göster
     const t = setTimeout(() => {
       gosterildi.current = true
       toast(
@@ -65,40 +62,12 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
             </button>
           </div>
         ),
-        {
-          duration: 6000,
-          style: { maxWidth: '380px', padding: '12px 16px' },
-        }
+        { duration: 6000, style: { maxWidth: '380px', padding: '12px 16px' } }
       )
     }, 2000)
 
     return () => clearTimeout(t)
   }, [pathname, isAdmin])
-
-  return (
-    <>
-      <Cursor />
-      {!isAdmin && <KonumModal />}
-      {!isAdmin && <WhatsAppButon />}
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 3000,
-          style: {
-            fontFamily: 'var(--font-nunito), sans-serif',
-            fontSize: '14px',
-            borderRadius: '14px',
-          },
-        }}
-      />
-      {!isAdmin && <Navbar />}
-      {!isAdmin && <Popup />}
-      {!isAdmin && <BolgeYokPopup />}
-      <main>{children}</main>
-      {!isAdmin && <Footer />}
-    </>
-  )
-}
 
   return (
     <>
