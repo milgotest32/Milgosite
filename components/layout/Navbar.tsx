@@ -72,10 +72,7 @@ export default function Navbar() {
             )}
           </button>
 
-          {/* Orta mesaj */}
-          <p style={{ fontSize: '11px', color: 'rgba(255,255,255,.6)', fontWeight: 500, margin: 0, textAlign: 'center', flex: 1, padding: '0 16px', display: isMobile ? 'none' : 'block' }}>
-            🚚 Aynı gün teslimat &nbsp;·&nbsp; İlk siparişte <strong style={{ color: '#F4A7B9' }}>%10 indirim: MILGO10</strong>
-          </p>
+          <div style={{ flex: 1 }} />
 
           {/* Sağ boş denge */}
           <div style={{ width: '80px' }} />
