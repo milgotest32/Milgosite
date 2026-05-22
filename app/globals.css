@@ -425,3 +425,13 @@ body:not(.admin-body) * {
 .admin-body button, .admin-body a, .admin-body select, .admin-body input[type="checkbox"], .admin-body input[type="radio"] {
   cursor: pointer;
 }
+
+/* Mobil alt navigasyon */
+@media (max-width: 768px) {
+  .mobil-nav {
+    display: flex !important;
+  }
+  main {
+    padding-bottom: 70px !important;
+  }
+}
