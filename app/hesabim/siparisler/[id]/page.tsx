@@ -6,17 +6,24 @@ import { supabase } from '@/lib/supabase/client'
 import { ArrowLeft, Package, MapPin, CreditCard, Clock } from 'lucide-react'
 export const dynamic = 'force-dynamic'
 
+const AKIM = [
+  { key: 'bekliyor',  ad: 'Sipariş Alındı', emoji: '🕐' },
+  { key: 'onaylandi', ad: 'Onaylandı',       emoji: '✅' },
+  { key: 'kuryede',   ad: 'Kurye Yolda',     emoji: '🛵' },
+  { key: 'teslim',    ad: 'Teslim Edildi',   emoji: '🎉' },
+]
 const DURUM: Record<string,string> = {
-  bekliyor:'Hazırlanıyor', onaylandi:'Onaylandı', kargoda:'Kuryede', kuryede:'Kuryede', teslim:'Teslim Edildi', iptal:'İptal',
+  bekliyor:'Sipariş Alındı', onaylandi:'Onaylandı', kargoda:'Kurye Yolda', kuryede:'Kurye Yolda', teslim:'Teslim Edildi', iptal:'İptal Edildi',
 }
 const DURUM_RENK: Record<string,{bg:string,color:string}> = {
   bekliyor:  {bg:'#FEF3C7',color:'#D97706'},
   onaylandi: {bg:'#EBF7FC',color:'#3B9FCC'},
-  kargoda:   {bg:'#F5F3FF',color:'#8B5CF6'},
-  kuryede:   {bg:'#F5F3FF',color:'#8B5CF6'},
+  kargoda:   {bg:'#FFF7ED',color:'#EA7C2B'},
+  kuryede:   {bg:'#FFF7ED',color:'#EA7C2B'},
   teslim:    {bg:'#F0FDF4',color:'#16A34A'},
   iptal:     {bg:'#FEF2F2',color:'#EF4444'},
 }
+const durumIndex = (d: string) => ['bekliyor','onaylandi','kuryede','teslim'].indexOf(d === 'kargoda' ? 'kuryede' : d)
 
 export default function SiparisDetayPage() {
   const { id } = useParams()
@@ -81,6 +88,39 @@ export default function SiparisDetayPage() {
             <Clock size={12}/>
             {new Date(siparis.created_at).toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'})}
           </p>
+
+          {/* Timeline */}
+          {durum !== 'iptal' && (
+            <div style={{display:'flex',alignItems:'flex-start',gap:0,marginTop:20}}>
+              {AKIM.map((a, i) => {
+                const aktifIdx = durumIndex(durum)
+                const tamamlandi = i <= aktifIdx
+                const aktif = i === aktifIdx
+                return (
+                  <div key={a.key} style={{display:'flex',alignItems:'flex-start',flex: i < 3 ? 1 : 'none'}}>
+                    <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:4}}>
+                      <div style={{
+                        width:32,height:32,borderRadius:'50%',
+                        background: tamamlandi ? '#E8567A' : '#F0ECF5',
+                        display:'flex',alignItems:'center',justifyContent:'center',
+                        boxShadow: aktif ? '0 0 0 4px rgba(232,86,122,0.15)' : 'none',
+                        flexShrink:0,fontSize:14,
+                      }}>
+                        {tamamlandi ? a.emoji : <span style={{width:8,height:8,borderRadius:'50%',background:'#D1C4D8',display:'block'}}/>}
+                      </div>
+                      <span style={{fontSize:10,color:tamamlandi?'#E8567A':'#9CA3AF',fontWeight:aktif?700:400,textAlign:'center',maxWidth:60}}>{a.ad}</span>
+                    </div>
+                    {i < 3 && <div style={{flex:1,height:2,background:i<aktifIdx?'#E8567A':'#F0ECF5',margin:'15px 4px 0',flexShrink:0}}/>}
+                  </div>
+                )
+              })}
+            </div>
+          )}
+          {durum === 'iptal' && (
+            <div style={{background:'#FEF2F2',borderRadius:10,padding:'10px 14px',marginTop:16,fontSize:13,color:'#EF4444',fontWeight:600}}>
+              ❌ Bu sipariş iptal edildi
+            </div>
+          )}
           {siparis.bolge_adi && (
             <div style={{marginTop:10,display:'inline-flex',alignItems:'center',gap:6,background:'#EBF7FC',color:'#3B9FCC',fontSize:12,fontWeight:700,padding:'5px 12px',borderRadius:50}}>
               📍 {siparis.bolge_adi} bölgesi

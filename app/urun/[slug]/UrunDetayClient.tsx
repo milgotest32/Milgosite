@@ -44,7 +44,9 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
       .eq('product_id', urun.id)
       .eq('onaylı', true)
       .order('created_at', { ascending: false })
-      .then(({ data }: any) => setYorumlar(data || []))
+      .then(({ data, error }: any) => {
+        setYorumlar(data || [])
+      })
   }, [urun.id])
 
   useEffect(() => {
