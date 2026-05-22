@@ -36,22 +36,31 @@ export default function SiparislerimPage() {
     })
   }, [router])
  
+  const AKIM = [
+    { key: 'bekliyor',  ad: 'Sipariş Alındı', emoji: '🕐' },
+    { key: 'onaylandi', ad: 'Onaylandı',       emoji: '✅' },
+    { key: 'kuryede',   ad: 'Kurye Yolda',     emoji: '🛵' },
+    { key: 'teslim',    ad: 'Teslim Edildi',   emoji: '🎉' },
+  ]
+
   const DURUM: Record<string, string> = {
-    bekliyor:  'Hazırlanıyor',
+    bekliyor:  'Sipariş Alındı',
     onaylandi: 'Onaylandı',
-    kargoda:   'Kuryede',
-    kuryede:   'Kuryede',
+    kargoda:   'Kurye Yolda',
+    kuryede:   'Kurye Yolda',
     teslim:    'Teslim Edildi',
-    iptal:     'İptal',
+    iptal:     'İptal Edildi',
   }
   const DURUM_RENK: Record<string, { bg: string; color: string }> = {
     bekliyor:  { bg: '#FEF3C7', color: '#D97706' },
     onaylandi: { bg: '#EBF7FC', color: '#3B9FCC' },
-    kargoda:   { bg: '#F5F3FF', color: '#8B5CF6' },
-    kuryede:   { bg: '#F5F3FF', color: '#8B5CF6' },
+    kargoda:   { bg: '#FFF7ED', color: '#EA7C2B' },
+    kuryede:   { bg: '#FFF7ED', color: '#EA7C2B' },
     teslim:    { bg: '#F0FDF4', color: '#16A34A' },
     iptal:     { bg: '#FEF2F2', color: '#EF4444' },
   }
+
+  const durumIndex = (d: string) => ['bekliyor','onaylandi','kuryede','teslim'].indexOf(d === 'kargoda' ? 'kuryede' : d)
  
   if (yukleniyor) return (
     <div style={{ minHeight: '100vh', background: '#F8F5FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -109,6 +118,40 @@ export default function SiparislerimPage() {
                     <div style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 14 }}>
                       {new Date(s.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </div>
+
+                    {/* Durum timeline */}
+                    {durum !== 'iptal' && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 16 }}>
+                        {AKIM.map((a, i) => {
+                          const aktifIdx = durumIndex(durum)
+                          const tamamlandi = i <= aktifIdx
+                          const aktif = i === aktifIdx
+                          return (
+                            <div key={a.key} style={{ display: 'flex', alignItems: 'center', flex: i < 3 ? 1 : 'none' }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+                                <div style={{
+                                  width: 28, height: 28, borderRadius: '50%',
+                                  background: tamamlandi ? '#E8567A' : '#F0ECF5',
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                  fontSize: 13,
+                                  boxShadow: aktif ? '0 0 0 3px rgba(232,86,122,0.2)' : 'none',
+                                  flexShrink: 0,
+                                }}>
+                                  {tamamlandi ? <span style={{ fontSize: 11 }}>{a.emoji}</span> : <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#D1C4D8', display: 'block' }} />}
+                                </div>
+                                <span style={{ fontSize: 9, color: tamamlandi ? '#E8567A' : '#9CA3AF', fontWeight: aktif ? 700 : 400, whiteSpace: 'nowrap' }}>{a.ad}</span>
+                              </div>
+                              {i < 3 && <div style={{ flex: 1, height: 2, background: i < aktifIdx ? '#E8567A' : '#F0ECF5', margin: '0 4px', marginBottom: 14 }} />}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
+                    {durum === 'iptal' && (
+                      <div style={{ background: '#FEF2F2', borderRadius: 10, padding: '8px 12px', marginBottom: 14, fontSize: 12, color: '#EF4444', fontWeight: 600 }}>
+                        ❌ Bu sipariş iptal edildi
+                      </div>
+                    )}
 
                     {/* Ürün önizleme */}
                     {s.site_siparis_kalemleri?.slice(0,3).map((k: any) => (
