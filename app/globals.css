@@ -38,27 +38,16 @@ body {
 }
 
 /* Cursor */
-#cur {
-  position: fixed;
-  width: 12px; height: 12px;
-  background: var(--p);
-  border-radius: 50%;
-  z-index: 9999;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  mix-blend-mode: multiply;
-  transition: width .15s, height .15s;
+#cur, #cur2 { display: none !important; }
+
+/* Pembe ok cursor — SVG data URI */
+html, body, * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M5 3l14 9-7 1-4 7z' fill='%23E8567A' stroke='%23fff' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 5 3, auto !important;
 }
-#cur2 {
-  position: fixed;
-  width: 38px; height: 38px;
-  border: 1.5px solid rgba(232,86,122,0.5);
-  border-radius: 50%;
-  z-index: 9998;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
+
+a, button, [role="button"], label, select, input[type="submit"], input[type="button"] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M5 3l14 9-7 1-4 7z' fill='%23E8567A' stroke='%23fff' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 5 3, pointer !important;
 }
-@media (hover: none) { #cur, #cur2 { display: none !important; } }
 
 /* Ticker animasyonu */
 .ticker { background: var(--d); padding: 13px 0; overflow: hidden; display: flex; }
@@ -142,7 +131,7 @@ body {
   font-size: 13px;
   font-weight: 700;
   letter-spacing: .03em;
-  cursor: none;
+  cursor: inherit;
   text-decoration: none;
   transition: background .2s, transform .2s;
 }
@@ -161,7 +150,7 @@ body {
   font-family: var(--font-body);
   font-size: 13px;
   font-weight: 600;
-  cursor: none;
+  cursor: inherit;
   text-decoration: none;
   transition: border-color .2s, color .2s;
 }
@@ -180,7 +169,7 @@ body {
   font-family: var(--font-body);
   font-size: 13px;
   font-weight: 700;
-  cursor: none;
+  cursor: inherit;
   text-decoration: none;
   transition: opacity .2s, transform .2s;
   box-shadow: 0 6px 20px rgba(232,86,122,.3);
@@ -227,7 +216,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: none;
+  cursor: inherit;
   transition: background .2s, transform .2s;
   flex-shrink: 0;
 }
@@ -428,7 +417,7 @@ body {
 
 /* Özel cursor - sadece non-admin */
 body:not(.admin-body) * {
-  cursor: none !important;
+  cursor: inherit !important;
 }
 .admin-body * {
   cursor: auto;

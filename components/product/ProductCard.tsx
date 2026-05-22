@@ -68,7 +68,7 @@ export default function ProductCard({ urun }: { urun: Urun }) {
 
         {/* Favori butonu */}
         <button onClick={favoriToggle}
-          style={{ position: 'absolute', top: '12px', right: '12px', width: '30px', height: '30px', borderRadius: '50%', background: '#fff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'none', boxShadow: '0 2px 8px rgba(26,10,18,.1)', opacity: favori ? 1 : 0, transition: 'opacity .2s', zIndex: 2 }}
+          style={{ position: 'absolute', top: '12px', right: '12px', width: '30px', height: '30px', borderRadius: '50%', background: '#fff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'inherit', boxShadow: '0 2px 8px rgba(26,10,18,.1)', opacity: favori ? 1 : 0, transition: 'opacity .2s', zIndex: 2 }}
           className="fav-btn">
           <Heart size={13} style={{ color: favori ? '#E8567A' : '#7A6070' }} fill={favori ? '#E8567A' : 'none'} />
         </button>

@@ -144,7 +144,7 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {gorseller.map((g, i) => (
                   <button key={g.id} onClick={() => setAktifGorsel(i)}
-                    style={{ width: '68px', height: '68px', borderRadius: '14px', overflow: 'hidden', border: `2px solid ${aktifGorsel === i ? '#E8567A' : 'rgba(26,10,18,.1)'}`, background: 'linear-gradient(135deg,#FEE8EF,#EBF5FC)', cursor: 'none', padding: '6px', transition: 'border-color .2s' }}>
+                    style={{ width: '68px', height: '68px', borderRadius: '14px', overflow: 'hidden', border: `2px solid ${aktifGorsel === i ? '#E8567A' : 'rgba(26,10,18,.1)'}`, background: 'linear-gradient(135deg,#FEE8EF,#EBF5FC)', cursor: 'inherit', padding: '6px', transition: 'border-color .2s' }}>
                     <img src={g.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', mixBlendMode: 'multiply' }} />
                   </button>
                 ))}
@@ -191,9 +191,9 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px', flexWrap: 'wrap' }}>
               <div style={{ display: 'flex', alignItems: 'center', background: 'rgba(26,10,18,.05)', border: '1.5px solid rgba(26,10,18,.1)', borderRadius: '14px', overflow: 'hidden', flexShrink: 0 }}>
-                <button onClick={() => setAdet(Math.max(1, adet - 1))} style={{ width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'none', border: 'none', cursor: 'none', color: '#1A0A12' }}><Minus size={15} /></button>
+                <button onClick={() => setAdet(Math.max(1, adet - 1))} style={{ width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'none', border: 'none', cursor: 'inherit', color: '#1A0A12' }}><Minus size={15} /></button>
                 <span style={{ width: '40px', textAlign: 'center', fontSize: '16px', fontWeight: 700, color: '#1A0A12' }}>{adet}</span>
-                <button onClick={() => setAdet(adet + 1)} style={{ width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'none', border: 'none', cursor: 'none', color: '#1A0A12' }}><Plus size={15} /></button>
+                <button onClick={() => setAdet(adet + 1)} style={{ width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'none', border: 'none', cursor: 'inherit', color: '#1A0A12' }}><Plus size={15} /></button>
               </div>
 
               {bolgdeVar === 'yok' ? (
@@ -202,13 +202,13 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
                 </div>
               ) : (
                 <button onClick={sepeteEkle} disabled={!!(urun.stok_takip && urun.stok <= 0)}
-                  style={{ flex: 1, minWidth: '180px', height: '44px', borderRadius: '50px', border: 'none', fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '13px', fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'none', transition: 'all .25s', background: eklendi ? '#22c55e' : '#1A0A12' }}>
+                  style={{ flex: 1, minWidth: '180px', height: '44px', borderRadius: '50px', border: 'none', fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '13px', fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'inherit', transition: 'all .25s', background: eklendi ? '#22c55e' : '#1A0A12' }}>
                   {eklendi ? <><Check size={15} />Eklendi!</> : <><ShoppingBag size={15} />Sepete Ekle · ₺{(urun.fiyat * adet).toFixed(2)}</>}
                 </button>
               )}
 
               <button onClick={() => setFavori(!favori)}
-                style={{ width: '44px', height: '44px', borderRadius: '14px', border: `1.5px solid ${favori ? '#E8567A' : 'rgba(26,10,18,.1)'}`, background: favori ? '#FEE8EF' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'none', transition: 'all .2s', flexShrink: 0 }}>
+                style={{ width: '44px', height: '44px', borderRadius: '14px', border: `1.5px solid ${favori ? '#E8567A' : 'rgba(26,10,18,.1)'}`, background: favori ? '#FEE8EF' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'inherit', transition: 'all .2s', flexShrink: 0 }}>
                 <Heart size={17} style={{ color: favori ? '#E8567A' : '#7A6070' }} fill={favori ? '#E8567A' : 'none'} />
               </button>
             </div>
@@ -251,7 +251,7 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
           <div style={{ display: 'flex', gap: '4px', borderBottom: '1px solid rgba(26,10,18,.08)', marginBottom: '28px', overflowX: 'auto' }}>
             {([['aciklama','Açıklama'],['ozellikler','Özellikler'],['yorumlar',`Yorumlar (${yorumlar.length})`]] as const).map(([key, label]) => (
               <button key={key} onClick={() => setAktifTab(key)}
-                style={{ padding: '12px 20px', fontSize: '13px', fontWeight: 700, color: aktifTab === key ? '#E8567A' : '#7A6070', background: 'none', border: 'none', borderBottom: `2px solid ${aktifTab === key ? '#E8567A' : 'transparent'}`, cursor: 'none', fontFamily: 'var(--font-nunito), Nunito, sans-serif', whiteSpace: 'nowrap', transition: 'color .2s', marginBottom: '-1px' }}>
+                style={{ padding: '12px 20px', fontSize: '13px', fontWeight: 700, color: aktifTab === key ? '#E8567A' : '#7A6070', background: 'none', border: 'none', borderBottom: `2px solid ${aktifTab === key ? '#E8567A' : 'transparent'}`, cursor: 'inherit', fontFamily: 'var(--font-nunito), Nunito, sans-serif', whiteSpace: 'nowrap', transition: 'color .2s', marginBottom: '-1px' }}>
                 {label}
               </button>
             ))}

@@ -108,7 +108,7 @@ export default function KayitPage() {
                   onFocus={e => e.target.style.borderColor = '#E8567A'}
                   onBlur={e => e.target.style.borderColor = 'rgba(26,10,18,0.1)'}
                 />
-                <button type="button" onClick={() => setGoster(!goster)} style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'none', color: '#7A6070', display: 'flex', alignItems: 'center' }}>
+                <button type="button" onClick={() => setGoster(!goster)} style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'inherit', color: '#7A6070', display: 'flex', alignItems: 'center' }}>
                   {goster ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
@@ -125,7 +125,7 @@ export default function KayitPage() {
               />
             </div>
 
-            <button type="submit" disabled={yukleniyor} style={{ width: '100%', background: yukleniyor ? '#7A6070' : '#E8567A', color: '#fff', border: 'none', borderRadius: '50px', padding: '15px', fontSize: '14px', fontWeight: 700, cursor: 'none', fontFamily: 'Nunito, sans-serif', marginTop: '4px', transition: 'background .2s', boxShadow: '0 6px 20px rgba(232,86,122,0.35)' }}>
+            <button type="submit" disabled={yukleniyor} style={{ width: '100%', background: yukleniyor ? '#7A6070' : '#E8567A', color: '#fff', border: 'none', borderRadius: '50px', padding: '15px', fontSize: '14px', fontWeight: 700, cursor: 'inherit', fontFamily: 'Nunito, sans-serif', marginTop: '4px', transition: 'background .2s', boxShadow: '0 6px 20px rgba(232,86,122,0.35)' }}>
               {yukleniyor ? 'Kaydediliyor...' : 'Üye Ol →'}
             </button>
 
