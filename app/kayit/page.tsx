@@ -78,7 +78,7 @@ export default function KayitPage() {
         <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(20px)', borderRadius: '32px', padding: '36px', border: '1px solid rgba(255,255,255,0.9)', boxShadow: '0 20px 60px rgba(26,10,18,0.1)' }}>
           <div style={{ textAlign: 'center', marginBottom: '28px' }}>
             <div style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '30px', color: '#1A0A12', marginBottom: '4px' }}>
-              milgo<span style={{ color: '#E8567A' }}>.</span>
+              <img src="https://jxfegluntgssrgpnvscs.supabase.co/storage/v1/object/public/site-medya/medya/1779186053874-lpldyhy0u38.png" alt="Milgo" style={{ height: "64px", width: "auto", objectFit: "contain", marginBottom: "8px" }} />
             </div>
             <h1 style={{ fontSize: '18px', fontWeight: 700, color: '#1A0A12', margin: 0 }}>Üye Ol</h1>
             <p style={{ fontSize: '13px', color: '#7A6070', margin: '4px 0 0' }}>İlk siparişinizde %10 indirim</p>
