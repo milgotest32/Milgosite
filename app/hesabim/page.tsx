@@ -19,7 +19,7 @@ export default function HesabimPage() {
     })
   }, [router])
 
-  const cikis = async () => { await supabase.auth.signOut(); router.push('/') }
+  const cikis = async () => { await supabase.auth.signOut(); router.push('/giris') }
 
   if (yukleniyor) return (
     <div style={{ minHeight: '100vh', background: '#F0EEF8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
