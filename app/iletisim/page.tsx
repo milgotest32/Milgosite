@@ -1,11 +1,18 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { supabase } from '@/lib/supabase/client'
 
 export default function IletisimPage() {
   const [form, setForm] = useState({ ad: '', email: '', konu: '', mesaj: '' })
   const [gonderildi, setGonderildi] = useState(false)
   const [yukleniyor, setYukleniyor] = useState(false)
   const [hata, setHata] = useState('')
+  const [waNumara, setWaNumara] = useState('902123521076')
+
+  useEffect(() => {
+    supabase.from('site_ayarlar').select('deger').eq('grup','whatsapp').eq('anahtar','numara').single()
+      .then(({ data }) => { if (data?.deger) setWaNumara(data.deger) })
+  }, [])
 
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }))
 
