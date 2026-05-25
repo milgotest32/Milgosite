@@ -16,13 +16,37 @@ export async function GET(req: NextRequest) {
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
 
   const db = serviceClient()
-  const { data, error } = await db
+
+  // site_musteriler'den shopify müşterilerini çek
+  const { data: musteriler, error: mErr } = await db
+    .from('site_musteriler')
+    .select('id, email, ad, soyad, telefon, ilce, posta_kodu, toplam_siparis, toplam_harcama, shopify_id, aktif, created_at')
+    .order('toplam_harcama', { ascending: false })
+
+  // site_users'dan admin/site kullanıcılarını çek
+  const { data: siteUsers } = await db
     .from('site_users')
     .select('id, email, role, ad, soyad, created_at, aktif')
     .order('created_at', { ascending: false })
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ data: data || [] })
+  if (mErr) return NextResponse.json({ error: mErr.message }, { status: 500 })
+
+  // Müşterileri birleştir - site_musteriler önce, kaynak bilgisiyle
+  const musteriListesi = (musteriler || []).map(m => ({
+    ...m,
+    kaynak: m.shopify_id ? 'shopify' : 'site',
+    role: 'customer',
+  }))
+
+  // site_users'dan sadece email'i site_musteriler'de olmayanları ekle
+  const musteriEmails = new Set(musteriListesi.map(m => m.email?.toLowerCase()))
+  const ekstraUsers = (siteUsers || [])
+    .filter(u => !musteriEmails.has(u.email?.toLowerCase()))
+    .map(u => ({ ...u, kaynak: 'site' }))
+
+  const data = [...musteriListesi, ...ekstraUsers]
+
+  return NextResponse.json({ data })
 }
 
 export async function PATCH(req: NextRequest) {
