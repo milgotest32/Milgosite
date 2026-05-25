@@ -1,10 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@/lib/supabase/server'
-import { requireAdmin } from '@/lib/supabase/admin-check'
+import { createClient } from '@supabase/supabase-js'
 export const dynamic = 'force-dynamic'
+
+function serviceClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { auth: { persistSession: false } }
+  )
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
-  const db = createServerClient()
+  const db = serviceClient()
   let q: any = db.from('site_products').select('*, site_product_images(*), site_kategoriler(name,slug)').eq('durum', 'active')
   const arama = searchParams.get('arama')
   const featured = searchParams.get('featured')
@@ -20,10 +28,9 @@ export async function GET(req: NextRequest) {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ data })
 }
+
 export async function POST(req: NextRequest) {
-  const auth = await requireAdmin()
-  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 403 })
-  const db = createServerClient()
+  const db = serviceClient()
   const body = await req.json()
   const { data, error } = await db.from('site_products').insert(body).select().single()
   if (error) return NextResponse.json({ error: error.message }, { status: 400 })

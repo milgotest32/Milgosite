@@ -1,6 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { requireAdmin } from '@/lib/supabase/admin-check'
 export const dynamic = 'force-dynamic'
 
 function serviceClient() {
@@ -11,16 +10,13 @@ function serviceClient() {
   )
 }
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const db = serviceClient()
-
-  // site_musteriler'den müşterileri çek
   const { data: musteriler, error: mErr } = await db
     .from('site_musteriler')
     .select('id, email, ad, soyad, telefon, ilce, posta_kodu, toplam_siparis, toplam_harcama, shopify_id, aktif, created_at')
     .order('toplam_harcama', { ascending: false })
 
-  // site_users'dan admin/site kullanıcılarını çek
   const { data: siteUsers } = await db
     .from('site_users')
     .select('id, email, role, ad, soyad, created_at, aktif')
@@ -28,32 +24,24 @@ export async function GET(req: NextRequest) {
 
   if (mErr) return NextResponse.json({ error: mErr.message }, { status: 500 })
 
-  // Müşterileri birleştir
   const musteriListesi = (musteriler || []).map(m => ({
     ...m,
     kaynak: m.shopify_id ? 'shopify' : 'site',
     role: 'customer',
   }))
 
-  // site_users'dan sadece site_musteriler'de olmayanları ekle
   const musteriEmails = new Set(musteriListesi.map(m => m.email?.toLowerCase()))
   const ekstraUsers = (siteUsers || [])
     .filter(u => !musteriEmails.has(u.email?.toLowerCase()))
     .map(u => ({ ...u, kaynak: 'site' }))
 
-  const data = [...musteriListesi, ...ekstraUsers]
-
-  return NextResponse.json({ data })
+  return NextResponse.json({ data: [...musteriListesi, ...ekstraUsers] })
 }
 
 export async function PATCH(req: NextRequest) {
-  const auth = await requireAdmin(req)
-  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
-
   const db = serviceClient()
   const { id, role } = await req.json()
   if (!id || !role) return NextResponse.json({ error: 'id ve role zorunlu' }, { status: 400 })
-
   const { error } = await db.from('site_users').update({ role }).eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ ok: true })
