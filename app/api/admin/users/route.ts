@@ -12,12 +12,9 @@ function serviceClient() {
 }
 
 export async function GET(req: NextRequest) {
-  const auth = await requireAdmin(req)
-  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
-
   const db = serviceClient()
 
-  // site_musteriler'den shopify müşterilerini çek
+  // site_musteriler'den müşterileri çek
   const { data: musteriler, error: mErr } = await db
     .from('site_musteriler')
     .select('id, email, ad, soyad, telefon, ilce, posta_kodu, toplam_siparis, toplam_harcama, shopify_id, aktif, created_at')
@@ -31,14 +28,14 @@ export async function GET(req: NextRequest) {
 
   if (mErr) return NextResponse.json({ error: mErr.message }, { status: 500 })
 
-  // Müşterileri birleştir - site_musteriler önce, kaynak bilgisiyle
+  // Müşterileri birleştir
   const musteriListesi = (musteriler || []).map(m => ({
     ...m,
     kaynak: m.shopify_id ? 'shopify' : 'site',
     role: 'customer',
   }))
 
-  // site_users'dan sadece email'i site_musteriler'de olmayanları ekle
+  // site_users'dan sadece site_musteriler'de olmayanları ekle
   const musteriEmails = new Set(musteriListesi.map(m => m.email?.toLowerCase()))
   const ekstraUsers = (siteUsers || [])
     .filter(u => !musteriEmails.has(u.email?.toLowerCase()))
