@@ -80,6 +80,14 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
   const adetToplam = useSepet(s => s.adetToplam)
   const sepetAdet = adetToplam()
 
+  // Şifre sıfırlama linkinden gelen token'ı yakala → /sifre-belirle'ye yönlendir
+  useEffect(() => {
+    const hash = window.location.hash
+    if (hash && hash.includes('type=recovery')) {
+      router.push('/sifre-belirle' + hash)
+    }
+  }, [])
+
   useEffect(() => {
     supabase.from('site_ayarlar').select('anahtar,deger').eq('grup', 'kargo').then(({ data }) => {
       if (data) {
