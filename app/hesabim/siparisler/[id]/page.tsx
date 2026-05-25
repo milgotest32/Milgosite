@@ -13,17 +13,23 @@ const AKIM = [
   { key: 'teslim',    ad: 'Teslim Edildi',   emoji: '🎉' },
 ]
 const DURUM: Record<string,string> = {
-  bekliyor:'Sipariş Alındı', onaylandi:'Onaylandı', kargoda:'Kurye Yolda', kuryede:'Kurye Yolda', teslim:'Teslim Edildi', iptal:'İptal Edildi',
+  bekliyor:'Sipariş Alındı', onaylandi:'Onaylandı', kargoda:'Kurye Yolda', kuryede:'Kurye Yolda',
+  teslim:'Teslim Edildi', teslim_edildi:'Teslim Edildi', iptal:'İptal Edildi', iade:'İade Edildi',
 }
 const DURUM_RENK: Record<string,{bg:string,color:string}> = {
-  bekliyor:  {bg:'#FEF3C7',color:'#D97706'},
-  onaylandi: {bg:'#EBF7FC',color:'#3B9FCC'},
-  kargoda:   {bg:'#FFF7ED',color:'#EA7C2B'},
-  kuryede:   {bg:'#FFF7ED',color:'#EA7C2B'},
-  teslim:    {bg:'#F0FDF4',color:'#16A34A'},
-  iptal:     {bg:'#FEF2F2',color:'#EF4444'},
+  bekliyor:      {bg:'#FEF3C7',color:'#D97706'},
+  onaylandi:     {bg:'#EBF7FC',color:'#3B9FCC'},
+  kargoda:       {bg:'#FFF7ED',color:'#EA7C2B'},
+  kuryede:       {bg:'#FFF7ED',color:'#EA7C2B'},
+  teslim:        {bg:'#F0FDF4',color:'#16A34A'},
+  teslim_edildi: {bg:'#F0FDF4',color:'#16A34A'},
+  iptal:         {bg:'#FEF2F2',color:'#EF4444'},
+  iade:          {bg:'#FEF2F2',color:'#EF4444'},
 }
-const durumIndex = (d: string) => ['bekliyor','onaylandi','kuryede','teslim'].indexOf(d === 'kargoda' ? 'kuryede' : d)
+const durumIndex = (d: string) => {
+  const n = d === 'kargoda' ? 'kuryede' : (d === 'teslim_edildi' ? 'teslim' : d)
+  return ['bekliyor','onaylandi','kuryede','teslim'].indexOf(n)
+}
 
 export default function SiparisDetayPage() {
   const { id } = useParams()
