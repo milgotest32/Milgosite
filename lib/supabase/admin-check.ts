@@ -1,44 +1,37 @@
 import { createClient } from '@supabase/supabase-js'
-import { NextRequest } from 'next/server'
+import { cookies } from 'next/headers'
 
-const PROJECT_ID = 'jxfegluntgssrgpnvscs'
-
-export async function requireAdmin(req: NextRequest): Promise<{ ok: boolean; error?: string }> {
+export async function requireAdmin(): Promise<{ ok: boolean; error?: string }> {
   try {
-    // Supabase'in cookie ismi: sb-{project_id}-auth-token
-    const cookieName = `sb-${PROJECT_ID}-auth-token`
-    const cookieValue = req.cookies.get(cookieName)?.value
-
+    const cookieStore = cookies()
+    
+    // Supabase tüm cookie'leri al, token içereni bul
+    const allCookies = cookieStore.getAll()
     let accessToken = ''
-
-    if (cookieValue) {
-      // Cookie base64 veya JSON formatında olabilir
-      try {
-        const decoded = decodeURIComponent(cookieValue)
-        // Format: ["access_token","refresh_token"] veya JSON objesi
-        if (decoded.startsWith('[')) {
-          const arr = JSON.parse(decoded)
-          accessToken = arr[0] || ''
-        } else if (decoded.startsWith('{')) {
-          const obj = JSON.parse(decoded)
-          accessToken = obj.access_token || ''
-        } else {
-          accessToken = decoded
+    
+    for (const cookie of allCookies) {
+      if (cookie.name.startsWith('sb-') && cookie.name.includes('-auth-token')) {
+        const val = cookie.value
+        try {
+          const decoded = decodeURIComponent(val)
+          if (decoded.startsWith('[')) {
+            const arr = JSON.parse(decoded)
+            accessToken = arr[0] || ''
+          } else if (decoded.startsWith('{')) {
+            const obj = JSON.parse(decoded)
+            accessToken = obj.access_token || ''
+          } else {
+            accessToken = decoded
+          }
+        } catch {
+          accessToken = val
         }
-      } catch {
-        accessToken = cookieValue
+        if (accessToken) break
       }
-    }
-
-    // Authorization header'dan al (fallback)
-    if (!accessToken) {
-      const authHeader = req.headers.get('authorization') || ''
-      accessToken = authHeader.replace('Bearer ', '').trim()
     }
 
     if (!accessToken) return { ok: false, error: 'Oturum bulunamadı' }
 
-    // Token'ı doğrula
     const anonClient = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -48,7 +41,6 @@ export async function requireAdmin(req: NextRequest): Promise<{ ok: boolean; err
     const { data: { user }, error: authError } = await anonClient.auth.getUser(accessToken)
     if (authError || !user) return { ok: false, error: 'Geçersiz oturum' }
 
-    // Admin rolünü service role ile kontrol et (RLS bypass)
     const serviceClient = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -61,7 +53,7 @@ export async function requireAdmin(req: NextRequest): Promise<{ ok: boolean; err
       .eq('id', user.id)
       .single()
 
-    if (!profile || profile.role !== 'admin') {
+    if (!profile || !['admin', 'superadmin'].includes(profile.role)) {
       return { ok: false, error: 'Admin yetkisi gerekli' }
     }
 
