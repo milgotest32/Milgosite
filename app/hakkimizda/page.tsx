@@ -1,3 +1,9 @@
+import type { Metadata } from 'next'
+export const metadata: Metadata = {
+  title: 'Hakkımızda | milgo.',
+  description: 'ATASANCAK Çiftliği ve Milgo hikayesi. Doğadan sofraya, katkısız ve geleneksel yöntemlerle üretilen çiğ süt, peynir ve tereyağının arkasındaki ekibi tanıyın.',
+  openGraph: { title: 'Hakkımızda | milgo.', description: 'ATASANCAK Çiftliği ve Milgo hikayesi. Doğadan sofraya, katkısız ve geleneksel üretim.' },
+}
 import { createServerClient } from '@/lib/supabase/server'
 
 const DEFAULT = {

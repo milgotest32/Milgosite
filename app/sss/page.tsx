@@ -1,6 +1,10 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
-export const metadata: Metadata = { title:'Sık Sorulan Sorular', description:'Milgo hakkında merak ettikleriniz' }
+export const metadata: Metadata = {
+  title: 'Sık Sorulan Sorular | milgo.',
+  description: 'Milgo hakkında merak ettikleriniz: teslimat bölgeleri, çiğ süt güvenliği, abonelik, iade ve daha fazlası.',
+  openGraph: { title: 'SSS | milgo.', description: 'Milgo hakkında sık sorulan sorular ve cevapları.' },
+}
 
 const SORULAR = [
   {s:'Ürünleriniz nerede üretiliyor?',c:'Tüm ürünlerimiz ATASANCAK Çiftliği\'nde üretilmektedir. 10.500 büyükbaş hayvana sahip çiftliğimiz, AB standartlarında sertifikalı üretim yapmaktadır.'},

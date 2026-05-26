@@ -1,3 +1,9 @@
+import type { Metadata } from 'next'
+export const metadata: Metadata = {
+  title: 'Paketler | milgo.',
+  description: 'Milgo özel ürün paketleri. Sevdiklerinize ya da kendinize özel doğal süt ürünleri kombinasyonları. İstanbul''a aynı gün teslimat.',
+  openGraph: { title: 'Paketler | milgo.', description: 'Milgo özel ürün paketleri. Doğal süt ürünleri kombinasyonları.' },
+}
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
