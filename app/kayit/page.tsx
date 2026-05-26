@@ -8,7 +8,7 @@ import { Eye, EyeOff, ArrowLeft, Check } from 'lucide-react'
 export const dynamic = 'force-dynamic'
 
 export default function KayitPage() {
-  const [form, setForm] = useState({ ad: '', soyad: '', email: '', sifre: '', sifreTekrar: '', telefon: '' })
+  const [form, setForm] = useState({ ad: '', soyad: '', email: '', sifre: '', sifreTekrar: '', telefon: '', referans_kodu: '' })
   const [goster, setGoster] = useState(false)
   const [yukleniyor, setYukleniyor] = useState(false)
   const [hata, setHata] = useState('')
@@ -30,6 +30,22 @@ export default function KayitPage() {
     if (error) { setHata(error.message); setYukleniyor(false); return }
     if (data.user) {
       await supabase.from('site_users').insert({ id: data.user.id, email: form.email, ad: form.ad, soyad: form.soyad, telefon: form.telefon, rol: 'musteri' }).select()
+      
+      // Referans kodu kullanıldıysa işle
+      if (form.referans_kodu.trim()) {
+        const { data: ref } = await supabase.from('site_referanslar')
+          .select('id, user_id, kullanim_sayisi').eq('kod', form.referans_kodu.toUpperCase().trim()).eq('aktif', true).single()
+        if (ref) {
+          // Kullanım kaydı ekle
+          await supabase.from('site_referans_kullanimlari').insert({ referans_id: ref.id, kullanan_user_id: data.user.id, indirim_tutari: 0 })
+          // Kullanım sayısını artır
+          await supabase.from('site_referanslar').update({ kullanim_sayisi: ref.kullanim_sayisi + 1 }).eq('id', ref.id)
+        }
+      }
+      
+      // Yeni kullanıcıya otomatik referans kodu oluştur
+      const yeniKod = (form.ad.substring(0,3) + Math.random().toString(36).substring(2,6)).toUpperCase()
+      await supabase.from('site_referanslar').insert({ user_id: data.user.id, kod: yeniKod, aktif: true })
     }
     setBasarili(true)
     setYukleniyor(false)
@@ -96,6 +112,13 @@ export default function KayitPage() {
               {inp('Soyad', 'soyad', 'text', 'Soyadınız')}
             </div>
             {inp('E-posta', 'email', 'email', 'ornek@email.com')}
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#7A6070', marginBottom: '6px' }}>Referans Kodu (isteğe bağlı)</label>
+              <input type="text" placeholder="Arkadaşınızın kodu (ör: MIL2024)" value={form.referans_kodu}
+                onChange={e => set('referans_kodu', e.target.value.toUpperCase())}
+                style={{ width: '100%', background: 'rgba(26,10,18,0.04)', border: '1.5px solid rgba(26,10,18,0.1)', borderRadius: '14px', padding: '13px 16px', fontSize: '14px', color: '#1A0A12', outline: 'none', fontFamily: 'Nunito, sans-serif', boxSizing: 'border-box' as any }}/>
+              <p style={{ fontSize: '11px', color: '#9CA3AF', marginTop: '4px' }}>Referans kodu girerseniz ilk siparişinizde indirim kazanırsınız.</p>
+            </div>
             {inp('Telefon (isteğe bağlı)', 'telefon', 'tel', '05XX XXX XX XX')}
 
             <div>

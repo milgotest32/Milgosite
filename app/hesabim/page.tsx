@@ -4,20 +4,33 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useSepet } from '@/lib/sepet'
 import { supabase } from '@/lib/supabase/client'
-import { Package, Heart, MapPin, Settings, ChevronRight, RefreshCw, LogOut } from 'lucide-react'
+import { Package, Heart, MapPin, Settings, ChevronRight, RefreshCw, LogOut, Gift } from 'lucide-react'
 export const dynamic = 'force-dynamic'
 
 export default function HesabimPage() {
   const [user, setUser] = useState<any>(null)
   const [yukleniyor, setYukleniyor] = useState(true)
+  const [referansKod, setReferansKod] = useState('')
   const router = useRouter()
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
+    const init = async () => {
+      const { data } = await supabase.auth.getSession()
       if (!data.session) { router.push('/giris'); return }
+      const userId = data.session.user.id
+      const { data: ref } = await supabase.from('site_referanslar').select('kod').eq('user_id', userId).eq('aktif', true).single()
+      if (ref) {
+        setReferansKod(ref.kod)
+      } else {
+        const ad = data.session.user.user_metadata?.ad || 'USR'
+        const yeniKod = (ad.substring(0,3) + Math.random().toString(36).substring(2,6)).toUpperCase()
+        await supabase.from('site_referanslar').insert({ user_id: userId, kod: yeniKod, aktif: true })
+        setReferansKod(yeniKod)
+      }
       setUser(data.session.user)
       setYukleniyor(false)
-    })
+    }
+    init()
   }, [router])
 
   const { temizle } = useSepet()
@@ -30,6 +43,7 @@ export default function HesabimPage() {
   )
 
   const MENULER = [
+    { icon: <Gift size={20} />, baslik: 'Referans Kodum', ac: referansKod || '...', href: '#referans', bg: '#FEF9EC', renk: '#F59E0B', kod: true },
     { icon: <Package size={20} />, baslik: 'Siparişlerim', ac: 'Geçmiş siparişleriniz', href: '/hesabim/siparisler', bg: '#FEE8EF', renk: '#E8567A' },
     { icon: <Heart size={20} />, baslik: 'Favorilerim', ac: 'Beğendiğiniz ürünler', href: '/hesabim/favoriler', bg: '#FEF2F2', renk: '#EF4444' },
     { icon: <RefreshCw size={20} />, baslik: 'Aboneliğim', ac: 'Abonelik planınız', href: '/hesabim/abonelik', bg: '#EBF5FC', renk: '#3B9FCC' },
