@@ -1,8 +1,3 @@
-export const metadata: Metadata = {
-  title: 'Blog | milgo.',
-  description: 'Milgo bloğu: çiğ süt faydaları, sağlıklı beslenme, tarifler ve çiftlik hayatından haberler. Doğal ve geleneksel gıda hakkında her şey.',
-  openGraph: { title: 'Blog | milgo.', description: 'Çiğ süt, doğal beslenme ve çiftlik hayatından yazılar.' },
-}
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
