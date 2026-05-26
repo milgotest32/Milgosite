@@ -12,6 +12,7 @@ import WhatsAppButon from '@/components/ui/WhatsAppButon'
 import { Toaster, toast } from 'react-hot-toast'
 import { supabase } from '@/lib/supabase/client'
 import { useSepet } from '@/lib/sepet'
+import { useFavori } from '@/lib/favori'
 import React from 'react'
 import ServiceWorker from '@/components/ui/ServiceWorker'
 
@@ -79,6 +80,7 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
   const isAdmin = pathname?.startsWith('/admin')
   const adetToplam = useSepet(s => s.adetToplam)
   const dbdenYukle = useSepet(s => s.dbdenYukle)
+  const favoriYukle = useFavori(s => s.dbdenYukle)
   const sepetAdet = adetToplam()
 
   // Giriş/çıkış: sepeti DB ile senkronize et
@@ -86,6 +88,7 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN') {
         dbdenYukle()
+        favoriYukle()
       }
     })
     return () => subscription.unsubscribe()

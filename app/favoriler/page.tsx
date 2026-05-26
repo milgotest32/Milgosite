@@ -1,89 +1,83 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Heart, ShoppingBag } from 'lucide-react'
+import { Heart, ShoppingBag, ArrowLeft } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
+import { useFavori } from '@/lib/favori'
+import { useSepet } from '@/lib/sepet'
 import type { Urun } from '@/lib/types'
-import ProductCard from '@/components/product/ProductCard'
-
-const DEPO_KEY = 'milgo_favoriler'
-
-function favoriOku(): string[] {
-  try { return JSON.parse(localStorage.getItem(DEPO_KEY) || '[]') } catch { return [] }
-}
+import toast from 'react-hot-toast'
 
 export default function FavorilerPage() {
   const [urunler, setUrunler] = useState<Urun[]>([])
   const [yukleniyor, setYukleniyor] = useState(true)
-
-  const yukle = useCallback(async () => {
-    const ids = favoriOku()
-    if (ids.length === 0) { setUrunler([]); setYukleniyor(false); return }
-    const { data } = await supabase
-      .from('site_products')
-      .select('*, site_product_images(*), site_kategoriler(name,slug)')
-      .in('id', ids)
-      .eq('durum', 'active')
-    // localStorage sırasını koru
-    const sirali = ids.map(id => (data || []).find((u: any) => u.id === id)).filter(Boolean) as Urun[]
-    setUrunler(sirali)
-    setYukleniyor(false)
-  }, [])
+  const { ids, toggle } = useFavori()
+  const ekle = useSepet(s => s.ekle)
 
   useEffect(() => {
-    yukle()
-    // ProductCard'dan gelen favori değişiklik eventi
-    window.addEventListener('milgo_favori_degisti', yukle)
-    return () => window.removeEventListener('milgo_favori_degisti', yukle)
-  }, [yukle])
+    if (!ids.length) { setUrunler([]); setYukleniyor(false); return }
+    supabase.from('site_products')
+      .select('*, site_product_images(url, ana), site_kategoriler(name)')
+      .in('id', ids)
+      .then(({ data }) => { setUrunler(data || []); setYukleniyor(false) })
+  }, [ids])
 
-  const tumunuTemizle = () => {
-    localStorage.removeItem(DEPO_KEY)
-    setUrunler([])
-    window.dispatchEvent(new Event('milgo_favori_degisti'))
-  }
+  if (yukleniyor) return (
+    <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ width: '32px', height: '32px', border: '3px solid #F0ECF5', borderTopColor: '#E8567A', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+    </div>
+  )
 
   return (
-    <div style={{ background: '#FDFBF9', minHeight: '70vh' }}>
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: 'clamp(32px,5vw,64px) clamp(16px,4vw,48px)' }}>
-
-        {/* Başlık */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px', flexWrap: 'wrap', gap: '12px' }}>
+    <div style={{ background: '#FDFBF9', minHeight: '100vh', padding: '32px 16px' }}>
+      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '32px' }}>
+          <Link href="/urunler" style={{ width: '36px', height: '36px', background: '#fff', border: '1px solid #F0ECF5', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', color: '#6B7280' }}><ArrowLeft size={16} /></Link>
           <div>
-            <span style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '.15em', textTransform: 'uppercase', color: '#E8567A', display: 'block', marginBottom: '6px' }}>Listem</span>
-            <h1 style={{ fontFamily: 'var(--font-nunito),sans-serif', fontSize: 'clamp(28px,4vw,44px)', color: '#1A0A12', margin: 0, display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <Heart size={32} fill="#E8567A" style={{ color: '#E8567A' }} />
-              Favorilerim
-            </h1>
+            <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1A0A12' }}>Favorilerim</h1>
+            <p style={{ fontSize: '13px', color: '#9CA3AF' }}>{urunler.length} ürün</p>
           </div>
-          {urunler.length > 0 && (
-            <button onClick={tumunuTemizle}
-              style={{ fontSize: '13px', color: '#7A6070', background: 'none', border: '1px solid #E5E7EB', borderRadius: '10px', padding: '8px 16px', cursor: 'pointer' }}>
-              Tümünü Temizle
-            </button>
-          )}
         </div>
 
-        {/* İçerik */}
-        {yukleniyor ? (
-          <div style={{ textAlign: 'center', padding: '80px 0', color: '#7A6070', fontSize: '14px' }}>Yükleniyor…</div>
-        ) : urunler.length === 0 ? (
+        {urunler.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '80px 24px' }}>
-            <div style={{ fontSize: '64px', marginBottom: '16px' }}>🤍</div>
-            <h2 style={{ fontFamily: 'var(--font-nunito),sans-serif', fontSize: '22px', color: '#1A0A12', marginBottom: '8px' }}>Henüz favori eklemediniz</h2>
-            <p style={{ color: '#7A6070', fontSize: '14px', marginBottom: '28px' }}>Ürün kartlarındaki kalp ikonuna tıklayarak favorilere ekleyebilirsiniz.</p>
-            <Link href="/urunler"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#1A0A12', color: '#fff', padding: '12px 24px', borderRadius: '14px', textDecoration: 'none', fontSize: '14px', fontWeight: 700 }}>
-              <ShoppingBag size={16} /> Ürünlere Göz At
-            </Link>
+            <Heart size={48} style={{ color: '#F0ECF5', margin: '0 auto 16px', display: 'block' }} />
+            <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#1A0A12', marginBottom: '8px' }}>Henüz favori ürün yok</h2>
+            <p style={{ fontSize: '14px', color: '#9CA3AF', marginBottom: '24px' }}>Ürünlerdeki ❤️ ikonuna tıklayarak favorilerinize ekleyin</p>
+            <Link href="/urunler" style={{ display: 'inline-block', background: 'linear-gradient(135deg,#E07090,#3B9FCC)', color: '#fff', padding: '12px 28px', borderRadius: '50px', textDecoration: 'none', fontSize: '14px', fontWeight: 700 }}>Ürünlere Gözat</Link>
           </div>
         ) : (
-          <>
-            <p style={{ fontSize: '13px', color: '#7A6070', marginBottom: '24px' }}>{urunler.length} ürün kaydedildi</p>
-            <div className="prod-grid">
-              {urunler.map(u => <ProductCard key={u.id} urun={u} />)}
-            </div>
-          </>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '16px' }}>
+            {urunler.map(urun => {
+              const gorsel = urun.site_product_images?.find((g: any) => g.ana)?.url || urun.site_product_images?.[0]?.url
+              return (
+                <div key={urun.id} style={{ background: '#fff', borderRadius: '20px', border: '1px solid #F0ECF5', overflow: 'hidden' }}>
+                  <div style={{ position: 'relative', aspectRatio: '1', background: '#F8F7FC' }}>
+                    {gorsel
+                      ? <img src={gorsel} alt={urun.name} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '12px' }} />
+                      : <span style={{ fontSize: '64px', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>🥛</span>}
+                    <button onClick={() => { toggle(urun.id); toast('Favorilerden çıkarıldı', { icon: '🤍' }) }}
+                      style={{ position: 'absolute', top: '10px', right: '10px', width: '30px', height: '30px', borderRadius: '50%', background: '#fff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,.1)' }}>
+                      <Heart size={13} fill="#E8567A" style={{ color: '#E8567A' }} />
+                    </button>
+                  </div>
+                  <div style={{ padding: '14px 16px 16px' }}>
+                    <p style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: '4px' }}>{(urun as any).site_kategoriler?.name}</p>
+                    <Link href={`/urun/${urun.slug}`} style={{ textDecoration: 'none' }}>
+                      <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1A0A12', marginBottom: '12px', lineHeight: '1.3' }}>{urun.name}</h3>
+                    </Link>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span style={{ fontSize: '18px', fontWeight: 800, color: '#1A0A12' }}>₺{urun.fiyat?.toFixed(2)}</span>
+                      <button onClick={() => { ekle(urun); toast.success('Sepete eklendi!') }}
+                        style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'linear-gradient(135deg,#E07090,#3B9FCC)', color: '#fff', border: 'none', borderRadius: '50px', padding: '8px 16px', fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+                        <ShoppingBag size={13} /> Sepete Ekle
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         )}
       </div>
     </div>
