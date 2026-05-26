@@ -110,7 +110,7 @@ export default function YeniUrunPage() {
         const { error: uploadErr } = await supabase.storage.from('site-medya').upload(yol, g.dosya, { upsert: false })
         if (uploadErr) { toast.error(`Görsel yüklenemedi: ${g.dosya.name}`); continue }
         const { data: { publicUrl } } = supabase.storage.from('site-medya').getPublicUrl(yol)
-        gorselKayitlari.push({ product_id: urun.id, url: publicUrl, sira: i, ana: g.ana, yol })
+        gorselKayitlari.push({ product_id: urun.id, url: publicUrl, sira: i, ana: g.ana })
       }
       if (gorselKayitlari.length > 0) {
         await supabase.from('site_product_images').insert(gorselKayitlari)

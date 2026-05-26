@@ -10,7 +10,6 @@ export const dynamic = 'force-dynamic'
 interface MevcutGorsel {
   id: string
   url: string
-  yol?: string
   ana: boolean
   sira: number
 }
@@ -78,7 +77,11 @@ export default function UrunDuzenle() {
 
   const mevcutGorselSil = async (gorsel: MevcutGorsel) => {
     if (!confirm('Bu görseli silmek istediğinizden emin misiniz?')) return
-    if (gorsel.yol) await supabase.storage.from('site-medya').remove([gorsel.yol])
+    if (gorsel.url?.includes('site-medya')) {
+      // URL'den storage path'ini çıkar: .../object/public/site-medya/PATH → PATH
+      const match = gorsel.url.match(/site-medya\/(.+)/)
+      if (match) await supabase.storage.from('site-medya').remove([match[1]])
+    }
     await supabase.from('site_product_images').delete().eq('id', gorsel.id)
     // Silinen ana görselse başka birini ana yap
     const kalan = mevcutGorseller.filter(g => g.id !== gorsel.id)
@@ -118,7 +121,7 @@ export default function UrunDuzenle() {
       if (g.ana) {
         await supabase.from('site_product_images').update({ ana: false }).eq('product_id', id as string)
       }
-      await supabase.from('site_product_images').insert({ product_id: id, url: publicUrl, sira: mevcutSira + i, ana: g.ana, yol })
+      await supabase.from('site_product_images').insert({ product_id: id, url: publicUrl, sira: mevcutSira + i, ana: g.ana })
     }
     toast.success(`${yeniGorseller.length} görsel yüklendi`)
     setYeniGorseller([])
