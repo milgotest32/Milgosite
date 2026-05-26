@@ -23,6 +23,7 @@ export default function AdminPage() {
     toplam_gelir: 0, bugun_ciro: 0, hafta_gelir: 0,
     bekleyen_siparis: 0, bugun_siparis: 0, aktif_abonelik: 0,
     son_siparisler: [], dusuk_stok: [], en_cok_satanlar: [],
+    aktif_sepetler: [], sepet_ozet: { toplam: 0, urun_bekleyen: 0, musteri_sayisi: 0 },
   })
   const [loading, setLoading] = useState(true)
 
@@ -32,6 +33,26 @@ export default function AdminPage() {
       .then(r => r.json())
       .then(d => { if (!d.error) setStats(d) })
       .finally(() => setLoading(false))
+
+    // Sepet istatistikleri
+    import('@/lib/supabase/client').then(({ supabase }) => {
+      supabase.from('site_sepetler')
+        .select('*, site_sepet_kalemleri(urun_ad, adet, fiyat), site_profiller(ad_soyad)')
+        .order('updated_at', { ascending: false })
+        .limit(20)
+        .then(({ data }) => {
+          const sepetler = data || []
+          setStats((p: any) => ({
+            ...p,
+            aktif_sepetler: sepetler,
+            sepet_ozet: {
+              toplam: sepetler.length,
+              urun_bekleyen: sepetler.reduce((t, s: any) => t + (s.site_sepet_kalemleri?.length || 0), 0),
+              musteri_sayisi: sepetler.filter((s: any) => s.user_id).length,
+            }
+          }))
+        })
+    })
   }
 
   useEffect(() => { yukle() }, [])
@@ -187,6 +208,62 @@ export default function AdminPage() {
               </div>
             )}
         </div>
+      </div>
+
+      {/* Sepet İstatistikleri */}
+      <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #F0ECF5', padding: '20px', marginTop: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+          <div>
+            <h2 style={{ fontSize: '15px', fontWeight: 700, color: '#1C1B2E' }}>🛒 Aktif Sepetler</h2>
+            <p style={{ fontSize: '12px', color: '#9CA3AF' }}>Hangi müşteri sepete ne attı</p>
+          </div>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <div style={{ textAlign: 'center', padding: '8px 16px', background: '#FEE8EF', borderRadius: '10px' }}>
+              <div style={{ fontSize: '18px', fontWeight: 800, color: '#E07090' }}>{stats.sepet_ozet?.toplam || 0}</div>
+              <div style={{ fontSize: '10px', color: '#9CA3AF' }}>Sepet</div>
+            </div>
+            <div style={{ textAlign: 'center', padding: '8px 16px', background: '#EBF7FC', borderRadius: '10px' }}>
+              <div style={{ fontSize: '18px', fontWeight: 800, color: '#3B9FCC' }}>{stats.sepet_ozet?.urun_bekleyen || 0}</div>
+              <div style={{ fontSize: '10px', color: '#9CA3AF' }}>Ürün</div>
+            </div>
+            <div style={{ textAlign: 'center', padding: '8px 16px', background: '#F0FDF4', borderRadius: '10px' }}>
+              <div style={{ fontSize: '18px', fontWeight: 800, color: '#22c55e' }}>{stats.sepet_ozet?.musteri_sayisi || 0}</div>
+              <div style={{ fontSize: '10px', color: '#9CA3AF' }}>Üye</div>
+            </div>
+          </div>
+        </div>
+        {(stats.aktif_sepetler || []).length === 0 ? (
+          <p style={{ color: '#9CA3AF', fontSize: '13px', fontStyle: 'italic' }}>Aktif sepet yok.</p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '280px', overflowY: 'auto' }}>
+            {(stats.aktif_sepetler || []).map((s: any) => {
+              const kalemleri = s.site_sepet_kalemleri || []
+              const toplam = kalemleri.reduce((t: number, k: any) => t + (k.fiyat * k.adet), 0)
+              const saat = Math.round((Date.now() - new Date(s.updated_at).getTime()) / 1000 / 60 / 60)
+              return (
+                <div key={s.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: '#F8F7FC', borderRadius: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: s.user_id ? '#FEE8EF' : '#F0ECF5', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>
+                      {s.user_id ? '👤' : '👻'}
+                    </div>
+                    <div>
+                      <p style={{ fontSize: '13px', fontWeight: 600, color: '#1C1B2E' }}>
+                        {s.site_profiller?.ad_soyad || 'Misafir'}
+                      </p>
+                      <p style={{ fontSize: '11px', color: '#9CA3AF' }}>
+                        {kalemleri.map((k: any) => k.urun_ad).join(', ').substring(0, 50)}{kalemleri.length > 2 ? '...' : ''}
+                      </p>
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    <p style={{ fontSize: '13px', fontWeight: 700, color: '#1C1B2E' }}>₺{toplam.toFixed(2)}</p>
+                    <p style={{ fontSize: '11px', color: '#9CA3AF' }}>{saat}s önce · {kalemleri.length} ürün</p>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       {/* Hızlı linkler */}
