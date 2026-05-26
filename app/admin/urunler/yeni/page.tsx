@@ -1,21 +1,29 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
-import { ArrowLeft, Save, X, Plus, MapPin, Trash2 } from 'lucide-react'
+import { ArrowLeft, Save, X, Plus, MapPin, Trash2, Upload, Image as ImageIcon, Star } from 'lucide-react'
 import toast from 'react-hot-toast'
 export const dynamic = 'force-dynamic'
 
 const slugify = (t: string) => t.toLowerCase().replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ç/g,'c').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')
 
+interface Gorsel {
+  dosya?: File
+  preview: string
+  ana: boolean
+  yukleniyor?: boolean
+}
+
 export default function YeniUrunPage() {
   const router = useRouter()
+  const fileRef = useRef<HTMLInputElement>(null)
   const [loading, setLoading] = useState(false)
   const [kategoriler, setKategoriler] = useState<any[]>([])
   const [markalar, setMarkalar] = useState<any[]>([])
   const [bolgeler, setBolgeler] = useState<any[]>([])
-  const [gorseller, setGorseller] = useState<string[]>([''])
+  const [gorseller, setGorseller] = useState<Gorsel[]>([])
   const [secilenBolgeler, setSecilenBolgeler] = useState<string[]>([])
   const [ozellikler, setOzellikler] = useState<{key: string; value: string}[]>([])
   const [form, setForm] = useState({
@@ -32,15 +40,37 @@ export default function YeniUrunPage() {
   }, [])
 
   const set = (k: string, v: any) => setForm(f=>({...f,[k]:v}))
-
-  const bolgeToggle = (id: string) => {
-    setSecilenBolgeler(prev => prev.includes(id) ? prev.filter(b=>b!==id) : [...prev, id])
-  }
-
+  const bolgeToggle = (id: string) => setSecilenBolgeler(prev => prev.includes(id) ? prev.filter(b=>b!==id) : [...prev, id])
   const ozellikEkle = () => setOzellikler(prev => [...prev, { key: '', value: '' }])
   const ozellikSil = (i: number) => setOzellikler(prev => prev.filter((_, idx) => idx !== i))
   const ozellikSet = (i: number, field: 'key'|'value', val: string) =>
     setOzellikler(prev => prev.map((o, idx) => idx === i ? { ...o, [field]: val } : o))
+
+  const dosyaEkle = (files: FileList | null) => {
+    if (!files?.length) return
+    const yeniGorseller: Gorsel[] = Array.from(files).map((dosya, i) => ({
+      dosya,
+      preview: URL.createObjectURL(dosya),
+      ana: gorseller.length === 0 && i === 0
+    }))
+    setGorseller(prev => {
+      const liste = [...prev, ...yeniGorseller]
+      if (!liste.some(g => g.ana) && liste.length > 0) liste[0].ana = true
+      return liste
+    })
+  }
+
+  const gorselSil = (i: number) => {
+    setGorseller(prev => {
+      const liste = prev.filter((_, idx) => idx !== i)
+      if (liste.length > 0 && !liste.some(g => g.ana)) liste[0].ana = true
+      return liste
+    })
+  }
+
+  const anaYap = (i: number) => {
+    setGorseller(prev => prev.map((g, idx) => ({ ...g, ana: idx === i })))
+  }
 
   const kaydet = async () => {
     if (!form.name || !form.fiyat) { toast.error('Ad ve fiyat zorunludur'); return }
@@ -69,11 +99,22 @@ export default function YeniUrunPage() {
 
     if (error) { toast.error(error.message); setLoading(false); return }
 
-    const gecerliGorseller = gorseller.filter(g=>g.trim())
-    if (gecerliGorseller.length > 0) {
-      await supabase.from('site_product_images').insert(
-        gecerliGorseller.map((url,i)=>({ product_id:urun.id, url, sira:i, ana:i===0 }))
-      )
+    // Görselleri yükle
+    if (gorseller.length > 0) {
+      const gorselKayitlari = []
+      for (let i = 0; i < gorseller.length; i++) {
+        const g = gorseller[i]
+        if (!g.dosya) continue
+        const ext = g.dosya.name.split('.').pop()
+        const yol = `urunler/${urun.id}/${Date.now()}-${i}.${ext}`
+        const { error: uploadErr } = await supabase.storage.from('site-medya').upload(yol, g.dosya, { upsert: false })
+        if (uploadErr) { toast.error(`Görsel yüklenemedi: ${g.dosya.name}`); continue }
+        const { data: { publicUrl } } = supabase.storage.from('site-medya').getPublicUrl(yol)
+        gorselKayitlari.push({ product_id: urun.id, url: publicUrl, sira: i, ana: g.ana, yol })
+      }
+      if (gorselKayitlari.length > 0) {
+        await supabase.from('site_product_images').insert(gorselKayitlari)
+      }
     }
 
     toast.success('Ürün oluşturuldu!')
@@ -138,19 +179,51 @@ export default function YeniUrunPage() {
             </div>
           </div>
 
+          {/* GÖRSEL YÜKLEME */}
           <div style={{background:'#fff',borderRadius:'16px',border:'1px solid #F0ECF5',padding:'24px'}}>
-            <h2 style={{fontSize:'15px',fontWeight:700,color:'#1C1B2E',marginBottom:'16px'}}>Ürün Görselleri</h2>
-            <p style={{fontSize:'12px',color:'#9CA3AF',marginBottom:'16px'}}>Görsel URL'lerini girin. İlk görsel ana görsel olacak.</p>
-            {gorseller.map((g,i)=>(
-              <div key={i} style={{display:'flex',gap:'8px',marginBottom:'8px'}}>
-                <input value={g} onChange={e=>{const a=[...gorseller];a[i]=e.target.value;setGorseller(a)}} placeholder="https://..." style={{flex:1,background:'#F8F7FC',border:'1px solid #F0ECF5',borderRadius:'10px',padding:'10px 14px',fontSize:'13px',color:'#1C1B2E',outline:'none',fontFamily:'inherit'}}/>
-                {i===0 && g && <img src={g} alt="" style={{width:'40px',height:'40px',borderRadius:'8px',objectFit:'contain',border:'1px solid #F0ECF5'}} onError={(e:any)=>e.target.style.display='none'}/>}
-                {gorseller.length>1 && <button onClick={()=>setGorseller(gorseller.filter((_,j)=>j!==i))} style={{width:'36px',height:'36px',background:'#FEF2F2',border:'none',borderRadius:'8px',color:'#EF4444',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}><X size={14}/></button>}
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'16px'}}>
+              <div>
+                <h2 style={{fontSize:'15px',fontWeight:700,color:'#1C1B2E',marginBottom:'2px'}}>Ürün Görselleri</h2>
+                <p style={{fontSize:'12px',color:'#9CA3AF'}}>PNG, JPG, WebP desteklenir. ⭐ ile ana görseli seçin.</p>
               </div>
-            ))}
-            <button onClick={()=>setGorseller([...gorseller,''])} style={{display:'flex',alignItems:'center',gap:'6px',background:'#F8F7FC',border:'1px dashed #F0ECF5',borderRadius:'10px',padding:'10px 16px',fontSize:'13px',color:'#6B7280',cursor:'pointer',fontFamily:'inherit',width:'100%',justifyContent:'center'}}>
-              <Plus size={14}/>Görsel Ekle
-            </button>
+              <button onClick={()=>fileRef.current?.click()} style={{display:'flex',alignItems:'center',gap:'6px',background:'linear-gradient(135deg,#E07090,#3B9FCC)',color:'#fff',border:'none',borderRadius:'10px',padding:'8px 16px',fontSize:'12px',fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>
+                <Upload size={13}/>Görsel Ekle
+              </button>
+            </div>
+            <input ref={fileRef} type="file" accept="image/*" multiple style={{display:'none'}} onChange={e=>dosyaEkle(e.target.files)}/>
+
+            {gorseller.length === 0 ? (
+              <div onClick={()=>fileRef.current?.click()} onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();dosyaEkle(e.dataTransfer.files)}}
+                style={{border:'2px dashed #E8E4F0',borderRadius:'12px',padding:'32px',textAlign:'center',cursor:'pointer',background:'#FAFAF9'}}>
+                <ImageIcon size={32} style={{color:'#D1D5DB',margin:'0 auto 8px',display:'block'}}/>
+                <p style={{fontSize:'13px',fontWeight:600,color:'#6B7280',marginBottom:'4px'}}>Görsel sürükleyin veya tıklayın</p>
+                <p style={{fontSize:'11px',color:'#9CA3AF'}}>PNG, JPG, WebP · Birden fazla seçebilirsiniz</p>
+              </div>
+            ) : (
+              <div>
+                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(120px,1fr))',gap:'10px',marginBottom:'12px'}}>
+                  {gorseller.map((g, i) => (
+                    <div key={i} style={{position:'relative',borderRadius:'12px',border:`2px solid ${g.ana?'#E07090':'#F0ECF5'}`,overflow:'hidden',background:'#F8F7FC',aspectRatio:'1'}}>
+                      <img src={g.preview} alt="" style={{width:'100%',height:'100%',objectFit:'contain',padding:'4px'}}/>
+                      <div style={{position:'absolute',top:'4px',right:'4px',display:'flex',gap:'3px'}}>
+                        <button onClick={()=>anaYap(i)} title="Ana görsel yap" style={{width:'22px',height:'22px',borderRadius:'6px',border:'none',background:g.ana?'#E07090':'rgba(0,0,0,0.4)',color:'#fff',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                          <Star size={11} fill={g.ana?'#fff':'none'}/>
+                        </button>
+                        <button onClick={()=>gorselSil(i)} style={{width:'22px',height:'22px',borderRadius:'6px',border:'none',background:'rgba(0,0,0,0.4)',color:'#fff',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                          <X size={11}/>
+                        </button>
+                      </div>
+                      {g.ana && <div style={{position:'absolute',bottom:'4px',left:'4px',background:'#E07090',color:'#fff',fontSize:'9px',fontWeight:700,padding:'2px 6px',borderRadius:'4px'}}>ANA</div>}
+                    </div>
+                  ))}
+                  <div onClick={()=>fileRef.current?.click()} style={{border:'2px dashed #E8E4F0',borderRadius:'12px',display:'flex',alignItems:'center',justifyContent:'center',aspectRatio:'1',cursor:'pointer',background:'#FAFAF9',flexDirection:'column',gap:'4px'}}>
+                    <Plus size={20} style={{color:'#D1D5DB'}}/>
+                    <span style={{fontSize:'10px',color:'#9CA3AF'}}>Ekle</span>
+                  </div>
+                </div>
+                <p style={{fontSize:'11px',color:'#9CA3AF'}}>⭐ tıklayarak ana görseli belirleyin. Ana görsel ürün listesinde görünür.</p>
+              </div>
+            )}
           </div>
 
           <div style={{background:'#fff',borderRadius:'16px',border:'1px solid #F0ECF5',padding:'24px'}}>
@@ -234,15 +307,12 @@ export default function YeniUrunPage() {
             </div>
           </div>
 
-          {/* Hizmet Bölgeleri */}
           <div style={{background:'#fff',borderRadius:'16px',border:'1px solid #F0ECF5',padding:'20px'}}>
             <div style={{display:'flex',alignItems:'center',gap:'8px',marginBottom:'8px'}}>
               <MapPin size={15} style={{color:'#E07090'}}/>
               <h2 style={{fontSize:'15px',fontWeight:700,color:'#1C1B2E'}}>Hizmet Bölgeleri</h2>
             </div>
-            <p style={{fontSize:'11px',color:'#9CA3AF',marginBottom:'12px'}}>
-              Seçilmezse tüm bölgelere gösterilir.
-            </p>
+            <p style={{fontSize:'11px',color:'#9CA3AF',marginBottom:'12px'}}>Seçilmezse tüm bölgelere gösterilir.</p>
             {bolgeler.length === 0 ? (
               <p style={{fontSize:'12px',color:'#9CA3AF'}}>Henüz bölge tanımlanmamış.</p>
             ) : (
