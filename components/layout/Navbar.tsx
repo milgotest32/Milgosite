@@ -45,7 +45,8 @@ export default function Navbar() {
     return () => subscription.unsubscribe()
   }, [])
 
-  const cikis = async () => { await supabase.auth.signOut(); router.push('/'); setUserDrop(false) }
+  const { temizle } = useSepet()
+  const cikis = async () => { temizle(); await supabase.auth.signOut(); router.push('/'); setUserDrop(false) }
 
   const drop: React.CSSProperties = { position: 'absolute', top: '100%', paddingTop: '8px', background: 'transparent', minWidth: '190px', zIndex: 200 }
   const dropInner: React.CSSProperties = { background: '#fff', borderRadius: '20px', boxShadow: '0 12px 40px rgba(26,10,18,0.15)', border: '1px solid rgba(232,86,122,0.08)', padding: '8px' }

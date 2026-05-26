@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useSepet } from '@/lib/sepet'
 import { supabase } from '@/lib/supabase/client'
 import { Package, Heart, MapPin, Settings, ChevronRight, RefreshCw, LogOut } from 'lucide-react'
 export const dynamic = 'force-dynamic'
@@ -19,7 +20,8 @@ export default function HesabimPage() {
     })
   }, [router])
 
-  const cikis = async () => { await supabase.auth.signOut(); router.push('/giris') }
+  const { temizle } = useSepet()
+  const cikis = async () => { temizle(); await supabase.auth.signOut(); router.push('/giris') }
 
   if (yukleniyor) return (
     <div style={{ minHeight: '100vh', background: '#F0EEF8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

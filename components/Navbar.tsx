@@ -27,7 +27,8 @@ export default function Navbar() {
     supabase.auth.onAuthStateChange((_, s) => setUser(s?.user || null))
   }, [])
 
-  const cikis = async () => { await supabase.auth.signOut(); router.push('/'); setUserMenu(false) }
+  const { temizle } = useSepet()
+  const cikis = async () => { temizle(); await supabase.auth.signOut(); router.push('/'); setUserMenu(false) }
 
   return (
     <>

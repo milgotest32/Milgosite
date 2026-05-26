@@ -68,7 +68,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     })
   }, [router])
 
-  const cikis = async () => { await supabase.auth.signOut(); router.push('/giris') }
+  const { temizle } = useSepet()
+  const cikis = async () => { temizle(); await supabase.auth.signOut(); router.push('/giris') }
 
   if (yetkiKontrol) return (
     <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#F8F7FC'}}>
