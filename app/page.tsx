@@ -30,7 +30,7 @@ const VARSAYILAN: Record<string, string> = {
   hero_kart_2_emoji: '⭐',
   hero_kart_2_ad: '4.9/5 Puan',
   hero_kart_2_alt: '800+ Mutlu Müşteri',
-  hero_gorsel_url: 'https://market.milgo.com.tr/cdn/shop/files/Milgo_UrunGorselleri_CigSut_1260x1600px_1.jpg',
+  hero_gorsel_url: 'https://jxfegluntgssrgpnvscs.supabase.co/storage/v1/object/public/site-medya/urunler/35cbe8eb-6d9d-43c8-85b9-686ea52bde31/1779776754131-0.webp',
 
   // Ticker
   ticker_1: 'Çiğ Süt',   ticker_1b: 'Sabah Sağılır',
@@ -282,17 +282,17 @@ export default function AnaSayfa() {
           {[
             {
               bg: 'linear-gradient(135deg,#FEE8EF,#FBCFE8)',
-              gorsel: 'https://market.milgo.com.tr/cdn/shop/files/Milgo_UrunGorselleri_CigSut_1260x1600px_1.jpg',
+              gorsel: 'https://jxfegluntgssrgpnvscs.supabase.co/storage/v1/object/public/site-medya/urunler/35cbe8eb-6d9d-43c8-85b9-686ea52bde31/1779776754131-0.webp',
               lbl: t('kat_1_etiket'), ad: t('kat_1_ad'), href: '/kategoriler/cig-sut', first: true,
             },
             {
               bg: 'linear-gradient(135deg,#EBF5FC,#BFDBFE)',
-              gorsel: 'https://market.milgo.com.tr/cdn/shop/files/Milgo_UrunGorselleri_Sade_1260x1600px_1_b55e51ff-60d1-487b-a7fc-75236cdb6702.jpg',
+              gorsel: 'https://jxfegluntgssrgpnvscs.supabase.co/storage/v1/object/public/site-medya/urunler/1b316ef8-834e-4960-b2f8-afb212e4d229/1779776804255-0.webp',
               lbl: t('kat_2_etiket'), ad: t('kat_2_ad'), href: '/kategoriler/peynir', first: false,
             },
             {
               bg: 'linear-gradient(135deg,#F0FDF4,#BBF7D0)',
-              gorsel: 'https://market.milgo.com.tr/cdn/shop/files/Milgo_UrunGorselleri_SadeTereyag_1260x1600px_1.jpg',
+              gorsel: 'https://jxfegluntgssrgpnvscs.supabase.co/storage/v1/object/public/site-medya/urunler/380d14b1-1cec-4996-bbc5-b039a014a537/1779776777993-0.webp',
               lbl: t('kat_3_etiket'), ad: t('kat_3_ad'), href: '/kategoriler/tereyagi', first: false,
             },
             {
