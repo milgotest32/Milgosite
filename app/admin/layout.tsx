@@ -55,6 +55,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
   const [collapsed, setCollapsed] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const [yetkiKontrol, setYetkiKontrol] = useState(true)
 
   useEffect(() => {
@@ -83,7 +84,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div style={{display:'flex',minHeight:'100vh',background:'#F8F7FC',fontFamily:'"Plus Jakarta Sans",sans-serif'}}>
-      <aside style={{width: collapsed ? '64px' : '220px',background:'#1C1B2E',display:'flex',flexDirection:'column',position:'fixed',top:0,left:0,bottom:0,zIndex:50,transition:'width 0.25s',overflow:'hidden'}}>
+      {/* Mobil overlay */}
+      {mobileOpen && (
+        <div onClick={()=>setMobileOpen(false)} style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',zIndex:49,display:'none'}} className="mobile-overlay"/>
+      )}
+      <style>{`
+        @media (max-width: 768px) {
+          .admin-sidebar { transform: translateX(-100%) !important; width: 240px !important; }
+          .admin-sidebar.open { transform: translateX(0) !important; }
+          .admin-content { margin-left: 0 !important; }
+          .mobile-overlay { display: block !important; }
+          .collapse-btn { display: none !important; }
+          .hamburger-btn { display: flex !important; }
+        }
+        @media (min-width: 769px) {
+          .hamburger-btn { display: none !important; }
+        }
+      `}</style>
+      <aside className={`admin-sidebar${mobileOpen?' open':''}`} style={{width: collapsed ? '64px' : '220px',background:'#1C1B2E',display:'flex',flexDirection:'column',position:'fixed',top:0,left:0,bottom:0,zIndex:50,transition:'all 0.25s',overflow:'hidden'}}>
         <div style={{padding:'20px 16px',borderBottom:'1px solid rgba(255,255,255,0.06)',display:'flex',alignItems:'center',gap:'10px',flexShrink:0}}>
           <div style={{width:'32px',height:'32px',background:'linear-gradient(135deg,#E07090,#3B9FCC)',borderRadius:'10px',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,fontSize:'14px',fontWeight:700,color:'#fff'}}>M</div>
           {!collapsed && <div>
@@ -98,7 +116,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               {g.items.map(item => {
                 const active = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href))
                 return (
-                  <Link key={item.href} href={item.href}
+                  <Link key={item.href} href={item.href} onClick={()=>setMobileOpen(false)}
                     style={{display:'flex',alignItems:'center',gap:'10px',padding:'8px 10px',borderRadius:'10px',marginBottom:'2px',textDecoration:'none',background:active?'rgba(244,167,185,0.15)':'transparent',color:active?'#F4A7B9':'rgba(255,255,255,0.55)',fontSize:'13px',fontWeight:active?600:400,transition:'all 0.15s',whiteSpace:'nowrap'}}>
                     <span style={{flexShrink:0}}>{item.icon}</span>
                     {!collapsed && item.ad}
@@ -119,11 +137,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </button>
         </div>
       </aside>
-      <div style={{marginLeft: collapsed ? '64px' : '220px',flex:1,display:'flex',flexDirection:'column',transition:'margin-left 0.25s'}}>
+      <div className="admin-content" style={{marginLeft: collapsed ? '64px' : '220px',flex:1,display:'flex',flexDirection:'column',transition:'margin-left 0.25s'}}>
         <header style={{background:'#fff',borderBottom:'1px solid #F0ECF5',padding:'0 24px',height:'56px',display:'flex',alignItems:'center',justifyContent:'space-between',position:'sticky',top:0,zIndex:40}}>
-          <button onClick={()=>setCollapsed(!collapsed)} style={{background:'none',border:'none',cursor:'pointer',color:'#6B7280',display:'flex',alignItems:'center'}}>
+          <div style={{display:'flex',alignItems:'center',gap:'8px'}}>
+            {/* Hamburger - sadece mobil */}
+            <button className="hamburger-btn" onClick={()=>setMobileOpen(!mobileOpen)} style={{background:'none',border:'none',cursor:'pointer',color:'#6B7280',display:'flex',alignItems:'center',padding:'4px'}}>
+              <div style={{width:'18px',display:'flex',flexDirection:'column',gap:'4px'}}>
+                <span style={{display:'block',height:'2px',background:'#6B7280',borderRadius:'2px'}}/>
+                <span style={{display:'block',height:'2px',background:'#6B7280',borderRadius:'2px'}}/>
+                <span style={{display:'block',height:'2px',background:'#6B7280',borderRadius:'2px'}}/>
+              </div>
+            </button>
+            {/* Collapse - sadece desktop */}
+            <button className="collapse-btn" onClick={()=>setCollapsed(!collapsed)} style={{background:'none',border:'none',cursor:'pointer',color:'#6B7280',display:'flex',alignItems:'center'}}>
             <ChevronRight size={18} style={{transform:collapsed?'none':'rotate(180deg)',transition:'transform 0.25s'}}/>
-          </button>
+            </button></div>
           <div style={{display:'flex',alignItems:'center',gap:'12px'}}>
             <button style={{background:'none',border:'none',cursor:'pointer',color:'#6B7280',position:'relative'}}>
               <Bell size={18}/>
