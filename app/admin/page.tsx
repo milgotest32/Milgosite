@@ -37,7 +37,7 @@ export default function AdminPage() {
     // Sepet istatistikleri
     import('@/lib/supabase/client').then(({ supabase }) => {
       supabase.from('site_sepetler')
-        .select('*, site_sepet_kalemleri(urun_ad, adet, fiyat), site_profiller(ad_soyad)')
+        .select('*, site_sepet_kalemleri(urun_ad, adet, fiyat), site_users(ad, soyad, email)')
         .order('updated_at', { ascending: false })
         .limit(20)
         .then(({ data }) => {
@@ -248,7 +248,7 @@ export default function AdminPage() {
                     </div>
                     <div>
                       <p style={{ fontSize: '13px', fontWeight: 600, color: '#1C1B2E' }}>
-                        {s.site_profiller?.ad_soyad || 'Misafir'}
+                        {(s.site_users ? `${s.site_users.ad || ''} ${s.site_users.soyad || ''}`.trim() || 'İsimsiz' : 'Misafir')}
                       </p>
                       <p style={{ fontSize: '11px', color: '#9CA3AF' }}>
                         {kalemleri.map((k: any) => k.urun_ad).join(', ').substring(0, 50)}{kalemleri.length > 2 ? '...' : ''}
@@ -272,6 +272,7 @@ export default function AdminPage() {
           { label: '📦 Siparişler', href: '/admin/siparisler' },
           { label: '💬 Yorumlar', href: '/admin/yorumlar' },
           { label: '✉️ Mesajlar', href: '/admin/mesajlar' },
+          { label: '🛒 Sepetler', href: '/admin/sepetler' },
           { label: '🗺 Bölge Raporu', href: '/admin/raporlar/bolgeler' },
           { label: '🔁 Abonelikler', href: '/admin/abonelikler' },
           { label: '🎟 Kuponlar', href: '/admin/kuponlar' },

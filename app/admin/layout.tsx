@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 import {
-  LayoutDashboard, Package, Tag, ShoppingBag, Users, Percent, FileText,
+  LayoutDashboard, Package, Tag, ShoppingBag, ShoppingCart, Users, Percent, FileText,
   Image, Globe, Map, Settings, BarChart2, LogOut, ChevronRight, Bell, Shield, Info, ArrowLeftRight, Store, Gift, Mail,
   Star, MessageSquare, MapPin, RefreshCw
 } from 'lucide-react'
@@ -22,6 +22,7 @@ const MENU = [
   ]},
   { grup: 'Satış', items: [
     { href: '/admin/siparisler', icon: <ShoppingBag size={16}/>, ad: 'Siparişler' },
+    { href: '/admin/sepetler', icon: <ShoppingCart size={16}/>, ad: 'Sepetler' },
     { href: '/admin/musteriler', icon: <Users size={16}/>, ad: 'Müşteriler' },
     { href: '/admin/kuponlar', icon: <Percent size={16}/>, ad: 'Kuponlar' },
     { href: '/admin/referans', icon: <Gift size={16}/>, ad: 'Referans' },
