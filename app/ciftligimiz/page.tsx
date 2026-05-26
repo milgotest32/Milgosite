@@ -1,8 +1,12 @@
 import type { Metadata } from 'next'
+
 export const metadata: Metadata = {
   title: 'Çiftliğimiz | milgo.',
-  description: 'ATASANCAK Çiftliği''ni keşfedin. AB onaylı, hastalıklardan ari sürüler, doğal yeşillikler. Milgo ürünlerinin kaynağı olan çiftliğimizi yakından tanıyın.',
-  openGraph: { title: 'Çiftliğimiz | milgo.', description: 'ATASANCAK Çiftliği — Milgo ürünlerinin kaynağı. AB onaylı, doğal.' },
+  description: 'ATASANCAK Çiftligimizi kesfedin. AB onayli, hastaliklardan ari surular, dogal yesillikler. Milgo urunlerinin kaynagina yakindan bakin.',
+  openGraph: {
+    title: 'Ciftligimiz | milgo.',
+    description: 'ATASANCAK Ciftligi — Milgo urunlerinin kaynagi. AB onayli, dogal.',
+  },
 }
 export default function CiftligimizPage() {
   return (
