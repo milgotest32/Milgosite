@@ -28,7 +28,7 @@ async function getSepetId(userId: string): Promise<string | null> {
     .from('site_sepetler')
     .select('id')
     .eq('user_id', userId)
-    .eq('durum', 'aktif')
+    
     .single()
   return data?.id || null
 }
@@ -38,7 +38,7 @@ async function getOrCreateSepetId(userId: string): Promise<string | null> {
   if (!id) {
     const { data } = await supabase
       .from('site_sepetler')
-      .insert({ user_id: userId, durum: 'aktif' })
+      .insert({ user_id: userId })
       .select('id')
       .single()
     id = data?.id || null
@@ -93,16 +93,25 @@ export const useSepet = create<SepetStore>()(
 
         const { data: kalemleri } = await supabase
           .from('site_sepet_kalemleri')
-          .select('*, site_products(*), site_product_images(url, ana)')
+          .select('product_id, variant_id, adet, urun_ad, urun_gorsel, fiyat')
           .eq('sepet_id', sepetId)
 
         if (!kalemleri?.length) return
+
+        // Ürün detaylarını çek
+        const productIds = [...new Set(kalemleri.map((k: any) => k.product_id))]
+        const { data: products } = await supabase
+          .from('site_products')
+          .select('*, site_product_images(url, ana)')
+          .in('id', productIds)
+
+        const productMap = Object.fromEntries((products || []).map((p: any) => [p.id, p]))
 
         const dbItems: SepetItem[] = kalemleri.map((k: any) => ({
           product_id: k.product_id,
           variant_id: k.variant_id,
           adet: k.adet,
-          urun: k.site_products,
+          urun: productMap[k.product_id] || { id: k.product_id, name: k.urun_ad, fiyat: k.fiyat },
           variant: undefined,
         }))
 
