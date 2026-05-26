@@ -3,7 +3,7 @@ import { cookies } from 'next/headers'
 
 export async function requireAdmin(): Promise<{ ok: boolean; error?: string }> {
   try {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     
     // Supabase tüm cookie'leri al, token içereni bul
     const allCookies = cookieStore.getAll()
