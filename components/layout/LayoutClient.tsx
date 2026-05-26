@@ -78,7 +78,18 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
   const router = useRouter()
   const isAdmin = pathname?.startsWith('/admin')
   const adetToplam = useSepet(s => s.adetToplam)
+  const dbdenYukle = useSepet(s => s.dbdenYukle)
   const sepetAdet = adetToplam()
+
+  // Giriş/çıkış: sepeti DB ile senkronize et
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_IN') {
+        dbdenYukle()
+      }
+    })
+    return () => subscription.unsubscribe()
+  }, [])
 
   // Şifre sıfırlama linkinden gelen token'ı yakala → /sifre-belirle'ye yönlendir
   useEffect(() => {
