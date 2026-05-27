@@ -312,56 +312,6 @@ a, button, [role="button"], label, select, input[type="submit"], input[type="but
   margin-bottom: 48px;
 }
 
-/* Hero */
-.hero-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-.hero-right-desktop { display: block; }
-.hero-right-mobile { display: none; }
-
-/* Admin dashboard */
-.admin-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-/* ===== MOBİL ===== */
-@media (max-width: 1023px) {
-  .hero-grid { grid-template-columns: 1fr !important; min-height: auto !important; }
-  .hero-right-desktop { display: none !important; }
-  .hero-right-mobile { display: flex !important; }
-  .cat-grid { grid-template-columns: repeat(2, 1fr) !important; }
-  .cat-grid .cat-first { grid-row: span 1 !important; }
-  .prod-grid {
-    display: flex !important;
-    flex-direction: row !important;
-    overflow-x: auto !important;
-    scroll-snap-type: x mandatory !important;
-    -webkit-overflow-scrolling: touch !important;
-    gap: 12px !important;
-    padding-bottom: 8px !important;
-    scrollbar-width: none !important;
-  }
-  .prod-grid::-webkit-scrollbar { display: none !important; }
-  .prod-grid > * {
-    flex: 0 0 72vw !important;
-    max-width: 280px !important;
-    scroll-snap-align: start !important;
-  }
-  .banner-grid { grid-template-columns: 1fr !important; }
-  .rev-grid { grid-template-columns: 1fr !important; }
-  .foot-grid { grid-template-columns: 1fr 1fr !important; gap: 32px !important; }
-  .admin-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
-}
-
-@media (max-width: 480px) {
-  .cat-grid { grid-template-columns: 1fr !important; }
-  .foot-grid { grid-template-columns: 1fr !important; }
-}
-
 /* ===== OVERRIDES ===== */
 
 /* Hero */
@@ -380,20 +330,7 @@ a, button, [role="button"], label, select, input[type="submit"], input[type="but
 }
 .cat-first { grid-row: span 2; }
 
-/* Ürün grid */
-.prod-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-}
 
-/* Abonelik */
-.banner-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 36px;
-  align-items: center;
-}
 
 /* Yorumlar */
 .rev-grid {
@@ -415,6 +352,24 @@ a, button, [role="button"], label, select, input[type="submit"], input[type="but
   /* Kategoriler: 2+2 eşit grid */
   .cat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
   .cat-first { grid-row: span 1 !important; }
+
+  /* Ürünler: yatay scroll */
+  .prod-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 12px !important;
+    padding-bottom: 8px !important;
+    scrollbar-width: none !important;
+  }
+  .prod-grid::-webkit-scrollbar { display: none !important; }
+  .prod-grid > * {
+    flex: 0 0 72vw !important;
+    max-width: 280px !important;
+    scroll-snap-align: start !important;
+  }
 
   /* Abonelik: alt alta */
   .banner-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
