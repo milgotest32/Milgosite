@@ -69,13 +69,13 @@ export const useSepet = create<SepetStore>()(
       },
 
       cikar: (productId, variantId) => {
-        set(s => ({ items: s.items.filter(i => !(i.product_id === productId && i.variant_id === variantId)) }))
+        set(s => ({ items: s.items.filter(i => !(i.product_id === productId && (i.variant_id ?? undefined) === (variantId ?? undefined))) }))
         get().dbeyeKaydet()
       },
 
       guncelle: (productId, adet, variantId) => {
         if (adet <= 0) { get().cikar(productId, variantId); return }
-        set(s => ({ items: s.items.map(i => i.product_id === productId && i.variant_id === variantId ? { ...i, adet } : i) }))
+        set(s => ({ items: s.items.map(i => i.product_id === productId && (i.variant_id ?? undefined) === (variantId ?? undefined) ? { ...i, adet } : i) }))
         get().dbeyeKaydet()
       },
 
