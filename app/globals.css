@@ -446,8 +446,8 @@ body:not(.admin-body) * {
     gap: 12px !important;
   }
 
-  /* İçerik padding azalt */
-  main {
+  /* Admin içerik padding */
+  .admin-body main {
     padding: 16px !important;
   }
 }
