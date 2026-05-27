@@ -247,10 +247,10 @@ export default function AnaSayfa() {
             ))}
           </div>
 
-          {/* Mobil görsel */}
-          <div className="hero-right-mobile" style={{ background: 'linear-gradient(135deg,#FEE8EF,#EBF5FC)', alignItems: 'center', justifyContent: 'center', padding: '24px', minHeight: '220px' }}>
+          {/* Mobil görsel - tam genişlik */}
+          <div className="hero-right-mobile" style={{ background: 'linear-gradient(135deg,#FEE8EF,#EBF5FC)', alignItems: 'center', justifyContent: 'center', padding: '32px 24px', minHeight: '300px', width: '100%', boxSizing: 'border-box' }}>
             <img src={t('hero_gorsel_url')} alt="Milgo"
-              style={{ width: '70%', maxWidth: '280px', objectFit: 'contain' }} />
+              style={{ width: '65%', maxWidth: '260px', objectFit: 'contain' }} />
           </div>
         </div>
       </section>

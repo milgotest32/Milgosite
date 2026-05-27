@@ -335,13 +335,17 @@ a, button, [role="button"], label, select, input[type="submit"], input[type="but
     grid-template-columns: 1fr !important;
     min-height: auto !important;
     grid-template-rows: auto auto !important;
-    width: 100% !important;
   }
   .hero-right-desktop { display: none !important; }
   .hero-right-mobile {
     display: flex !important;
-    min-height: 260px !important;
-    width: 100% !important;
+    min-height: 300px !important;
+    width: 100vw !important;
+    position: relative !important;
+    left: 50% !important;
+    right: 50% !important;
+    margin-left: -50vw !important;
+    margin-right: -50vw !important;
   }
   .rev-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
 }
