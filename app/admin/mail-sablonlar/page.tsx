@@ -89,7 +89,7 @@ export default function MailSablonlar() {
         </button>
       </div>
 
-      <div style={{display:'grid',gridTemplateColumns:'240px 1fr',gap:'16px'}}>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:'16px'}}>
         {/* Sol: Şablon listesi */}
         <div style={{background:'#fff',borderRadius:'16px',border:'1px solid #F0ECF5',padding:'16px'}}>
           <h3 style={{fontSize:'13px',fontWeight:700,color:'#1C1B2E',marginBottom:'12px'}}>Şablonlar</h3>

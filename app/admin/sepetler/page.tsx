@@ -70,7 +70,7 @@ export default function AdminSepetler() {
       </div>
 
       {/* Özet */}
-      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'12px',marginBottom:'20px'}}>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:'12px',marginBottom:'20px'}}>
         {[
           { label:'Toplam Sepet', val: ozet.toplam, renk:'#E07090', bg:'#FEE8EF' },
           { label:'Ürünlü Sepet', val: ozet.urunlu, renk:'#3B9FCC', bg:'#EBF7FC' },

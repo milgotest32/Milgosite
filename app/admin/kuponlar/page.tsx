@@ -25,7 +25,7 @@ export default function KuponlarPage() {
       </div>
       {form.goster&&(<div style={{background:'#fff',borderRadius:'16px',border:'2px solid #F4A7B9',padding:'24px',marginBottom:'16px'}}>
         <h2 style={{fontSize:'15px',fontWeight:700,color:'#1C1B2E',marginBottom:'16px'}}>Yeni Kupon</h2>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px',marginBottom:'12px'}}>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(260px,1fr))',gap:'12px',marginBottom:'12px'}}>
           {[['Kupon Kodu *','kod'],['Ad','ad'],['Değer *','deger'],['Min. Sepet (₺)','min_tutar'],['Kullanım Limiti','kullanim_limiti']].map(([l,k])=>(
             <div key={k}><label style={{display:'block',fontSize:'11px',fontWeight:700,textTransform:'uppercase',color:'#6B7280',marginBottom:'5px'}}>{l}</label>
             <input value={(form as any)[k]} onChange={e=>setForm({...form,[k]:e.target.value})} placeholder={k==='kod'?'MILGO10':''} style={{width:'100%',background:'#F8F7FC',border:'1px solid #F0ECF5',borderRadius:'10px',padding:'10px 14px',fontSize:'13px',outline:'none',fontFamily:'inherit'}}/></div>
@@ -41,7 +41,7 @@ export default function KuponlarPage() {
         </div>
       </div>)}
       <div style={{background:'#fff',borderRadius:'16px',border:'1px solid #F0ECF5',overflow:'hidden'}}>
-        <table style={{width:'100%',borderCollapse:'collapse'}}>
+        <div style={{overflowX:"auto",WebkitOverflowScrolling:"touch"}}><table style={{width:'100%',borderCollapse:'collapse'}}>
           <thead><tr style={{background:'#F8F7FC',borderBottom:'1px solid #F0ECF5'}}>
             {['Kod','Ad','Tip/Değer','Kullanım','Durum','İşlem'].map(h=><th key={h} style={{padding:'10px 16px',textAlign:'left',fontSize:'11px',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',color:'#9CA3AF'}}>{h}</th>)}
           </tr></thead>
@@ -62,7 +62,7 @@ export default function KuponlarPage() {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
       </div>
     </div>
   )

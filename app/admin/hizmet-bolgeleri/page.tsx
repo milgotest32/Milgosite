@@ -202,7 +202,7 @@ export default function HizmetBolgeleriPage() {
       {yeniForm.goster && (
         <div style={{ background: '#fff', borderRadius: '16px', border: '2px solid #F4A7B9', padding: '24px', marginBottom: '16px' }}>
           <h2 style={{ fontSize: '15px', fontWeight: 700, color: '#1C1B2E', marginBottom: '16px' }}>Yeni Bölge</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: '12px', marginBottom: '12px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: '#6B7280', marginBottom: '6px' }}>Bölge Adı *</label>
               <input value={yeniForm.name} onChange={e => setYeniForm({ ...yeniForm, name: e.target.value })} placeholder="Örn: İstanbul Avrupa" style={{ width: '100%', background: '#F8F7FC', border: '1px solid #F0ECF5', borderRadius: '10px', padding: '10px 14px', fontSize: '13px', outline: 'none', fontFamily: 'inherit' }} />

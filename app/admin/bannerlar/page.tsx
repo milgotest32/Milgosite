@@ -55,7 +55,7 @@ export default function BannerlarPage() {
       {form.goster && (
         <div style={{ background: '#fff', borderRadius: '16px', border: '2px solid #F4A7B9', padding: '24px', marginBottom: '16px' }}>
           <h2 style={{ fontSize: '15px', fontWeight: 700, color: '#1C1B2E', marginBottom: '16px' }}>Yeni Banner</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: '12px', marginBottom: '12px' }}>
             <div>{lbl('Ana Başlık *')}<input value={form.baslik} onChange={e => set('baslik', e.target.value)} style={inpStyle} placeholder="Çiftlikten Sofranıza" /></div>
             <div>{lbl('Alt Başlık')}<input value={form.alt_baslik} onChange={e => set('alt_baslik', e.target.value)} style={inpStyle} placeholder="Taze ve doğal ürünler" /></div>
             <div>{lbl('Buton Yazısı')}<input value={form.buton_yazi} onChange={e => set('buton_yazi', e.target.value)} style={inpStyle} placeholder="Alışverişe Başla" /></div>

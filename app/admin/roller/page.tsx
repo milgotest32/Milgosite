@@ -55,7 +55,7 @@ export default function RollerPage() {
       </div>
 
       {/* Rol açıklamaları */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: '12px', marginBottom: '20px' }}>
         {[
           { rol: 'admin', icon: <Shield size={16} />, baslik: 'Admin', aciklama: 'Tüm panele erişim, ürün/sipariş/kullanıcı yönetimi', renk: '#E07090', bg: '#FEF0F4' },
           { rol: 'musteri', icon: <UserCheck size={16} />, baslik: 'Müşteri', aciklama: 'Sadece kendi hesabını ve siparişlerini görebilir', renk: '#22C55E', bg: '#F0FDF4' },

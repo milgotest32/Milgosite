@@ -86,7 +86,7 @@ export default function SiparislerPage() {
       )}
 
       <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #F0ECF5', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div style={{overflowX:"auto",WebkitOverflowScrolling:"touch"}}><table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ background: '#F8F7FC', borderBottom: '1px solid #F0ECF5' }}>
               {['Sipariş No', 'Müşteri', 'Bölge / İlçe', 'Tutar', 'Ödeme', 'Durum', 'Tarih', ''].map(h =>
@@ -173,7 +173,7 @@ export default function SiparislerPage() {
               )
             })}
           </tbody>
-        </table>
+        </table></div>
       </div>
     </div>
   )

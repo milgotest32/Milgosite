@@ -116,7 +116,7 @@ export default function YonlendirmelerPage() {
       {/* Yeni ekle formu */}
       <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #F0ECF5', padding: '20px', marginBottom: '20px' }}>
         <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#1C1B2E', marginBottom: '14px' }}>➕ Yeni Yönlendirme Ekle</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '10px', alignItems: 'end' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: '10px', alignItems: 'end' }}>
           <div>
             <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#6B7280', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               Eski URL (Shopify)
@@ -151,7 +151,7 @@ export default function YonlendirmelerPage() {
 
       {/* Liste */}
       <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #F0ECF5', overflow: 'hidden' }}>
-        <div style={{ padding: '16px 20px', borderBottom: '1px solid #F0ECF5', display: 'grid', gridTemplateColumns: '1fr 1fr 80px 100px', gap: '10px' }}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid #F0ECF5', display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(120px,1fr))', gap: '10px' }}>
           <span style={{ fontSize: '11px', fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Eski URL</span>
           <span style={{ fontSize: '11px', fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Yeni URL</span>
           <span style={{ fontSize: '11px', fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Durum</span>
@@ -167,7 +167,7 @@ export default function YonlendirmelerPage() {
             <div key={r.id} style={{
               padding: '14px 20px',
               borderBottom: i < liste.length - 1 ? '1px solid #F8F7FC' : 'none',
-              display: 'grid', gridTemplateColumns: '1fr 1fr 80px 100px',
+              display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(120px,1fr))',
               gap: '10px', alignItems: 'center',
               background: r.aktif ? '#fff' : '#FAFAFA',
               opacity: r.aktif ? 1 : 0.6

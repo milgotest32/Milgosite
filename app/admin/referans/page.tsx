@@ -114,14 +114,14 @@ export default function ReferansSistemi() {
       </div>
 
       {/* İstatistikler */}
-      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'12px',marginBottom:'16px'}}>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:'12px',marginBottom:'16px'}}>
         {card('Toplam Referans', stats.toplam, <Gift size={15} style={{color:'#E07090'}}/>, '#E07090')}
         {card('Aktif Referans', stats.aktif, <Users size={15} style={{color:'#3B9FCC'}}/>, '#3B9FCC')}
         {card('Toplam Kullanım', stats.kullanimlar, <TrendingUp size={15} style={{color:'#22c55e'}}/>, '#22c55e')}
         {card('Kazandırılan ₺', `₺${stats.kazanilan}`, <Gift size={15} style={{color:'#f59e0b'}}/>, '#f59e0b')}
       </div>
 
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'16px',marginBottom:'16px'}}>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))',gap:'16px',marginBottom:'16px'}}>
         {/* Ayarlar */}
         <div style={{background:'#fff',borderRadius:'16px',border:'1px solid #F0ECF5',padding:'24px'}}>
           <h2 style={{fontSize:'15px',fontWeight:700,color:'#1C1B2E',marginBottom:'16px'}}>İndirim Ayarları</h2>

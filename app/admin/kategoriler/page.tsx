@@ -94,7 +94,7 @@ export default function KategorilerPage() {
       </div>
 
       {sekme==='genel' ? (
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px'}}>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(260px,1fr))',gap:'12px'}}>
           <div>
             <label style={labelStyle}>Ad *</label>
             <input value={data.name||''} onChange={e=>{

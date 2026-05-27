@@ -324,7 +324,7 @@ export default function AyarlarPage() {
                     {inp('Sipariş Butonu','anasayfa','hero_btn_siparis','text','Hemen Sipariş Ver')}
                     {inp('Abonelik Butonu','anasayfa','hero_btn_abonelik','text','Abonelik')}
                     {inp('Görsel URL','anasayfa','hero_gorsel_url','text','https://...')}
-                    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
+                    <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:'10px'}}>
                       {inp('İstat 1 Sayı','anasayfa','hero_stat_1_sayi','text','10.5K')}
                       {inp('İstat 1 Etiket','anasayfa','hero_stat_1_etiket','text','Büyükbaş')}
                       {inp('İstat 2 Sayı','anasayfa','hero_stat_2_sayi','text','✓')}
@@ -332,7 +332,7 @@ export default function AyarlarPage() {
                       {inp('İstat 3 Sayı','anasayfa','hero_stat_3_sayi','text','AB')}
                       {inp('İstat 3 Etiket','anasayfa','hero_stat_3_etiket','text','Onaylı')}
                     </div>
-                    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
+                    <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:'10px'}}>
                       {inp('Kart 1 Emoji','anasayfa','hero_kart_1_emoji','text','🥛')}
                       {inp('Kart 1 Adı','anasayfa','hero_kart_1_ad','text','Çiğ Süt 2L')}
                       {inp('Kart 1 Alt Yazı','anasayfa','hero_kart_1_alt','text','₺130')}
@@ -346,7 +346,7 @@ export default function AyarlarPage() {
                 {/* TICKER */}
                 <div style={{borderBottom:'1px solid #F0ECF5',paddingBottom:'20px'}}>
                   <h3 style={{fontSize:'13px',fontWeight:700,color:'#E8567A',marginBottom:'14px',letterSpacing:'.05em',textTransform:'uppercase'}}>📢 Kayan Yazı (Ticker)</h3>
-                  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
+                  <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:'10px'}}>
                     {inp('1. Sol','anasayfa','ticker_1','text','Çiğ Süt')}
                     {inp('1. Sağ','anasayfa','ticker_1b','text','Günlük Taze')}
                     {inp('2. Sol','anasayfa','ticker_2','text','Peynir')}
@@ -366,12 +366,12 @@ export default function AyarlarPage() {
                 <div style={{borderBottom:'1px solid #F0ECF5',paddingBottom:'20px'}}>
                   <h3 style={{fontSize:'13px',fontWeight:700,color:'#E8567A',marginBottom:'14px',letterSpacing:'.05em',textTransform:'uppercase'}}>🗂️ Kategoriler Bölümü</h3>
                   <div style={{display:'flex',flexDirection:'column',gap:'10px'}}>
-                    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
+                    <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:'10px'}}>
                       {inp('Üst Etiket','anasayfa','kategoriler_tag','text','Kategoriler')}
                       {inp('Başlık','anasayfa','kategoriler_baslik','text','Doğallığı')}
                       {inp('Başlık (italik)','anasayfa','kategoriler_baslik_italik','text','Keşfedin')}
                     </div>
-                    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
+                    <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:'10px'}}>
                       {inp('Kat 1 Etiket','anasayfa','kat_1_etiket','text','En Çok Satan')}
                       {inp('Kat 1 Adı','anasayfa','kat_1_ad','text','Çiğ İnek Sütü')}
                       {inp('Kat 2 Etiket','anasayfa','kat_2_etiket','text','Peynir')}
@@ -387,7 +387,7 @@ export default function AyarlarPage() {
                 {/* ÜRÜNLER */}
                 <div style={{borderBottom:'1px solid #F0ECF5',paddingBottom:'20px'}}>
                   <h3 style={{fontSize:'13px',fontWeight:700,color:'#E8567A',marginBottom:'14px',letterSpacing:'.05em',textTransform:'uppercase'}}>🛍️ Ürünler Bölümü</h3>
-                  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
+                  <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:'10px'}}>
                     {inp('Üst Etiket','anasayfa','urunler_tag','text','En Çok Satanlar')}
                     {inp('Başlık','anasayfa','urunler_baslik','text','Çok')}
                     {inp('Başlık (italik)','anasayfa','urunler_baslik_italik','text','Sevilenler')}
@@ -398,7 +398,7 @@ export default function AyarlarPage() {
                 {/* PAKETLER */}
                 <div style={{borderBottom:'1px solid #F0ECF5',paddingBottom:'20px'}}>
                   <h3 style={{fontSize:'13px',fontWeight:700,color:'#E8567A',marginBottom:'14px',letterSpacing:'.05em',textTransform:'uppercase'}}>🎁 Paketler Bölümü</h3>
-                  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
+                  <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:'10px'}}>
                     {inp('Üst Etiket','anasayfa','paketler_tag','text','🎁 Özel Fırsatlar')}
                     {inp('Başlık','anasayfa','paketler_baslik','text','Hazır Paketlerimiz')}
                     {inp('Tümünü Gör Butonu','anasayfa','paketler_tumu','text','Tümünü Gör →')}
@@ -409,7 +409,7 @@ export default function AyarlarPage() {
                 <div style={{borderBottom:'1px solid #F0ECF5',paddingBottom:'20px'}}>
                   <h3 style={{fontSize:'13px',fontWeight:700,color:'#E8567A',marginBottom:'14px',letterSpacing:'.05em',textTransform:'uppercase'}}>🔄 Abonelik Bölümü</h3>
                   <div style={{display:'flex',flexDirection:'column',gap:'10px'}}>
-                    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
+                    <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:'10px'}}>
                       {inp('Üst Etiket','anasayfa','abonelik_tag','text','⟳ Haftalık Abonelik')}
                       {inp('Başlık','anasayfa','abonelik_baslik','text','Her Hafta Taze,')}
                       {inp('Başlık (italik)','anasayfa','abonelik_baslik_italik','text','Hiç Düşünmeden')}
@@ -436,7 +436,7 @@ export default function AyarlarPage() {
                 {/* YORUMLAR */}
                 <div style={{borderBottom:'1px solid #F0ECF5',paddingBottom:'20px'}}>
                   <h3 style={{fontSize:'13px',fontWeight:700,color:'#E8567A',marginBottom:'14px',letterSpacing:'.05em',textTransform:'uppercase'}}>⭐ Müşteri Yorumları</h3>
-                  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
+                  <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:'10px'}}>
                     {inp('Üst Etiket','anasayfa','yorumlar_tag','text','Müşterilerimiz')}
                     {inp('Başlık','anasayfa','yorumlar_baslik','text','Sizden')}
                     {inp('Başlık (italik)','anasayfa','yorumlar_baslik_italik','text','Gelenler')}
@@ -461,7 +461,7 @@ export default function AyarlarPage() {
                 {/* BÜLTEN */}
                 <div>
                   <h3 style={{fontSize:'13px',fontWeight:700,color:'#E8567A',marginBottom:'14px',letterSpacing:'.05em',textTransform:'uppercase'}}>📧 Bülten Bölümü</h3>
-                  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
+                  <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:'10px'}}>
                     {inp('Başlık','anasayfa','bulten_baslik','text','İlk Siparişte')}
                     {inp('Başlık (italik)','anasayfa','bulten_baslik_italik','text','%10 İndirim')}
                     {inp('Açıklama','anasayfa','bulten_aciklama','text','Bültene katılın...')}

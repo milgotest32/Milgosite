@@ -161,7 +161,7 @@ export default function MusterilerPage() {
       )}
 
       {/* İstatistik kartlar */}
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'12px', marginBottom:'20px' }}>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))', gap:'12px', marginBottom:'20px' }}>
         {[
           { label:'Toplam Müşteri', value: musteriler.length, emoji:'👥' },
           { label:'Shopify Müşterisi', value: musteriler.filter(m=>m.kaynak==='shopify').length, emoji:'🛍' },
@@ -178,7 +178,7 @@ export default function MusterilerPage() {
 
       {/* Tablo */}
       <div style={{ background:'#fff', borderRadius:'16px', border:'1px solid #F0ECF5', overflow:'hidden' }}>
-        <table style={{ width:'100%', borderCollapse:'collapse' }}>
+        <div style={{overflowX:"auto",WebkitOverflowScrolling:"touch"}}><table style={{ width:'100%', borderCollapse:'collapse' }}>
           <thead><tr style={{ background:'#F8F7FC', borderBottom:'1px solid #F0ECF5' }}>
             {['Müşteri','İletişim','Konum','Sipariş','Harcama','Kaynak','Kayıt'].map(h =>
               <th key={h} style={{ padding:'10px 16px', textAlign:'left', fontSize:'11px', fontWeight:700, textTransform:'uppercase', color:'#9CA3AF', letterSpacing:'0.1em' }}>{h}</th>
@@ -228,7 +228,7 @@ export default function MusterilerPage() {
                 </tr>
               ))}
           </tbody>
-        </table>
+        </table></div>
       </div>
     </div>
   )

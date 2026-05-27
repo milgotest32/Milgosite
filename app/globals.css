@@ -448,3 +448,39 @@ body:not(.admin-body) * {
     padding-bottom: 70px !important;
   }
 }
+
+/* ===================== ADMIN MOBİL DÜZELTME ===================== */
+@media (max-width: 768px) {
+  /* 4 sütunlu istatistik kartları → 2 sütun */
+  .admin-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* 2 sütunlu formlar → 1 sütun */
+  .admin-form-grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Yan yana panel + içerik → alt alta */
+  .admin-panel-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Tablo scroll */
+  .admin-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Başlık alanı → alt alta */
+  .admin-page-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+
+  /* İçerik padding azalt */
+  main {
+    padding: 16px !important;
+  }
+}
