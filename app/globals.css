@@ -335,6 +335,7 @@ a, button, [role="button"], label, select, input[type="submit"], input[type="but
     grid-template-columns: 1fr !important;
     min-height: auto !important;
     grid-template-rows: auto auto !important;
+    width: 100% !important;
   }
   .hero-right-desktop { display: none !important; }
   .hero-right-mobile {
@@ -380,6 +381,7 @@ a, button, [role="button"], label, select, input[type="submit"], input[type="but
 
 @media (max-width: 480px) {
   .footer-top { grid-template-columns: 1fr !important; }
+  section { padding-left: 12px !important; padding-right: 12px !important; }
 }
 
 /* Özel cursor - sadece non-admin */
@@ -400,6 +402,13 @@ body:not(.admin-body) * {
   }
   main {
     padding-bottom: 70px !important;
+  }
+}
+
+
+@media (max-width: 767px) {
+  .hero-grid > div:first-child {
+    padding: 28px 16px !important;
   }
 }
 
