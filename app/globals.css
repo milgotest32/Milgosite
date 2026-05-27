@@ -322,16 +322,6 @@ a, button, [role="button"], label, select, input[type="submit"], input[type="but
 .hero-right-desktop { display: block; }
 .hero-right-mobile { display: none !important; }
 
-/* Kategori — masaüstü: 3 kolon, mobil: 2 kolon */
-.cat-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-.cat-first { grid-row: span 2; }
-
-
-
 /* Yorumlar */
 .rev-grid {
   display: grid;
@@ -341,9 +331,17 @@ a, button, [role="button"], label, select, input[type="submit"], input[type="but
 
 /* Tablet */
 @media (max-width: 1023px) {
-  .hero-grid { grid-template-columns: 1fr !important; min-height: auto !important; }
+  .hero-grid {
+    grid-template-columns: 1fr !important;
+    min-height: auto !important;
+    grid-template-rows: auto auto !important;
+  }
   .hero-right-desktop { display: none !important; }
-  .hero-right-mobile { display: flex !important; }
+  .hero-right-mobile {
+    display: flex !important;
+    min-height: 260px !important;
+    width: 100% !important;
+  }
   .rev-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
 }
 
@@ -352,6 +350,7 @@ a, button, [role="button"], label, select, input[type="submit"], input[type="but
   /* Kategoriler: 2+2 eşit grid */
   .cat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
   .cat-first { grid-row: span 1 !important; }
+  .cat-grid > a > div { min-height: 160px !important; }
 
   /* Ürünler: yatay scroll */
   .prod-grid {

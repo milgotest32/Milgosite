@@ -250,7 +250,7 @@ export default function AnaSayfa() {
           {/* Mobil görsel */}
           <div className="hero-right-mobile" style={{ background: 'linear-gradient(135deg,#FEE8EF,#EBF5FC)', alignItems: 'center', justifyContent: 'center', padding: '24px', minHeight: '220px' }}>
             <img src={t('hero_gorsel_url')} alt="Milgo"
-              style={{ width: '55%', maxWidth: '200px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
+              style={{ width: '70%', maxWidth: '280px', objectFit: 'contain' }} />
           </div>
         </div>
       </section>
