@@ -131,7 +131,7 @@ export default function PaketlerPage() {
       {/* Form Modal */}
       {formGoster && (
         <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',zIndex:1000,display:'flex',alignItems:'flex-start',justifyContent:'center',padding:'24px',overflowY:'auto'}}>
-          <div style={{background:'#fff',borderRadius:'20px',padding:'28px',width:'100%',maxWidth:'800px',marginTop:'20px'}}>
+          <div style={{background:'#fff',borderRadius:'20px',padding:'28px',width:'100%',maxWidth:'100%',marginTop:'20px'}}>
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'24px'}}>
               <h2 style={{fontSize:'18px',fontWeight:700,color:'#1C1B2E',margin:0}}>{duzenleId?'Paketi Düzenle':'Yeni Paket'}</h2>
               <button onClick={formKapat} style={{background:'none',border:'none',cursor:'pointer',color:'#9CA3AF'}}><X size={20}/></button>

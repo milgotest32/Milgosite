@@ -116,7 +116,7 @@ export default function YonlendirmelerPage() {
       {/* Yeni ekle formu */}
       <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #F0ECF5', padding: '20px', marginBottom: '20px' }}>
         <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#1C1B2E', marginBottom: '14px' }}>➕ Yeni Yönlendirme Ekle</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: '10px', alignItems: 'end' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: '10px', alignItems: 'end' }}>
           <div>
             <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#6B7280', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               Eski URL (Shopify)

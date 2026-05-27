@@ -62,7 +62,7 @@ export default function BlogPage() {
           <button onClick={kaydet} style={{ padding: '10px 24px', background: 'linear-gradient(135deg,#E07090,#3B9FCC)', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Kaydet</button>
         </div>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: '16px' }}>
         <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #F0ECF5', padding: '24px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
           <div>{lbl('Başlık *')}<input value={form.baslik} onChange={e => { set('baslik', e.target.value); if (!form.slug || mode === 'yeni') set('slug', slugify(e.target.value)) }} style={inpStyle} placeholder="Yazı başlığı" /></div>
           <div>{lbl('Slug')}<input value={form.slug} onChange={e => set('slug', e.target.value)} style={inpStyle} placeholder="otomatik-olusturulur" /></div>
@@ -97,7 +97,7 @@ export default function BlogPage() {
         </button>
       </div>
       <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #F0ECF5', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div style={{overflowX:"auto",WebkitOverflowScrolling:"touch"}}><table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead><tr style={{ background: '#F8F7FC', borderBottom: '1px solid #F0ECF5' }}>
             {['Başlık', 'Tarih', 'Durum', 'İşlem'].map(h => <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: '#9CA3AF', letterSpacing: '0.1em' }}>{h}</th>)}
           </tr></thead>
@@ -125,7 +125,7 @@ export default function BlogPage() {
                 )
               })}
           </tbody>
-        </table>
+        </table></div>
       </div>
     </div>
   )

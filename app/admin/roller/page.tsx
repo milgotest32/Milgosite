@@ -50,7 +50,7 @@ export default function RollerPage() {
         <div style={{ position: 'relative' }}>
           <Search size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9CA3AF' }} />
           <input value={arama} onChange={e => setArama(e.target.value)} placeholder="Kullanıcı ara..."
-            style={{ background: '#fff', border: '1px solid #F0ECF5', borderRadius: '50px', padding: '8px 16px 8px 34px', fontSize: '13px', outline: 'none', fontFamily: 'inherit', width: '220px' }} />
+            style={{ background: '#fff', border: '1px solid #F0ECF5', borderRadius: '50px', padding: '8px 16px 8px 34px', fontSize: '13px', outline: 'none', fontFamily: 'inherit', width: '100%', maxWidth: '220px' }} />
         </div>
       </div>
 
@@ -73,7 +73,7 @@ export default function RollerPage() {
       </div>
 
       <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #F0ECF5', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div style={{overflowX:"auto",WebkitOverflowScrolling:"touch"}}><table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ background: '#F8F7FC', borderBottom: '1px solid #F0ECF5' }}>
               {['Kullanıcı', 'Mevcut Rol', 'İşlem'].map(h =>
@@ -127,7 +127,7 @@ export default function RollerPage() {
               )
             })}
           </tbody>
-        </table>
+        </table></div>
       </div>
     </div>
   )

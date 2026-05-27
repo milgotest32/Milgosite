@@ -59,7 +59,7 @@ export default function AdminUrunlerPage() {
       </div>
 
       <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #F0ECF5', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div style={{overflowX:"auto",WebkitOverflowScrolling:"touch"}}><table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ background: '#F8F7FC', borderBottom: '1px solid #F0ECF5' }}>
               {['Ürün', 'Kategori', 'Fiyat', 'Stok', 'Durum', 'İşlem'].map(h => (
@@ -113,7 +113,7 @@ export default function AdminUrunlerPage() {
               )
             })}
           </tbody>
-        </table>
+        </table></div>
       </div>
     </div>
   )

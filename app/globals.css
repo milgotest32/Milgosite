@@ -416,6 +416,32 @@ body:not(.admin-body) * {
   }
 }
 
+
+/* ===== ADMIN GENEL MOBİL ===== */
+@media (max-width: 768px) {
+  /* Sayfa başlığı */
+  .admin-body .admin-page-header,
+  .admin-body > div > div:first-child {
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+  /* Kartlar tam genişlik */
+  .admin-body [style*="display:'grid'"],
+  .admin-body [style*='display:"grid"'] {
+    grid-template-columns: 1fr !important;
+  }
+  /* Input'lar tam genişlik */
+  .admin-body input[type="text"],
+  .admin-body input[type="number"],
+  .admin-body input[type="email"],
+  .admin-body select,
+  .admin-body textarea {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
 /* ===================== ADMIN MOBİL DÜZELTME ===================== */
 @media (max-width: 768px) {
   /* 4 sütunlu istatistik kartları → 2 sütun */
