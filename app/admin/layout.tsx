@@ -93,6 +93,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           .admin-sidebar { transform: translateX(-100%) !important; width: 240px !important; }
           .admin-sidebar.open { transform: translateX(0) !important; }
           .admin-content { margin-left: 0 !important; }
+  .admin-content main { padding: 12px !important; }
           .mobile-overlay { display: block !important; }
           .collapse-btn { display: none !important; }
           .hamburger-btn { display: flex !important; }
@@ -161,7 +162,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
           </div>
         </header>
-        <main style={{flex:1,padding:'24px',overflowY:'auto'}}>
+        <main style={{flex:1,padding:'24px',overflowY:'auto',boxSizing:'border-box' as any}}>
           {children}
         </main>
       </div>
