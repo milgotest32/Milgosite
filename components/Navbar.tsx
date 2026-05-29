@@ -24,7 +24,8 @@ export default function Navbar() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setUser(data.session?.user || null))
-    supabase.auth.onAuthStateChange((_, s) => setUser(s?.user || null))
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, s) => setUser(s?.user || null))
+    return () => subscription.unsubscribe()
   }, [])
 
   const { temizle } = useSepet()

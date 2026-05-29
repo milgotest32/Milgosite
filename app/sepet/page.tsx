@@ -72,25 +72,29 @@ export default function SepetPage() {
         <div className="sepet-grid" style={{display:'grid',gridTemplateColumns:'1fr 340px',gap:'20px',alignItems:'start'}}>
           {/* Ürünler */}
           <div style={{display:'flex',flexDirection:'column',gap:'12px'}}>
-            {items.map(({urun,adet})=>{
+            {items.map((item)=>{
+              const {urun, variant, adet, product_id, variant_id} = item
               const g=urun.site_product_images?.[0]?.url
+              const fiyat = variant?.fiyat ?? urun.fiyat
+              const itemKey = variant_id ? `${product_id}-${variant_id}` : product_id
               return(
-                <div key={urun.id} className="urun-satir" style={{background:'#fff',borderRadius:'20px',padding:'14px 16px',display:'flex',alignItems:'center',gap:'14px',border:'1px solid #F0ECF5'}}>
+                <div key={itemKey} className="urun-satir" style={{background:'#fff',borderRadius:'20px',padding:'14px 16px',display:'flex',alignItems:'center',gap:'14px',border:'1px solid #F0ECF5'}}>
                   <Link href={`/urun/${urun.slug}`} className="urun-gorsel" style={{width:'80px',height:'80px',borderRadius:'14px',background:'#F0EEF8',overflow:'hidden',flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',padding:'8px',textDecoration:'none'}}>
                     {g?<img src={g} alt={urun.name} style={{width:'100%',height:'100%',objectFit:'contain'}}/>:<span style={{fontSize:'36px'}}>🥛</span>}
                   </Link>
                   <div style={{flex:1,minWidth:0}}>
                     <Link href={`/urun/${urun.slug}`} style={{fontSize:'15px',fontWeight:700,color:'#1C1B2E',textDecoration:'none',display:'block',marginBottom:'4px',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{urun.name}</Link>
-                    <span style={{fontSize:'15px',fontWeight:700,color:'#E07090'}}>₺{urun.fiyat.toFixed(2)}</span>
+                    {variant && <span style={{fontSize:'12px',color:'#9CA3AF',display:'block',marginBottom:'2px'}}>{variant.name}</span>}
+                    <span style={{fontSize:'15px',fontWeight:700,color:'#E07090'}}>₺{fiyat.toFixed(2)}</span>
                   </div>
                   <div className="urun-sag" style={{display:'flex',alignItems:'center',gap:'10px',flexShrink:0}}>
                     <div style={{display:'flex',alignItems:'center',background:'#F0EEF8',borderRadius:'10px',overflow:'hidden'}}>
-                      <button onClick={()=>guncelle(urun.id,adet-1)} style={{width:'34px',height:'34px',display:'flex',alignItems:'center',justifyContent:'center',background:'none',border:'none',cursor:'pointer',color:'#6B7280'}}><Minus size={13}/></button>
+                      <button onClick={()=>guncelle(product_id,adet-1,variant_id)} style={{width:'34px',height:'34px',display:'flex',alignItems:'center',justifyContent:'center',background:'none',border:'none',cursor:'pointer',color:'#6B7280'}}><Minus size={13}/></button>
                       <span style={{width:'28px',textAlign:'center',fontSize:'14px',fontWeight:700}}>{adet}</span>
-                      <button onClick={()=>guncelle(urun.id,adet+1)} style={{width:'34px',height:'34px',display:'flex',alignItems:'center',justifyContent:'center',background:'none',border:'none',cursor:'pointer',color:'#6B7280'}}><Plus size={13}/></button>
+                      <button onClick={()=>guncelle(product_id,adet+1,variant_id)} style={{width:'34px',height:'34px',display:'flex',alignItems:'center',justifyContent:'center',background:'none',border:'none',cursor:'pointer',color:'#6B7280'}}><Plus size={13}/></button>
                     </div>
-                    <span className="urun-fiyat-toplam" style={{fontSize:'15px',fontWeight:700,color:'#1C1B2E',minWidth:'68px',textAlign:'right'}}>₺{(urun.fiyat*adet).toFixed(2)}</span>
-                    <button onClick={()=>{cikar(urun.id);toast.success('Ürün kaldırıldı')}} style={{width:'34px',height:'34px',display:'flex',alignItems:'center',justifyContent:'center',background:'#FEF2F2',borderRadius:'10px',border:'none',cursor:'pointer',color:'#EF4444',flexShrink:0}}><Trash2 size={15}/></button>
+                    <span className="urun-fiyat-toplam" style={{fontSize:'15px',fontWeight:700,color:'#1C1B2E',minWidth:'68px',textAlign:'right'}}>₺{(fiyat*adet).toFixed(2)}</span>
+                    <button onClick={()=>{cikar(product_id,variant_id);toast.success('Ürün kaldırıldı')}} style={{width:'34px',height:'34px',display:'flex',alignItems:'center',justifyContent:'center',background:'#FEF2F2',borderRadius:'10px',border:'none',cursor:'pointer',color:'#EF4444',flexShrink:0}}><Trash2 size={15}/></button>
                   </div>
                 </div>
               )

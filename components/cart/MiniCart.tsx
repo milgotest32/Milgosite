@@ -21,18 +21,22 @@ export default function MiniCart({ onClose }: { onClose: () => void }) {
       ) : (
         <>
           <div style={{flex:1,overflowY:'auto',padding:'16px 24px',display:'flex',flexDirection:'column',gap:'12px'}}>
-            {items.map(({urun,adet})=>{
+            {items.map((item)=>{
+              const {urun, variant, adet, product_id, variant_id} = item
               const g=urun.site_product_images?.[0]?.url
+              const fiyat = variant?.fiyat ?? urun.fiyat
+              const itemKey = variant_id ? `${product_id}-${variant_id}` : product_id
               return(
-                <div key={urun.id} style={{display:'flex',gap:'12px',alignItems:'center',background:'#F0EEF8',borderRadius:'16px',padding:'12px'}}>
+                <div key={itemKey} style={{display:'flex',gap:'12px',alignItems:'center',background:'#F0EEF8',borderRadius:'16px',padding:'12px'}}>
                   <div style={{width:'60px',height:'60px',borderRadius:'12px',background:'#fff',overflow:'hidden',flexShrink:0}}>
                     {g?<img src={g} alt={urun.name} style={{width:'100%',height:'100%',objectFit:'contain',padding:'4px'}}/>:<span style={{fontSize:'28px',display:'flex',alignItems:'center',justifyContent:'center',height:'100%'}}>🥛</span>}
                   </div>
                   <div style={{flex:1,minWidth:0}}>
                     <p style={{fontSize:'13px',fontWeight:600,color:'#1C1B2E',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{urun.name}</p>
-                    <p style={{fontSize:'12px',color:'#6B7280'}}>x{adet} · ₺{(urun.fiyat*adet).toFixed(2)}</p>
+                    {variant && <p style={{fontSize:'11px',color:'#9CA3AF',margin:'1px 0'}}>({variant.name})</p>}
+                    <p style={{fontSize:'12px',color:'#6B7280'}}>x{adet} · ₺{(fiyat*adet).toFixed(2)}</p>
                   </div>
-                  <button onClick={()=>cikar(urun.id)} style={{background:'none',border:'none',cursor:'pointer',color:'#9CA3AF'}}><X size={14}/></button>
+                  <button onClick={()=>cikar(product_id, variant_id)} style={{background:'none',border:'none',cursor:'pointer',color:'#9CA3AF'}}><X size={14}/></button>
                 </div>
               )
             })}

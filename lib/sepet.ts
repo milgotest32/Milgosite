@@ -165,6 +165,7 @@ export const useSepet = create<SepetStore>()(
       }, 0),
 
       kargoUcreti: () => {
+        if (typeof window === 'undefined') return 49.90
         const standart = parseFloat(localStorage.getItem('milgo_kargo_standart') || '49.90') || 49.90
         const limit = parseFloat(localStorage.getItem('milgo_kargo_limit') || '500') || 500
         return get().araToplam() >= limit ? 0 : standart

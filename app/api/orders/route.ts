@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
   } catch {}
 
   // Fiyatları DB'den doğrula + stok kontrolü — her ürün için tek sorguda
-  const dogrulanmisItems: Array<{ product_id: string; urun_ad: string; urun_gorsel: string | null; fiyat: number; adet: number }> = []
+  const dogrulanmisItems: Array<{ product_id: string; variant_id?: string; urun_ad: string; urun_gorsel: string | null; fiyat: number; adet: number }> = []
   let ara_toplam = 0
 
   for (const item of items) {
@@ -71,11 +71,27 @@ export async function POST(req: NextRequest) {
       }, { status: 400 })
     }
 
-    const fiyat = urun.fiyat // DB'den gelen doğrulanmış fiyat
+    // Variant fiyatı DB'den doğrula
+    let fiyat = urun.fiyat
+    let urun_ad = urun.name
+    if (item.variant_id) {
+      const { data: variant } = await db
+        .from('site_variants')
+        .select('fiyat, name, aktif')
+        .eq('id', item.variant_id)
+        .eq('product_id', item.product_id)
+        .single()
+      if (variant && variant.aktif) {
+        if (variant.fiyat != null) fiyat = variant.fiyat
+        urun_ad = `${urun.name} (${variant.name})`
+      }
+    }
+
     ara_toplam += fiyat * item.adet
     dogrulanmisItems.push({
       product_id: item.product_id,
-      urun_ad: urun.name,
+      variant_id: item.variant_id || undefined,
+      urun_ad,
       urun_gorsel: item.urun_gorsel || null,
       fiyat,
       adet: Number(item.adet),
@@ -148,6 +164,7 @@ export async function POST(req: NextRequest) {
   const kalemler = dogrulanmisItems.map(i => ({
     siparis_id: siparis.id,
     product_id: i.product_id,
+    variant_id: i.variant_id || null,
     urun_ad: i.urun_ad,
     urun_gorsel: i.urun_gorsel,
     birim_fiyat: i.fiyat,       // DB'den gelen doğrulanmış fiyat

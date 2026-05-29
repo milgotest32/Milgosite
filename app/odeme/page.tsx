@@ -118,9 +118,9 @@ export default function OdemePage() {
         body: JSON.stringify({
           items: items.map(i => ({
             product_id: i.product_id, variant_id: i.variant_id,
-            urun_ad: i.urun.name,
+            urun_ad: i.variant ? `${i.urun.name} (${i.variant.name})` : i.urun.name,
             urun_gorsel: i.urun.site_product_images?.find((g:any) => g.ana)?.url || i.urun.site_product_images?.[0]?.url || null,
-            fiyat: i.urun.fiyat, adet: i.adet
+            fiyat: i.variant?.fiyat ?? i.urun.fiyat, adet: i.adet
           })),
           adres: form,
           musteri_id: user?.id,
@@ -147,7 +147,7 @@ export default function OdemePage() {
         body: JSON.stringify({
           siparis_id: siparis.id, tutar: genelToplam(),
           email: form.email, adres: form,
-          sepet: items.map(i => [i.urun.name, i.urun.fiyat.toFixed(2), i.adet]),
+          sepet: items.map(i => [i.variant ? `${i.urun.name} (${i.variant.name})` : i.urun.name, (i.variant?.fiyat ?? i.urun.fiyat).toFixed(2), i.adet]),
         })
       })
       const { token, error: paytrErr } = await paytrR.json()
@@ -411,8 +411,12 @@ export default function OdemePage() {
             <div style={{background:'#fff',borderRadius:'20px',padding:'20px',border:'1px solid #F0ECF5'}}>
               <h3 style={{fontSize:'15px',fontWeight:700,color:'#1C1B2E',marginBottom:'14px'}}>Sipariş Özeti</h3>
               <div style={{display:'flex',flexDirection:'column',gap:'10px',marginBottom:'14px'}}>
-                {items.map(({urun,adet})=>(
-                  <div key={urun.id} style={{display:'flex',alignItems:'center',gap:'10px'}}>
+                {items.map((item)=>{
+                  const {urun, variant, adet, product_id, variant_id} = item
+                  const fiyat = variant?.fiyat ?? urun.fiyat
+                  const itemKey = variant_id ? `${product_id}-${variant_id}` : product_id
+                  return (
+                  <div key={itemKey} style={{display:'flex',alignItems:'center',gap:'10px'}}>
                     <div style={{width:'40px',height:'40px',borderRadius:'10px',background:'#F0EEF8',flexShrink:0,overflow:'hidden',display:'flex',alignItems:'center',justifyContent:'center'}}>
                       {urun.site_product_images?.[0]?.url
                         ? <img src={urun.site_product_images[0].url} alt="" style={{width:'100%',height:'100%',objectFit:'contain',padding:'4px'}}/>
@@ -420,11 +424,12 @@ export default function OdemePage() {
                     </div>
                     <div style={{flex:1,minWidth:0}}>
                       <p style={{fontSize:'12px',fontWeight:600,color:'#1C1B2E',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',margin:0}}>{urun.name}</p>
-                      <p style={{fontSize:'11px',color:'#9CA3AF',margin:0}}>x{adet}</p>
+                      <p style={{fontSize:'11px',color:'#9CA3AF',margin:0}}>{variant ? `${variant.name} · ` : ''}x{adet}</p>
                     </div>
-                    <span style={{fontSize:'13px',fontWeight:700,color:'#1C1B2E',flexShrink:0}}>₺{(urun.fiyat*adet).toFixed(2)}</span>
+                    <span style={{fontSize:'13px',fontWeight:700,color:'#1C1B2E',flexShrink:0}}>₺{(fiyat*adet).toFixed(2)}</span>
                   </div>
-                ))}
+                )})}
+
               </div>
               <div style={{borderTop:'1px solid #F0ECF5',paddingTop:'12px',display:'flex',flexDirection:'column',gap:'8px'}}>
                 <div style={{display:'flex',justifyContent:'space-between',fontSize:'13px'}}>
