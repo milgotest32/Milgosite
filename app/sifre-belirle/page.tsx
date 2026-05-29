@@ -22,11 +22,12 @@ export default function SifreBelirle() {
     const hash = window.location.hash
     if (hash && hash.includes('type=recovery')) {
       // Supabase client token'ı otomatik işler, session'a geçirir
-      supabase.auth.onAuthStateChange((event, session) => {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
         if (event === 'PASSWORD_RECOVERY') {
           setHazir(true)
         }
       })
+      return () => subscription.unsubscribe()
     } else {
       // Token yoksa, mevcut oturuma bak
       supabase.auth.getSession().then(({ data }) => {

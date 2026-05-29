@@ -29,7 +29,7 @@ export default function KayitPage() {
     })
     if (error) { setHata(error.message); setYukleniyor(false); return }
     if (data.user) {
-      await supabase.from('site_users').insert({ id: data.user.id, email: form.email, ad: form.ad, soyad: form.soyad, telefon: form.telefon, rol: 'musteri' }).select()
+      await supabase.from('site_users').insert({ id: data.user.id, email: form.email, ad: form.ad, soyad: form.soyad, telefon: form.telefon, role: 'customer' }).select()
       
       // Referans kodu kullanıldıysa işle
       if (form.referans_kodu.trim()) {

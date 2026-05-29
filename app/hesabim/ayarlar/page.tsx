@@ -37,12 +37,16 @@ export default function AyarlarPage() {
   const profilKaydet = async () => {
     setProfilYukleniyor(true)
     setProfilMesaj(null)
-    const { error } = await supabase.auth.updateUser({
+    const { data: { user: currentUser }, error } = await supabase.auth.updateUser({
       data: { ad, soyad, telefon }
     })
     if (error) {
       setProfilMesaj({ tip: 'hata', metin: 'Güncelleme başarısız: ' + error.message })
     } else {
+      // site_users tablosunu da güncelle
+      if (currentUser) {
+        await supabase.from('site_users').update({ ad, soyad, telefon }).eq('id', currentUser.id)
+      }
       setProfilMesaj({ tip: 'basari', metin: 'Profil bilgileriniz güncellendi.' })
     }
     setProfilYukleniyor(false)

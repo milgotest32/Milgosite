@@ -24,7 +24,7 @@ export default function GirisPage() {
     // Admin kontrolü
     if (data.user) {
       const { data: profile } = await supabase.from('site_users').select('role').eq('id', data.user.id).single()
-      if (profile?.role === 'admin') { router.push('/admin'); return }
+      if (profile?.role === 'admin' || profile?.role === 'superadmin') { router.push('/admin'); return }
     }
     router.push('/')
   }
