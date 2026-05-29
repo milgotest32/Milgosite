@@ -12,7 +12,6 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       { source: '/robots.txt', destination: '/api/robots' },
-      { source: '/sw.js', destination: '/api/sw' },
     ]
   },
   async redirects() {

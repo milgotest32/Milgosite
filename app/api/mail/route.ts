@@ -16,7 +16,17 @@ export async function POST(req: NextRequest) {
   const authHeader = req.headers.get('x-internal-key')
   const internalKey = process.env.INTERNAL_API_KEY
 
-  if (!authHeader || authHeader !== internalKey) {
+  // Eğer INTERNAL_API_KEY set edilmişse: header eşleşmeli
+  // Set edilmemişse: kullanıcı oturumu kontrolü yap
+  const internalKeySet = internalKey && internalKey.length > 0
+  const internalKeyValid = internalKeySet && authHeader === internalKey
+
+  if (!internalKeyValid) {
+    if (internalKeySet) {
+      // Key set edilmiş ama header yanlış
+      return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 })
+    }
+    // Key set edilmemiş - user auth dene
     const { data: { user } } = await db.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 })
   }

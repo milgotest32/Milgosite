@@ -1,5 +1,6 @@
 'use client'
 import { useSepet } from '@/lib/sepet'
+import { useFavori } from '@/lib/favori'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
@@ -74,7 +75,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [router])
 
   const { temizle } = useSepet()
-  const cikis = async () => { temizle(); await supabase.auth.signOut(); router.push('/giris') }
+  const { temizle: favoriTemizle } = useFavori()
+  const cikis = async () => { temizle(); favoriTemizle(); await supabase.auth.signOut(); router.push('/giris') }
 
   if (yetkiKontrol) return (
     <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#F8F7FC'}}>

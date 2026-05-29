@@ -8,7 +8,10 @@ async function mailGonder(to: string, subject: string, html: string, baseUrl: st
   try {
     await fetch(`${baseUrl}/api/mail`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-internal-key': process.env.INTERNAL_API_KEY || '',
+      },
       body: JSON.stringify({ to, subject, html })
     })
   } catch { /* mail hatası akışı durdurmasın */ }

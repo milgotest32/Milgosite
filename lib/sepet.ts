@@ -107,12 +107,23 @@ export const useSepet = create<SepetStore>()(
 
         const productMap = Object.fromEntries((products || []).map((p: any) => [p.id, p]))
 
+        // Variant detaylarını çek
+        const variantIds = kalemleri.filter((k: any) => k.variant_id).map((k: any) => k.variant_id)
+        let variantMap: Record<string, any> = {}
+        if (variantIds.length > 0) {
+          const { data: variants } = await supabase
+            .from('site_variants')
+            .select('*')
+            .in('id', variantIds)
+          variantMap = Object.fromEntries((variants || []).map((v: any) => [v.id, v]))
+        }
+
         const dbItems: SepetItem[] = kalemleri.map((k: any) => ({
           product_id: k.product_id,
           variant_id: k.variant_id,
           adet: k.adet,
           urun: productMap[k.product_id] || { id: k.product_id, name: k.urun_ad, fiyat: k.fiyat },
-          variant: undefined,
+          variant: k.variant_id ? variantMap[k.variant_id] : undefined,
         }))
 
         // Local ile merge: aynı ürün varsa topla, yoksa ekle

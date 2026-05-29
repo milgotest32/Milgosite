@@ -11,7 +11,10 @@ async function mailGonder(to: string, subject: string, html: string, baseUrl: st
   try {
     await fetch(`${baseUrl}/api/mail`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-internal-key': process.env.INTERNAL_API_KEY || '',
+      },
       body: JSON.stringify({ to, subject, html })
     })
   } catch { /* mail hatası siparişi durdurmasın */ }
@@ -119,11 +122,27 @@ export async function POST(req: NextRequest) {
   // İndirimi sunucuda hesapla
   let indirim = 0
   if (kupon_kod) {
+    // Önce normal kupon ara
     const { data: kupon } = await db.from('site_kuponlar').select('*').eq('kod', kupon_kod.toUpperCase()).eq('aktif', true).single()
     if (kupon && (!kupon.bitis || new Date(kupon.bitis) >= new Date()) && (!kupon.kullanim_limiti || kupon.kullanim_sayisi < kupon.kullanim_limiti)) {
       indirim = kupon.tip === 'yuzde' ? ara_toplam * (kupon.deger / 100) : kupon.deger
       if (kupon.max_indirim) indirim = Math.min(indirim, kupon.max_indirim)
       indirim = Math.min(indirim, ara_toplam)
+    } else {
+      // Referans kodu olarak dene
+      const { data: refAyarlar } = await db.from('site_ayarlar').select('anahtar,deger').eq('grup','referans')
+      const refAy: Record<string,string> = {}
+      refAyarlar?.forEach((r: any) => { refAy[r.anahtar] = r.deger })
+      if (refAy.referans_aktif === '1') {
+        const { data: ref } = await db.from('site_referanslar').select('id').eq('kod', kupon_kod.toUpperCase()).eq('aktif', true).single()
+        if (ref) {
+          const minSiparis = parseFloat(refAy.referans_gelen_min_siparis || refAy.referans_min_siparis || '200')
+          if (ara_toplam >= minSiparis) {
+            indirim = parseFloat(refAy.referans_gelen_indirim || '50')
+            indirim = Math.min(indirim, ara_toplam)
+          }
+        }
+      }
     }
   }
 

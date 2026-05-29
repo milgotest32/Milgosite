@@ -11,7 +11,9 @@ export default function SifreSifirlaPage() {
   const [loading, setLoading] = useState(false)
   const gonder = async (e: React.FormEvent) => {
     e.preventDefault(); setLoading(true)
-    const { error } = await supabase.auth.resetPasswordForEmail(email)
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/sifre-belirle`,
+    })
     if (error) { toast.error(error.message); setLoading(false); return }
     setGonderildi(true); setLoading(false)
   }
