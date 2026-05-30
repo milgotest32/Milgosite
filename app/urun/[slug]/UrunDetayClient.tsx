@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useSepet } from '@/lib/sepet'
+import { useFavori } from '@/lib/favori'
 import { supabase } from '@/lib/supabase/client'
 import type { Urun } from '@/lib/types'
 import { ShoppingBag, Heart, Star, Truck, ShieldCheck, Plus, Minus, Check, ChevronRight, Package, MapPin, Send, LogIn } from 'lucide-react'
@@ -14,7 +15,8 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
   const [aktifGorsel, setAktifGorsel] = useState(0)
   const [adet, setAdet] = useState(1)
   const [eklendi, setEklendi] = useState(false)
-  const [favori, setFavori] = useState(false)
+  const { toggle: favoriToggle, varMi } = useFavori()
+  const favori = varMi(urun.id)
   const [yorumlar, setYorumlar] = useState<any[]>([])
   const [aktifTab, setAktifTab] = useState<'aciklama'|'ozellikler'|'yorumlar'>('aciklama')
   const [bolgdeVar, setBolgdeVar] = useState<'var' | 'yok' | 'belirsiz'>('belirsiz')
@@ -210,7 +212,7 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
                 </button>
               )}
 
-              <button onClick={() => setFavori(!favori)}
+              <button onClick={() => { favoriToggle(urun.id); toast(favori ? 'Favorilerden çıkarıldı' : 'Favorilere eklendi!', { icon: favori ? '🤍' : '❤️' }) }}
                 style={{ width: '44px', height: '44px', borderRadius: '14px', border: `1.5px solid ${favori ? '#E8567A' : 'rgba(26,10,18,.1)'}`, background: favori ? '#FEE8EF' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'inherit', transition: 'all .2s', flexShrink: 0 }}>
                 <Heart size={17} style={{ color: favori ? '#E8567A' : '#7A6070' }} fill={favori ? '#E8567A' : 'none'} />
               </button>
