@@ -126,22 +126,27 @@ export const useSepet = create<SepetStore>()(
           variant: k.variant_id ? variantMap[k.variant_id] : undefined,
         }))
 
-        // Local ile merge: aynı ürün varsa topla, yoksa ekle
+        // DB her zaman yetkili kaynak — sadece DB'de olmayan local ürünleri ekle
         set(s => {
           const merged = [...dbItems]
           s.items.forEach(localItem => {
             const idx = merged.findIndex(i => i.product_id === localItem.product_id && i.variant_id === localItem.variant_id)
-            if (idx >= 0) {
-              merged[idx] = { ...merged[idx], adet: Math.max(merged[idx].adet, localItem.adet) }
-            } else {
+            if (idx < 0) {
+              // DB'de yok ama local'de var (giriş öncesi eklendi) → ekle
               merged.push(localItem)
             }
+            // DB'de varsa DB'nin adedini kullan, local'i yoksay
           })
           return { items: merged }
         })
 
-        // Merge sonucu DB'ye yaz
-        get().dbeyeKaydet()
+        // Sadece local'den yeni ürün eklendiyse DB'ye yaz
+        const localOnlyItems = get().items.filter(
+          localItem => !dbItems.find(d => d.product_id === localItem.product_id && d.variant_id === localItem.variant_id)
+        )
+        if (localOnlyItems.length > 0) {
+          get().dbeyeKaydet()
+        }
       },
 
       // Sepeti DB'ye kaydet

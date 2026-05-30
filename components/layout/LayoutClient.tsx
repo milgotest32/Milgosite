@@ -83,12 +83,17 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
   const favoriYukle = useFavori(s => s.dbdenYukle)
   const sepetAdet = adetToplam()
 
-  // Giriş/çıkış: sepeti DB ile senkronize et
+  // Giriş/çıkış: sepeti DB ile senkronize et (tekrar tetiklenmeyi önle)
   useEffect(() => {
+    let yuklendi = false
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_IN') {
+      if (event === 'SIGNED_IN' && !yuklendi) {
+        yuklendi = true
         dbdenYukle()
         favoriYukle()
+      }
+      if (event === 'SIGNED_OUT') {
+        yuklendi = false
       }
     })
     return () => subscription.unsubscribe()
