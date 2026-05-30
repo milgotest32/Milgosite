@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import { Check, RefreshCw } from 'lucide-react'
 
@@ -14,6 +14,16 @@ const PLANLAR = [
 export default function AbonelikClient() {
   const [secili, setSecili] = useState('aile')
   const [form, setForm] = useState({ ad: '', email: '', telefon: '', adres: '', ilce: '' })
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return
+      supabase.from('site_users').select('ad,soyad,telefon').eq('id', user.id).single().then(({ data }) => {
+        if (data) setForm(f => ({ ...f, ad: `${data.ad || ''} ${data.soyad || ''}`.trim(), email: user.email || '', telefon: data.telefon || '' }))
+        else setForm(f => ({ ...f, email: user.email || '' }))
+      })
+    })
+  }, [])
   const [basari, setBasari] = useState(false)
   const [yukleniyor, setYukleniyor] = useState(false)
   const [hata, setHata] = useState('')
