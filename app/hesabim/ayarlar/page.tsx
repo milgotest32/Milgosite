@@ -26,10 +26,18 @@ export default function AyarlarPage() {
       if (!data.session) { router.push('/giris'); return }
       const u = data.session.user
       setUser(u)
-      const meta = u.user_metadata || {}
-      setAd(meta.ad || meta.first_name || '')
-      setSoyad(meta.soyad || meta.last_name || '')
-      setTelefon(meta.telefon || meta.phone || '')
+      // Önce site_users'dan oku (daha güvenilir)
+      const { data: profil } = await supabase.from('site_users').select('ad,soyad,telefon').eq('id', u.id).single()
+      if (profil) {
+        setAd(profil.ad || '')
+        setSoyad(profil.soyad || '')
+        setTelefon(profil.telefon || '')
+      } else {
+        const meta = u.user_metadata || {}
+        setAd(meta.ad || meta.first_name || '')
+        setSoyad(meta.soyad || meta.last_name || '')
+        setTelefon(meta.telefon || meta.phone || '')
+      }
       setYukleniyor(false)
     })
   }, [router])
@@ -61,8 +69,19 @@ export default function AyarlarPage() {
       setSifreMesaj({ tip: 'hata', metin: 'Şifre en az 6 karakter olmalı.' })
       return
     }
+    if (!mevcutSifre) {
+      setSifreMesaj({ tip: 'hata', metin: 'Mevcut şifrenizi girin.' })
+      return
+    }
     setSifreYukleniyor(true)
     setSifreMesaj(null)
+    // Mevcut şifreyi doğrula
+    const { error: loginError } = await supabase.auth.signInWithPassword({ email: user.email, password: mevcutSifre })
+    if (loginError) {
+      setSifreMesaj({ tip: 'hata', metin: 'Mevcut şifre yanlış.' })
+      setSifreYukleniyor(false)
+      return
+    }
     const { error } = await supabase.auth.updateUser({ password: yeniSifre })
     if (error) {
       setSifreMesaj({ tip: 'hata', metin: 'Şifre güncellenemedi: ' + error.message })
@@ -168,6 +187,10 @@ export default function AyarlarPage() {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }}>
+            <div>
+              <label style={labelStil}>Mevcut Şifre</label>
+              <input style={inputStil} type="password" value={mevcutSifre} onChange={e => setMevcutSifre(e.target.value)} placeholder="••••••••" />
+            </div>
             <div>
               <label style={labelStil}>Yeni Şifre</label>
               <input style={inputStil} type="password" value={yeniSifre} onChange={e => setYeniSifre(e.target.value)} placeholder="••••••••" />
