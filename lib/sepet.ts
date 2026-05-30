@@ -22,6 +22,10 @@ interface SepetStore {
   dbeyeKaydet: () => Promise<void>
 }
 
+// Race condition önleme: aynı anda birden fazla dbeyeKaydet çalışmasın
+let kaydetKilitli = false
+let bekleyenKaydet = false
+
 async function getSepetId(userId: string): Promise<string | null> {
   const { data } = await supabase
     .from('site_sepetler')
@@ -155,26 +159,39 @@ export const useSepet = create<SepetStore>()(
       },
 
       dbeyeKaydet: async () => {
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user) return
+        // Kilit varsa bekleyen olarak işaretle, çıkış yap
+        if (kaydetKilitli) { bekleyenKaydet = true; return }
+        kaydetKilitli = true
 
-        const sepetId = await getOrCreateSepetId(user.id)
-        if (!sepetId) return
+        try {
+          const { data: { user } } = await supabase.auth.getUser()
+          if (!user) return
 
-        const items = get().items
-        await supabase.from('site_sepet_kalemleri').delete().eq('sepet_id', sepetId)
-        if (items.length > 0) {
-          await supabase.from('site_sepet_kalemleri').insert(
-            items.map(i => ({
-              sepet_id: sepetId,
-              product_id: i.product_id,
-              variant_id: i.variant_id || null,
-              urun_ad: i.urun?.name || '',
-              urun_gorsel: i.urun?.site_product_images?.[0]?.url || '',
-              fiyat: i.variant?.fiyat ?? i.urun?.fiyat ?? 0,
-              adet: i.adet,
-            }))
-          )
+          const sepetId = await getOrCreateSepetId(user.id)
+          if (!sepetId) return
+
+          const items = get().items
+          await supabase.from('site_sepet_kalemleri').delete().eq('sepet_id', sepetId)
+          if (items.length > 0) {
+            await supabase.from('site_sepet_kalemleri').insert(
+              items.map(i => ({
+                sepet_id: sepetId,
+                product_id: i.product_id,
+                variant_id: i.variant_id || null,
+                urun_ad: i.urun?.name || '',
+                urun_gorsel: i.urun?.site_product_images?.[0]?.url || '',
+                fiyat: i.variant?.fiyat ?? i.urun?.fiyat ?? 0,
+                adet: i.adet,
+              }))
+            )
+          }
+        } finally {
+          kaydetKilitli = false
+          // Kilitle bekleyen varsa şimdi çalıştır
+          if (bekleyenKaydet) {
+            bekleyenKaydet = false
+            get().dbeyeKaydet()
+          }
         }
       },
 
