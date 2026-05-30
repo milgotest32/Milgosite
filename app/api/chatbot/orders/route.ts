@@ -3,7 +3,8 @@ import { createClient } from '@supabase/supabase-js'
 
 export const dynamic = 'force-dynamic'
 
-const CHATBOT_SECRET = process.env.CHATBOT_SECRET || 'milgo-chatbot-2025'
+// Secret mutlaka Vercel env'den gelecek — fallback yok
+const CHATBOT_SECRET = process.env.CHATBOT_SECRET
 
 function serviceClient() {
   return createClient(
@@ -31,9 +32,9 @@ const ODEME_TR: Record<string, string> = {
 }
 
 export async function GET(req: NextRequest) {
-  // Token kontrolü
-  const token = req.headers.get('x-chatbot-secret') || req.nextUrl.searchParams.get('secret')
-  if (token !== CHATBOT_SECRET) {
+  // Token kontrolü — sadece header üzerinden (URL param güvensiz: loglara düşer)
+  const token = req.headers.get('x-chatbot-secret')
+  if (!token || token !== CHATBOT_SECRET) {
     return NextResponse.json({ error: 'Yetkisiz' }, { status: 401 })
   }
 
