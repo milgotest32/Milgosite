@@ -54,7 +54,7 @@ export const useSepet = create<SepetStore>()(
 
       ekle: (urun, adet = 1, variant) => {
         set(s => {
-          const idx = s.items.findIndex(i => i.product_id === urun.id && i.variant_id === variant?.id)
+          const idx = s.items.findIndex(i => i.product_id === urun.id && (i.variant_id ?? undefined) === (variant?.id ?? undefined))
           if (idx >= 0) {
             const items = [...s.items]
             items[idx] = { ...items[idx], adet: items[idx].adet + adet }
@@ -141,7 +141,7 @@ export const useSepet = create<SepetStore>()(
         set(s => {
           const merged = [...dbItems]
           s.items.forEach(localItem => {
-            const idx = merged.findIndex(i => i.product_id === localItem.product_id && i.variant_id === localItem.variant_id)
+            const idx = merged.findIndex(i => i.product_id === localItem.product_id && (i.variant_id || null) === (localItem.variant_id || null))
             if (idx < 0) merged.push(localItem)
           })
           return { items: merged }
@@ -149,7 +149,7 @@ export const useSepet = create<SepetStore>()(
 
         // Sadece yeni local ürün eklendiyse DB'ye yaz
         const localOnlyItems = get().items.filter(
-          localItem => !dbItems.find(d => d.product_id === localItem.product_id && d.variant_id === localItem.variant_id)
+          localItem => !dbItems.find(d => d.product_id === localItem.product_id && (d.variant_id || null) === (localItem.variant_id || null))
         )
         if (localOnlyItems.length > 0) get().dbeyeKaydet()
       },
