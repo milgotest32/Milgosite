@@ -1,5 +1,5 @@
-const CACHE_NAME = 'milgo-v1'
-const STATIC_ASSETS = ['/', '/urunler', '/abonelik', '/offline']
+const CACHE_NAME = 'milgo-v3'
+const STATIC_ASSETS = ['/', '/urunler', '/blog', '/iletisim', '/offline']
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
@@ -20,7 +20,8 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return
   if (!e.request.url.startsWith(self.location.origin)) return
-  
+  if (e.request.url.includes('/api/')) return // API isteklerini cache'leme
+
   e.respondWith(
     fetch(e.request)
       .then(res => {
@@ -30,6 +31,6 @@ self.addEventListener('fetch', (e) => {
         }
         return res
       })
-      .catch(() => caches.match(e.request).then(cached => cached || caches.match('/')))
+      .catch(() => caches.match(e.request).then(cached => cached || caches.match('/offline')))
   )
 })

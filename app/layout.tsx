@@ -21,6 +21,11 @@ const cormorant = Cormorant_Garamond({
 
 export const metadata: Metadata = {
   title: 'Milgo | Çiftlikten Sofranıza',
+  manifest: '/manifest.json',
+  icons: {
+    icon: '/icons/favicon-32.png',
+    apple: '/icons/apple-touch-icon.png',
+  },
   description: 'ATASANCAK Çiftliği\'nden günlük toplanan çiğ süt, geleneksel yöntemlerle hazırlanan peynir ve tereyağı. Doğal, katkısız, İstanbul\'a aynı gün teslimat.',
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://milgo.com.tr'),
   themeColor: '#E8567A',
