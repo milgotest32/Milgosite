@@ -19,6 +19,6 @@ export const KuponService = {
   },
 
   async kullan(id: string) {
-    await supabase.rpc('kupon_kullan', { p_id: id })
+    await supabase.rpc('kupon_kullan', { p_kod: id })
   }
 }
