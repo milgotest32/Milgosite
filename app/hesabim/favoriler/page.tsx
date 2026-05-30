@@ -1,45 +1,38 @@
 'use client'
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
+import { useFavori } from '@/lib/favori'
 import { ArrowLeft, Heart, ShoppingBag } from 'lucide-react'
 import ProductCard from '@/components/product/ProductCard'
 export const dynamic = 'force-dynamic'
-
-const DEPO_KEY = 'milgo_favoriler'
-
-function favoriOku(): string[] {
-  try { return JSON.parse(localStorage.getItem(DEPO_KEY) || '[]') } catch { return [] }
-}
 
 export default function HesabimFavorilerPage() {
   const [urunler, setUrunler] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const router = useRouter()
-
-  const yukle = useCallback(async () => {
-    const ids = favoriOku()
-    if (ids.length === 0) { setUrunler([]); setLoading(false); return }
-    const { data } = await supabase
-      .from('site_products')
-      .select('*, site_product_images(*), site_kategoriler(name,slug)')
-      .in('id', ids)
-      .eq('durum', 'active')
-    // localStorage sırasını koru
-    const sirali = ids.map(id => (data || []).find((u: any) => u.id === id)).filter(Boolean)
-    setUrunler(sirali)
-    setLoading(false)
-  }, [])
+  const ids = useFavori(s => s.ids)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (!data.session) { router.push('/giris'); return }
-      yukle()
     })
-    window.addEventListener('milgo_favori_degisti', yukle)
-    return () => window.removeEventListener('milgo_favori_degisti', yukle)
-  }, [router, yukle])
+  }, [router])
+
+  useEffect(() => {
+    if (ids.length === 0) { setUrunler([]); setLoading(false); return }
+    supabase
+      .from('site_products')
+      .select('*, site_product_images(*), site_kategoriler(name,slug)')
+      .in('id', ids)
+      .eq('durum', 'active')
+      .then(({ data }) => {
+        const sirali = ids.map(id => (data || []).find((u: any) => u.id === id)).filter(Boolean)
+        setUrunler(sirali)
+        setLoading(false)
+      })
+  }, [ids])
 
   return (
     <div style={{ minHeight: '100vh', background: '#F0EEF8', padding: '32px 24px' }}>
