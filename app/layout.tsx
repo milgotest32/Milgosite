@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Nunito, Cormorant_Garamond } from 'next/font/google'
 import './globals.css'
 import LayoutClient from '@/components/layout/LayoutClient'
@@ -19,6 +19,10 @@ const cormorant = Cormorant_Garamond({
   display: 'swap',
 })
 
+export const viewport: Viewport = {
+  themeColor: '#E8567A',
+}
+
 export const metadata: Metadata = {
   title: 'Milgo | Çiftlikten Sofranıza',
   manifest: '/manifest.json',
@@ -28,7 +32,7 @@ export const metadata: Metadata = {
   },
   description: 'ATASANCAK Çiftliği\'nden günlük toplanan çiğ süt, geleneksel yöntemlerle hazırlanan peynir ve tereyağı. Doğal, katkısız, İstanbul\'a aynı gün teslimat.',
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://milgo.com.tr'),
-  themeColor: '#E8567A',
+
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
