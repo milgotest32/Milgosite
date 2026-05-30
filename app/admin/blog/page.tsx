@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic'
 
 const slugify = (t: string) => t.toLowerCase().replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ç/g,'c').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')
 
-const bos = { baslik:'', slug:'', ozet:'', icerik:'', gorsel_url:'', durum:'taslak' }
+const bos = { baslik:'', slug:'', ozet:'', icerik:'', gorsel_url:'', durum:'taslak', okuma_suresi: 1, etiketler: '', kategori_id: '', seo_title: '', seo_description: '' }
 
 export default function BlogPage() {
   const [yazilar, setYazilar] = useState<any[]>([])
@@ -67,7 +67,12 @@ export default function BlogPage() {
           <div>{lbl('Başlık *')}<input value={form.baslik} onChange={e => { set('baslik', e.target.value); if (!form.slug || mode === 'yeni') set('slug', slugify(e.target.value)) }} style={inpStyle} placeholder="Yazı başlığı" /></div>
           <div>{lbl('Slug')}<input value={form.slug} onChange={e => set('slug', e.target.value)} style={inpStyle} placeholder="otomatik-olusturulur" /></div>
           <div>{lbl('Özet')}<textarea value={form.ozet} onChange={e => set('ozet', e.target.value)} rows={3} style={{ ...inpStyle, resize: 'vertical' }} placeholder="Kısa özet..." /></div>
-          <div>{lbl('İçerik')}<textarea value={form.icerik} onChange={e => set('icerik', e.target.value)} rows={12} style={{ ...inpStyle, resize: 'vertical' }} placeholder="Yazı içeriği..." /></div>
+          <div>{lbl('İçerik')}<textarea value={form.icerik} onChange={e => {
+            set('icerik', e.target.value)
+            // Otomatik okuma süresi: ortalama 200 kelime/dk
+            const kelimeSayisi = e.target.value.replace(/<[^>]+>/g,'').split(/\s+/).filter(Boolean).length
+            set('okuma_suresi', String(Math.max(1, Math.ceil(kelimeSayisi / 200))))
+          }} rows={12} style={{ ...inpStyle, resize: 'vertical' }} placeholder="Yazı içeriği..." /></div>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #F0ECF5', padding: '20px' }}>
