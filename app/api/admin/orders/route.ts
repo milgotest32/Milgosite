@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireAdmin } from '@/lib/supabase/admin-check'
 export const dynamic = 'force-dynamic'
 
 function serviceClient() {
@@ -11,6 +12,9 @@ function serviceClient() {
 }
 
 export async function GET() {
+  const auth = await requireAdmin()
+  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
+
   const db = serviceClient()
   const { data, error } = await db
     .from('site_siparisler')

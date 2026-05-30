@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireAdmin } from '@/lib/supabase/admin-check'
 export const dynamic = 'force-dynamic'
 
 function serviceClient() {
@@ -11,6 +12,8 @@ function serviceClient() {
 }
 
 export async function GET() {
+  const auth = await requireAdmin()
+  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
   const db = serviceClient()
   const { data: musteriler, error: mErr } = await db
     .from('site_musteriler')
@@ -39,6 +42,8 @@ export async function GET() {
 }
 
 export async function PATCH(req: NextRequest) {
+  const auth = await requireAdmin()
+  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
   const db = serviceClient()
   const { id, role } = await req.json()
   if (!id || !role) return NextResponse.json({ error: 'id ve role zorunlu' }, { status: 400 })

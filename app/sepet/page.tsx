@@ -23,7 +23,7 @@ export default function SepetPage() {
       if (d.gecerli) {
         setKupon(d.kupon, d.indirim)
         setKuponBas(true)
-        setKuponMesaj(`✓ %${d.kupon.deger} indirim uygulandı! -₺${d.indirim.toFixed(2)}`)
+        setKuponMesaj(d.kupon.tip === 'yuzde' ? `✓ %${d.kupon.deger} indirim uygulandı! -₺${d.indirim.toFixed(2)}` : `✓ ₺${d.indirim.toFixed(2)} indirim uygulandı!`)
         toast.success('Kupon uygulandı!')
       } else {
         setKuponMesaj(d.hata)

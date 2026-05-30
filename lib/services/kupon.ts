@@ -19,6 +19,6 @@ export const KuponService = {
   },
 
   async kullan(id: string) {
-    await supabase.from('site_kuponlar').update({ kullanim_sayisi: supabase.rpc('increment', { x: 1 }) }).eq('id', id)
+    await supabase.rpc('kupon_kullan', { p_id: id })
   }
 }

@@ -145,7 +145,7 @@ export default function OdemePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          siparis_id: siparis.id, tutar: genelToplam(),
+          siparis_id: siparis.id, tutar: siparis.toplam,
           email: form.email, adres: form,
           sepet: items.map(i => [i.variant ? `${i.urun.name} (${i.variant.name})` : i.urun.name, (i.variant?.fiyat ?? i.urun.fiyat).toFixed(2), i.adet]),
         })
@@ -158,9 +158,10 @@ export default function OdemePage() {
         setYukleniyor(false)
         return
       }
+      // FIX: önce token set et, sonra temizle (sıra önemli)
       siparisBasarili.current = true
-      temizle()
       setPaytrToken(token)
+      temizle()
     } catch (e: any) {
       toast.error(e.message || 'Bir hata oluştu')
       setYukleniyor(false)

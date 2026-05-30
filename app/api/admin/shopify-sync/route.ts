@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
+import { requireAdmin } from '@/lib/supabase/admin-check'
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 
@@ -35,6 +36,8 @@ const DURUM_MAP: any = {
 }
 
 export async function POST(req: NextRequest) {
+  const auth = await requireAdmin()
+  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
   const db = createServerClient()
   const { tip = 'hepsi' } = await req.json().catch(() => ({}))
 
@@ -174,6 +177,8 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
+  const auth = await requireAdmin()
+  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
   if (!SHOPIFY_TOKEN) {
     return NextResponse.json({
       ok: false,

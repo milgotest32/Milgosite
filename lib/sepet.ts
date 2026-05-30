@@ -22,13 +22,11 @@ interface SepetStore {
   dbeyeKaydet: () => Promise<void>
 }
 
-// Supabase'den kullanıcının sepetini yükle
 async function getSepetId(userId: string): Promise<string | null> {
   const { data } = await supabase
     .from('site_sepetler')
     .select('id')
     .eq('user_id', userId)
-    
     .single()
   return data?.id || null
 }
@@ -64,7 +62,6 @@ export const useSepet = create<SepetStore>()(
           }
           return { items: [...s.items, { product_id: urun.id, variant_id: variant?.id, urun, variant, adet }] }
         })
-        // DB'ye kaydet (async, sessizce)
         get().dbeyeKaydet()
       },
 
@@ -79,77 +76,84 @@ export const useSepet = create<SepetStore>()(
         get().dbeyeKaydet()
       },
 
-      temizle: () => set({ items: [], kupon: null, indirim: 0, notlar: '' }),
+      // FIX #1: temizle() artık DB'yi de temizliyor
+      temizle: () => {
+        set({ items: [], kupon: null, indirim: 0, notlar: '' })
+        supabase.auth.getUser().then(({ data: { user } }) => {
+          if (!user) return
+          getSepetId(user.id).then(sepetId => {
+            if (sepetId) supabase.from('site_sepet_kalemleri').delete().eq('sepet_id', sepetId)
+          })
+        })
+      },
+
       setKupon: (kupon, indirim) => set({ kupon, indirim }),
       setNotlar: (notlar) => set({ notlar }),
 
-      // Giriş yapınca DB'den yükle, local ile merge et
+      // FIX #5: DB boşsa local ürünleri kaybetme
       dbdenYukle: async () => {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return
 
         const sepetId = await getSepetId(user.id)
-        if (!sepetId) return
+
+        // DB'de sepet yoksa, local ürünleri koru (giriş öncesi eklenmiş)
+        if (!sepetId) {
+          const localItems = get().items
+          if (localItems.length > 0) get().dbeyeKaydet()
+          return
+        }
 
         const { data: kalemleri } = await supabase
           .from('site_sepet_kalemleri')
           .select('product_id, variant_id, adet, urun_ad, urun_gorsel, fiyat')
           .eq('sepet_id', sepetId)
 
-        if (!kalemleri?.length) return
+        const productIds = [...new Set((kalemleri || []).map((k: any) => k.product_id))]
 
-        // Ürün detaylarını çek
-        const productIds = [...new Set(kalemleri.map((k: any) => k.product_id))]
-        const { data: products } = await supabase
-          .from('site_products')
-          .select('*, site_product_images(url, ana)')
-          .in('id', productIds)
+        let dbItems: SepetItem[] = []
 
-        const productMap = Object.fromEntries((products || []).map((p: any) => [p.id, p]))
+        if (productIds.length > 0) {
+          const { data: products } = await supabase
+            .from('site_products')
+            .select('*, site_product_images(url, ana)')
+            .in('id', productIds)
 
-        // Variant detaylarını çek
-        const variantIds = kalemleri.filter((k: any) => k.variant_id).map((k: any) => k.variant_id)
-        let variantMap: Record<string, any> = {}
-        if (variantIds.length > 0) {
-          const { data: variants } = await supabase
-            .from('site_variants')
-            .select('*')
-            .in('id', variantIds)
-          variantMap = Object.fromEntries((variants || []).map((v: any) => [v.id, v]))
+          const productMap = Object.fromEntries((products || []).map((p: any) => [p.id, p]))
+
+          const variantIds = (kalemleri || []).filter((k: any) => k.variant_id).map((k: any) => k.variant_id)
+          let variantMap: Record<string, any> = {}
+          if (variantIds.length > 0) {
+            const { data: variants } = await supabase.from('site_variants').select('*').in('id', variantIds)
+            variantMap = Object.fromEntries((variants || []).map((v: any) => [v.id, v]))
+          }
+
+          dbItems = (kalemleri || []).map((k: any) => ({
+            product_id: k.product_id,
+            variant_id: k.variant_id,
+            adet: k.adet,
+            urun: productMap[k.product_id] || { id: k.product_id, name: k.urun_ad, fiyat: k.fiyat },
+            variant: k.variant_id ? variantMap[k.variant_id] : undefined,
+          }))
         }
 
-        const dbItems: SepetItem[] = kalemleri.map((k: any) => ({
-          product_id: k.product_id,
-          variant_id: k.variant_id,
-          adet: k.adet,
-          urun: productMap[k.product_id] || { id: k.product_id, name: k.urun_ad, fiyat: k.fiyat },
-          variant: k.variant_id ? variantMap[k.variant_id] : undefined,
-        }))
-
-        // DB her zaman yetkili kaynak — sadece DB'de olmayan local ürünleri ekle
+        // DB yetkili kaynak — local'den sadece DB'de olmayanları ekle
         set(s => {
           const merged = [...dbItems]
           s.items.forEach(localItem => {
             const idx = merged.findIndex(i => i.product_id === localItem.product_id && i.variant_id === localItem.variant_id)
-            if (idx < 0) {
-              // DB'de yok ama local'de var (giriş öncesi eklendi) → ekle
-              merged.push(localItem)
-            }
-            // DB'de varsa DB'nin adedini kullan, local'i yoksay
+            if (idx < 0) merged.push(localItem)
           })
           return { items: merged }
         })
 
-        // Sadece local'den yeni ürün eklendiyse DB'ye yaz
+        // Sadece yeni local ürün eklendiyse DB'ye yaz
         const localOnlyItems = get().items.filter(
           localItem => !dbItems.find(d => d.product_id === localItem.product_id && d.variant_id === localItem.variant_id)
         )
-        if (localOnlyItems.length > 0) {
-          get().dbeyeKaydet()
-        }
+        if (localOnlyItems.length > 0) get().dbeyeKaydet()
       },
 
-      // Sepeti DB'ye kaydet
       dbeyeKaydet: async () => {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return
@@ -158,7 +162,6 @@ export const useSepet = create<SepetStore>()(
         if (!sepetId) return
 
         const items = get().items
-        // Mevcut kalemleri sil, yeniden yaz
         await supabase.from('site_sepet_kalemleri').delete().eq('sepet_id', sepetId)
         if (items.length > 0) {
           await supabase.from('site_sepet_kalemleri').insert(
