@@ -111,6 +111,60 @@ export default function AdminAboneliklerPage() {
 
   return (
     <div>
+      {/* Sekme butonları */}
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+        {([['abonelikler', '📋 Abonelikler'], ['kapasite', '📊 Kapasite Yönetimi']] as const).map(([k, ad]) => (
+          <button key={k} onClick={() => { setAktifSekme(k); if (k === 'kapasite') kapasite_yukle() }}
+            style={{ padding: '8px 18px', borderRadius: '50px', border: '1.5px solid', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
+              borderColor: aktifSekme === k ? '#E8567A' : '#F0ECF5',
+              background: aktifSekme === k ? 'linear-gradient(135deg,#FEF0F4,#EBF7FC)' : '#fff',
+              color: aktifSekme === k ? '#E8567A' : '#6B7280' }}>
+            {ad}
+          </button>
+        ))}
+      </div>
+
+      {aktifSekme === 'kapasite' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1C1B2E', margin: 0 }}>{AY} Kapasitesi</h2>
+              <p style={{ fontSize: '13px', color: '#6B7280', margin: '4px 0 0' }}>Her plan için 3 fiyat dilimi tanımlayın.</p>
+            </div>
+            <button onClick={kapasite_kaydet} disabled={kapasiteYukleniyor}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg,#E8567A,#3B9FCC)', color: '#fff', border: 'none', borderRadius: '50px', padding: '10px 20px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+              <Save size={14} /> Kaydet
+            </button>
+          </div>
+          {kapasiteYukleniyor ? <p style={{ color: '#9CA3AF', fontSize: '14px' }}>Yükleniyor...</p> : (
+            (['baslangic', 'aile', 'premium'] as const).map(plan => {
+              const d = kapasite[plan] || {}
+              const PLAN_AD: Record<string, string> = { baslangic: 'Başlangıç', aile: 'Aile', premium: 'Premium' }
+              return (
+                <div key={plan} style={{ background: '#fff', border: '1px solid #F0ECF5', borderRadius: '16px', padding: '20px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: PLAN_RENK[plan] }} />
+                    <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1C1B2E', margin: 0 }}>{PLAN_AD[plan]} Planı</h3>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px' }}>
+                    {([['toplam_kapasite','Toplam Kapasite'],['dilim_1_adet','1. Dilim Adet'],['dilim_1_fiyat','1. Dilim Fiyat (₺)'],['dilim_2_adet','2. Dilim Adet'],['dilim_2_fiyat','2. Dilim Fiyat (₺)'],['dilim_3_adet','3. Dilim Adet'],['dilim_3_fiyat','3. Dilim Fiyat (₺)']] as const).map(([alan, label]) => (
+                      <div key={alan}>
+                        <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: '#6B7280', marginBottom: '4px' }}>{label}</label>
+                        <input type="number" value={d[alan] || ''} onChange={e => setKap(plan, alan, e.target.value)}
+                          style={{ width: '100%', background: '#F8F7FC', border: '1px solid #F0ECF5', borderRadius: '10px', padding: '8px 12px', fontSize: '14px', color: '#1C1B2E', outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' }} />
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ marginTop: '12px', background: '#F8F7FC', borderRadius: '10px', padding: '10px 14px', fontSize: '12px', color: '#6B7280' }}>
+                    Toplam: {Number(d.dilim_1_adet||0) + Number(d.dilim_2_adet||0) + Number(d.dilim_3_adet||0)} / {d.toplam_kapasite || 100} kapasite tanımlı
+                  </div>
+                </div>
+              )
+            })
+          )}
+        </div>
+      )}
+
       {/* Başlık */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
         <div>
