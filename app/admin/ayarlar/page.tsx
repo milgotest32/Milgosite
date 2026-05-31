@@ -33,12 +33,15 @@ export default function AyarlarPage() {
 
   const kaydet = async () => {
     setSaving(true)
+    const rows: { grup: string; anahtar: string; deger: string }[] = []
     for (const [grup, keys] of Object.entries(ayarlar)) {
-      for (const [anahtar, deger] of Object.entries(keys)) {
-        await supabase.from('site_ayarlar').upsert({ grup, anahtar, deger }, { onConflict: 'grup,anahtar' })
+      for (const [anahtar, deger] of Object.entries(keys as Record<string, string>)) {
+        rows.push({ grup, anahtar, deger })
       }
     }
-    toast.success('Ayarlar kaydedildi!')
+    const { error } = await supabase.from('site_ayarlar').upsert(rows, { onConflict: 'grup,anahtar' })
+    if (error) toast.error('Kayıt hatası!')
+    else toast.success('Ayarlar kaydedildi!')
     setSaving(false)
   }
 
