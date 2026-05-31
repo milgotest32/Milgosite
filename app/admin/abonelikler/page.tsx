@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
-import { RefreshCw, Search, Phone, Mail, MapPin } from 'lucide-react'
+import { RefreshCw, Search, Phone, Mail, MapPin, BarChart2, Save } from 'lucide-react'
 import toast from 'react-hot-toast'
 export const dynamic = 'force-dynamic'
 
@@ -18,6 +18,9 @@ export default function AdminAboneliklerPage() {
   const [arama, setArama] = useState('')
   const [yukleniyor, setYukleniyor] = useState(true)
   const [islem, setIslem] = useState<string | null>(null)
+  const [aktifSekme, setAktifSekme] = useState<'abonelikler' | 'kapasite'>('abonelikler')
+  const [kapasite, setKapasite] = useState<Record<string, any>>({})
+  const [kapasiteYukleniyor, setKapasiteYukleniyor] = useState(false)
 
   const yukle = async () => {
     setYukleniyor(true)
@@ -38,12 +41,55 @@ export default function AdminAboneliklerPage() {
 
   useEffect(() => { yukle() }, [filtre])
 
+  const PLANLAR_ADI: Record<string, string> = { baslangic: 'Başlangıç', aile: 'Aile', premium: 'Premium' }
+  const AY = new Date().toISOString().slice(0, 7)
+
+  const kapasite_yukle = async () => {
+    setKapasiteYukleniyor(true)
+    const { data } = await supabase.from('site_kapasite_dilimleri').select('*').eq('ay', AY)
+    const map: Record<string, any> = {}
+    ;(data || []).forEach((d: any) => { map[d.plan] = d })
+    // Varsayılan değerler yoksa doldur
+    ;['baslangic', 'aile', 'premium'].forEach(plan => {
+      if (!map[plan]) map[plan] = {
+        plan, ay: AY, toplam_kapasite: 100, aktif: true,
+        dilim_1_adet: 40, dilim_1_fiyat: plan === 'baslangic' ? 520 : plan === 'aile' ? 980 : 1380,
+        dilim_2_adet: 35, dilim_2_fiyat: plan === 'baslangic' ? 580 : plan === 'aile' ? 1080 : 1520,
+        dilim_3_adet: 25, dilim_3_fiyat: plan === 'baslangic' ? 650 : plan === 'aile' ? 1180 : 1680,
+      }
+    })
+    setKapasite(map)
+    setKapasiteYukleniyor(false)
+  }
+
+  const kapasite_kaydet = async () => {
+    setKapasiteYukleniyor(true)
+    for (const plan of ['baslangic', 'aile', 'premium']) {
+      const d = kapasite[plan]
+      if (!d) continue
+      await supabase.from('site_kapasite_dilimleri').upsert({
+        ay: AY, plan,
+        toplam_kapasite: Number(d.toplam_kapasite),
+        dilim_1_adet: Number(d.dilim_1_adet), dilim_1_fiyat: Number(d.dilim_1_fiyat),
+        dilim_2_adet: Number(d.dilim_2_adet), dilim_2_fiyat: Number(d.dilim_2_fiyat),
+        dilim_3_adet: Number(d.dilim_3_adet), dilim_3_fiyat: Number(d.dilim_3_fiyat),
+        aktif: true,
+      }, { onConflict: 'ay,plan' })
+    }
+    toast.success('Kapasite dilimleri kaydedildi')
+    setKapasiteYukleniyor(false)
+  }
+
+  const setKap = (plan: string, alan: string, deger: any) => {
+    setKapasite((prev: Record<string, any>) => ({ ...prev, [plan]: { ...prev[plan], [alan]: deger } }))
+  }
+
   const durumGuncelle = async (id: string, aktif: boolean, durum: string) => {
     setIslem(id)
     const { error } = await supabase.from('site_abonelikler').update({ aktif, durum }).eq('id', id)
     if (error) { toast.error('İşlem başarısız'); setIslem(null); return }
     toast.success('Güncellendi')
-    setAbonelikler(prev => prev.map(a => a.id === id ? { ...a, aktif, durum } : a))
+    setAbonelikler((prev: any[]) => prev.map(a => a.id === id ? { ...a, aktif, durum } : a))
     setIslem(null)
   }
 
@@ -93,6 +139,7 @@ export default function AdminAboneliklerPage() {
         ))}
       </div>
 
+      {aktifSekme === 'abonelikler' && <>
       {/* Filtreler + Arama */}
       <div style={{ display: 'flex', gap: '10px', marginBottom: '16px', flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', gap: '6px' }}>
@@ -207,6 +254,8 @@ export default function AdminAboneliklerPage() {
           })}
         </div>
       )}
-    </div>
+    </>
+    }
+  </div>
   )
 }

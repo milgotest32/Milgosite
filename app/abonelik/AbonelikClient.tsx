@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase/client'
-import { Check, RefreshCw } from 'lucide-react'
+import { Check, RefreshCw, Zap } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,22 +15,27 @@ export default function AbonelikClient() {
   const [secili, setSecili] = useState('aile')
   const [form, setForm] = useState({ ad: '', email: '', telefon: '', adres: '', ilce: '' })
   const [userId, setUserId] = useState<string | null>(null)
+  const [kapasite, setKapasite] = useState<{ aktif: boolean; planlar?: any[] }>({ aktif: false })
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(({ data: { user } }: any) => {
       if (!user) return
       setUserId(user.id)
-      supabase.from('site_users').select('ad,soyad,telefon').eq('id', user.id).single().then(({ data }) => {
-        if (data) setForm(f => ({ ...f, ad: `${data.ad || ''} ${data.soyad || ''}`.trim(), email: user.email || '', telefon: data.telefon || '' }))
-        else setForm(f => ({ ...f, email: user.email || '' }))
+      supabase.from('site_users').select('ad,soyad,telefon').eq('id', user.id).single().then(({ data }: any) => {
+        if (data) setForm((f: any) => ({ ...f, ad: `${data.ad || ''} ${data.soyad || ''}`.trim(), email: user.email || '', telefon: data.telefon || '' }))
+        else setForm((f: any) => ({ ...f, email: user.email || '' }))
       })
     })
   }, [])
+  useEffect(() => {
+    fetch('/api/kapasite').then(r => r.json()).then(data => setKapasite(data)).catch(() => {})
+  }, [])
+
   const [basari, setBasari] = useState(false)
   const [yukleniyor, setYukleniyor] = useState(false)
   const [hata, setHata] = useState('')
 
-  const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }))
+  const set = (k: string, v: string) => setForm((f: any) => ({ ...f, [k]: v }))
 
   const kaydet = async () => {
     if (!form.ad || !form.email || !form.telefon || !form.adres || !form.ilce) {
@@ -42,12 +47,20 @@ export default function AbonelikClient() {
     setHata('')
     const plan = PLANLAR.find(p => p.slug === secili)!
     setYukleniyor(true)
+
+    // Kapasite sistemi açıksa güncel fiyatı kilitle
+    const kapasiePlani = kapasite.aktif ? kapasite.planlar?.find((p: any) => p.plan === secili) : null
+    const guncelFiyat = kapasiePlani ? kapasiePlani.guncelFiyat : plan.fiyat
+    const rezervasyonAyi = kapasite.aktif && kapasite.planlar ? new Date().toISOString().slice(0, 7) : null
+
     await supabase.from('site_abonelikler').insert({
       musteri_id: userId || undefined,
       musteri_ad: form.ad, musteri_email: form.email,
       musteri_telefon: form.telefon,
       teslimat_adres: `${form.adres}, ${form.ilce}`,
-      plan: secili, haftalik_litre: plan.litre, fiyat: plan.fiyat,
+      plan: secili, haftalik_litre: plan.litre, fiyat: guncelFiyat,
+      kilitli_fiyat: kapasite.aktif ? guncelFiyat : null,
+      rezervasyon_ayi: rezervasyonAyi,
     })
 
     // n8n webhook bildirimi
@@ -119,7 +132,35 @@ export default function AbonelikClient() {
               {plan.one && <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: '#E8567A', color: '#fff', fontSize: '10px', fontWeight: 800, padding: '4px 14px', borderRadius: '50px', whiteSpace: 'nowrap' }}>EN POPÜLER</div>}
               <h3 style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '22px', color: '#1A0A12', marginBottom: '4px' }}>{plan.ad}</h3>
               <p style={{ fontSize: '13px', color: '#7A6070', marginBottom: '16px' }}>{plan.litre}L / hafta</p>
-              <p style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '32px', color: '#1A0A12', marginBottom: '20px' }}>₺{plan.fiyat}<span style={{ fontSize: '13px', color: '#7A6070' }}>/ay</span></p>
+              {(() => {
+                const kp = kapasite.aktif ? kapasite.planlar?.find((p: any) => p.plan === plan.slug) : null
+                return (
+                  <>
+                    <p style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: '32px', color: '#1A0A12', marginBottom: kp ? '8px' : '20px' }}>
+                      ₺{kp ? kp.guncelFiyat : plan.fiyat}<span style={{ fontSize: '13px', color: '#7A6070' }}>/ay</span>
+                    </p>
+                    {kp && !kp.dolu && (
+                      <div style={{ marginBottom: '16px' }}>
+                        {/* Doluluk çubuğu */}
+                        <div style={{ background: '#F3F4F6', borderRadius: '99px', height: '6px', marginBottom: '6px', overflow: 'hidden' }}>
+                          <div style={{ height: '100%', borderRadius: '99px', width: `${kp.dolulukYuzde}%`, background: kp.dolulukYuzde > 80 ? '#E8567A' : kp.dolulukYuzde > 50 ? '#F59E0B' : '#22C55E', transition: 'width 0.5s' }} />
+                        </div>
+                        <p style={{ fontSize: '11px', color: '#7A6070', margin: 0 }}>
+                          {kp.dolulukYuzde}% dolu · {kp.kalan} yer kaldı
+                          {kp.sonrakiFiyat && kp.sonrakiKalan && (
+                            <span style={{ color: '#E8567A', fontWeight: 700 }}> · {kp.sonrakiKalan} sonra ₺{kp.sonrakiFiyat}</span>
+                          )}
+                        </p>
+                      </div>
+                    )}
+                    {kp?.dolu && (
+                      <div style={{ marginBottom: '16px', background: '#FEE8EF', borderRadius: '10px', padding: '8px 12px', fontSize: '12px', color: '#E8567A', fontWeight: 700 }}>
+                        Bu ay doldu — gelecek aya kayıt alınıyor
+                      </div>
+                    )}
+                  </>
+                )
+              })()}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {plan.ozellikler.map(o => (
                   <div key={o} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#1A0A12' }}>
@@ -160,7 +201,12 @@ export default function AbonelikClient() {
           </div>
           <button onClick={kaydet} disabled={yukleniyor}
             style={{ width: '100%', background: 'linear-gradient(135deg,#E8567A,#3B9FCC)', color: '#fff', border: 'none', borderRadius: '50px', padding: '16px', fontSize: '15px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', opacity: yukleniyor ? 0.7 : 1 }}>
-            {yukleniyor ? 'Kaydediliyor...' : `${PLANLAR.find(p=>p.slug===secili)?.ad} Planı Başlat →`}
+            {yukleniyor ? 'Kaydediliyor...' : (() => {
+              const kp = kapasite.aktif ? kapasite.planlar?.find((p: any) => p.plan === secili) : null
+              if (kp?.dolu) return 'Gelecek Aya Kayıt Ol →'
+              if (kp) return `₺${kp.guncelFiyat} Fiyatı Kilitle →`
+              return `${PLANLAR.find(p=>p.slug===secili)?.ad} Planı Başlat →`
+            })()}
           </button>
         </div>
       </div>

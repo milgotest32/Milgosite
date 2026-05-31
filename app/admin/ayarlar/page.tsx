@@ -80,6 +80,7 @@ export default function AyarlarPage() {
     {k:'whatsapp',ad:'💬 WhatsApp'},
     {k:'guvenlik',ad:'🔒 Güvenlik'},
     {k:'webhook',ad:'🔗 Webhook'},
+    {k:'kapasite',ad:'📊 Kapasite Fiyatlama'},
   ]
 
   const inp = (label:string, grup:string, k:string, type='text', placeholder='') => (
@@ -480,6 +481,38 @@ export default function AyarlarPage() {
                   <input type="checkbox" checked={get('guvenlik','rate_limit_enabled')==='1'} onChange={e=>set('guvenlik','rate_limit_enabled',e.target.checked?'1':'0')} style={{cursor:'pointer'}}/>
                   Rate Limit Aktif
                 </label>
+              </div>
+            )}
+
+            {aktifTab==='kapasite' && (
+              <div style={{display:'flex',flexDirection:'column',gap:'24px'}}>
+                <div>
+                  <h2 style={{fontSize:'16px',fontWeight:700,color:'#1C1B2E',marginBottom:'4px'}}>Kapasite Fiyatlama Sistemi</h2>
+                  <p style={{fontSize:'13px',color:'#6B7280',margin:'0 0 20px'}}>Aylık kapasiteyi dilimler halinde fiyatlandırın. Erken rezervasyon yapan müşteriler daha ucuza kilitler.</p>
+                </div>
+
+                {/* Sistem Toggle */}
+                <div style={{background:'#F8F7FC',borderRadius:'16px',padding:'20px',border:'1px solid #F0ECF5'}}>
+                  <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                    <div>
+                      <p style={{margin:0,fontSize:'14px',fontWeight:700,color:'#1C1B2E'}}>Sistemi Aktif Et</p>
+                      <p style={{margin:'4px 0 0',fontSize:'12px',color:'#6B7280'}}>Kapalıyken abonelik sayfası normal çalışır, hiçbir şey değişmez</p>
+                    </div>
+                    <label style={{position:'relative',display:'inline-block',width:'48px',height:'28px',cursor:'pointer'}}>
+                      <input type="checkbox" checked={get('kapasite','sistem_aktif')==='1'} onChange={e=>set('kapasite','sistem_aktif',e.target.checked?'1':'0')} style={{opacity:0,width:0,height:0}}/>
+                      <span style={{position:'absolute',inset:0,background:get('kapasite','sistem_aktif')==='1'?'#E07090':'#D1D5DB',borderRadius:'24px',transition:'0.2s'}}>
+                        <span style={{position:'absolute',left:get('kapasite','sistem_aktif')==='1'?'22px':'2px',top:'2px',width:'20px',height:'20px',background:'#fff',borderRadius:'50%',transition:'0.2s',boxShadow:'0 1px 4px rgba(0,0,0,0.2)'}}/>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                {get('kapasite','sistem_aktif')==='1' && (
+                  <div style={{background:'#EBF7FC',borderRadius:'12px',padding:'14px 16px',fontSize:'13px',color:'#2D5E7D',display:'flex',alignItems:'flex-start',gap:'10px'}}>
+                    <span style={{fontSize:'16px'}}>ℹ️</span>
+                    <p style={{margin:0}}>Kapasite dilimlerini <strong>Admin → Abonelikler</strong> sayfasından aylık olarak yönetin. Buradan sadece sistemi açıp kapatabilirsiniz.</p>
+                  </div>
+                )}
               </div>
             )}
             {aktifTab==='webhook' && (
