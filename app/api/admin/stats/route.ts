@@ -23,12 +23,14 @@ export async function GET() {
     { count: musteriSayisi },
     { data: siparisler },
     { data: urunler },
+    { data: kalemler },
   ] = await Promise.all([
     db.from('site_siparisler').select('*', { count: 'exact', head: true }),
     db.from('site_products').select('*', { count: 'exact', head: true }).eq('durum', 'active'),
     db.from('site_musteriler').select('*', { count: 'exact', head: true }),
     db.from('site_siparisler').select('toplam, durum, created_at, siparis_no, musteri_ad, musteri_email').order('created_at', { ascending: false }).limit(200),
     db.from('site_products').select('id, name, stok').eq('durum', 'active').lt('stok', 10).order('stok', { ascending: true }).limit(5),
+    db.from('site_siparis_kalemleri').select('urun_ad, adet, toplam').limit(1000),
   ])
 
   const bugun = new Date()
@@ -55,6 +57,17 @@ export async function GET() {
     aktif_abonelik: 0,
     son_siparisler: tumSiparisler.slice(0, 8),
     dusuk_stok: urunler || [],
-    en_cok_satanlar: [],
+    en_cok_satanlar: (() => {
+      const grouped: Record<string, { adet: number; gelir: number }> = {}
+      ;(kalemler || []).forEach((k: any) => {
+        if (!grouped[k.urun_ad]) grouped[k.urun_ad] = { adet: 0, gelir: 0 }
+        grouped[k.urun_ad].adet += k.adet
+        grouped[k.urun_ad].gelir += k.toplam
+      })
+      return Object.entries(grouped)
+        .sort((a, b) => b[1].adet - a[1].adet)
+        .slice(0, 5)
+        .map(([ad, d]) => ({ ad, ...d }))
+    })(),
   })
 }

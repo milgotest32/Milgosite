@@ -14,10 +14,12 @@ const PLANLAR = [
 export default function AbonelikClient() {
   const [secili, setSecili] = useState('aile')
   const [form, setForm] = useState({ ad: '', email: '', telefon: '', adres: '', ilce: '' })
+  const [userId, setUserId] = useState<string | null>(null)
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) return
+      setUserId(user.id)
       supabase.from('site_users').select('ad,soyad,telefon').eq('id', user.id).single().then(({ data }) => {
         if (data) setForm(f => ({ ...f, ad: `${data.ad || ''} ${data.soyad || ''}`.trim(), email: user.email || '', telefon: data.telefon || '' }))
         else setForm(f => ({ ...f, email: user.email || '' }))
@@ -41,6 +43,7 @@ export default function AbonelikClient() {
     const plan = PLANLAR.find(p => p.slug === secili)!
     setYukleniyor(true)
     await supabase.from('site_abonelikler').insert({
+      musteri_id: userId || undefined,
       musteri_ad: form.ad, musteri_email: form.email,
       musteri_telefon: form.telefon,
       teslimat_adres: `${form.adres}, ${form.ilce}`,

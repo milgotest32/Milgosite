@@ -29,11 +29,11 @@ export default function AboneliğimPage() {
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { router.push('/giris'); return }
-      const email = data.session.user.email
+      const user = data.session.user
       const { data: ab } = await supabase
         .from('site_abonelikler')
         .select('*')
-        .eq('musteri_email', email)
+        .or(`musteri_id.eq.${user.id},musteri_email.eq.${user.email}`)
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle()

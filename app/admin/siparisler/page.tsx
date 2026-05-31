@@ -32,6 +32,9 @@ export default function SiparislerPage() {
   const [hata, setHata] = useState('')
   const [arama, setArama] = useState('')
   const [guncelleniyor, setGuncelleniyor] = useState<string | null>(null)
+  const [sayfa, setSayfa] = useState(0)
+  const [dahaVar, setDahaVar] = useState(false)
+  const SAYFA_BOYUTU = 50
 
   const durumGuncelle = async (id: string, yeniDurum: string) => {
     setGuncelleniyor(id + yeniDurum)
@@ -40,22 +43,28 @@ export default function SiparislerPage() {
     setGuncelleniyor(null)
   }
 
-  useEffect(() => {
-    supabase
+  const yukle = async (s: number = 0) => {
+    setLoading(true)
+    const { data, error } = await supabase
       .from('site_siparisler')
       .select('*, site_siparis_kalemleri(*)')
       .order('created_at', { ascending: false })
-      .limit(200)
-      .then(({ data, error }) => {
-        if (error) {
-          console.error('Sipariş yükleme hatası:', error)
-          setHata(error.message)
-        } else {
-          setSiparisler(data || [])
-        }
-        setLoading(false)
-      })
-  }, [])
+      .range(s * SAYFA_BOYUTU, (s + 1) * SAYFA_BOYUTU)
+    if (error) {
+      setHata(error.message)
+    } else {
+      if (s === 0) setSiparisler(data || [])
+      else setSiparisler(prev => [...prev, ...(data || [])])
+      setDahaVar((data || []).length === SAYFA_BOYUTU + 1)
+      // SAYFA_BOYUTU+1 çekip son elemanı at - daha var mı bilgisi için
+      if ((data || []).length === SAYFA_BOYUTU + 1) {
+        setSiparisler(prev => s === 0 ? (data || []).slice(0, SAYFA_BOYUTU) : [...prev.slice(0, -1)])
+      }
+    }
+    setLoading(false)
+  }
+
+  useEffect(() => { yukle(0) }, [])
 
   const filtrelendi = siparisler.filter(s =>
     !arama ||
@@ -69,7 +78,7 @@ export default function SiparislerPage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <div>
           <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#1C1B2E' }}>Siparişler</h1>
-          {!loading && <p style={{ fontSize: '12px', color: '#9CA3AF', marginTop: '2px' }}>{siparisler.length} sipariş</p>}
+          {!loading && <p style={{ fontSize: '12px', color: '#9CA3AF', marginTop: '2px' }}>{siparisler.length} sipariş{dahaVar ? '+' : ''}</p>}
         </div>
         <div style={{ position: 'relative' }}>
           <Search size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9CA3AF' }} />
@@ -175,6 +184,15 @@ export default function SiparislerPage() {
           </tbody>
         </table></div>
       </div>
+      {dahaVar && (
+        <div style={{ textAlign: 'center', marginTop: '16px' }}>
+          <button onClick={() => { const s = sayfa + 1; setSayfa(s); yukle(s) }}
+            disabled={loading}
+            style={{ background: '#fff', border: '1px solid #F0ECF5', borderRadius: '50px', padding: '10px 24px', fontSize: '13px', fontWeight: 600, color: '#6B7280', cursor: 'pointer', fontFamily: 'inherit' }}>
+            {loading ? 'Yükleniyor...' : 'Daha Fazla Yükle'}
+          </button>
+        </div>
+      )}
     </div>
   )
 }

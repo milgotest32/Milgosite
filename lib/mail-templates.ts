@@ -11,7 +11,7 @@ export function siparisMail(siparis: any, items: any[]): string {
 <head><meta charset="utf-8"/></head>
 <body style="margin:0;padding:0;background:#F0EEF8;font-family:Arial,sans-serif">
   <div style="max-width:600px;margin:0 auto;padding:32px 16px">
-    <div style="background:#1A0A12;borderRadius:16px;padding:28px;text-align:center;margin-bottom:24px">
+    <div style="background:#1A0A12;border-radius:16px;padding:28px;text-align:center;margin-bottom:24px">
       <h1 style="color:#fff;margin:0;font-size:28px">milgo<span style="color:#F4A7B9">.</span></h1>
       <p style="color:rgba(255,255,255,0.6);margin:8px 0 0;font-size:13px">Çiftlikten Sofranıza</p>
     </div>
