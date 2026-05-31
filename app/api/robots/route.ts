@@ -3,7 +3,7 @@ import { createServerClient } from '@/lib/supabase/server'
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://milgo.com.tr'
+  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://market.milgo.com.tr'
   
   try {
     const db = createServerClient()

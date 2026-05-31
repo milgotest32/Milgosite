@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     apple: '/icons/apple-touch-icon.png',
   },
   description: 'ATASANCAK Çiftliği\'nden günlük toplanan çiğ süt, geleneksel yöntemlerle hazırlanan peynir ve tereyağı. Doğal, katkısız, İstanbul\'a aynı gün teslimat.',
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://milgo.com.tr'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://market.milgo.com.tr'),
 
   appleWebApp: {
     capable: true,
@@ -41,11 +41,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Milgo | Çiftlikten Sofranıza',
     description: 'Günlük toplanan çiğ süt, peynir ve tereyağı. Doğal, katkısız, İstanbul\'a aynı gün teslimat.',
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://milgo.com.tr',
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://market.milgo.com.tr',
     siteName: 'milgo.',
     images: [
       {
-        url: 'https://milgo.com.tr/icons/og-image.png',
+        url: 'https://market.milgo.com.tr/icons/og-image.png',
         width: 1260,
         height: 1600,
         alt: 'Milgo Çiğ Süt',
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Milgo | Çiftlikten Sofranıza',
     description: 'Günlük toplanan çiğ süt, peynir ve tereyağı. Doğal, katkısız.',
-    images: ['https://milgo.com.tr/icons/og-image.png'],
+    images: ['https://market.milgo.com.tr/icons/og-image.png'],
   },
 }
 

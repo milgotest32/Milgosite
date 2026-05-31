@@ -65,7 +65,7 @@ export async function GET(req: NextRequest) {
     const kategori = kategoriTespit(u.name, u.slug)
     const stok_var = !u.stok_takip || u.stok > 0
     const fiyat = parseFloat(u.fiyat)
-    const link = `https://milgosite.vercel.app/urun/${u.slug}`
+    const link = `https://market.milgo.com.tr/urun/${u.slug}`
 
     // WhatsApp satırı
     const stok_icon = stok_var ? '' : ' _(stokta yok)_'

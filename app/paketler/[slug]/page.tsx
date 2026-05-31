@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     .eq('slug', slug)
     .single()
   if (!data) return { title: 'Paket Bulunamadı' }
-  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://milgo.com.tr'
+  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://market.milgo.com.tr'
   return {
     title: `${data.name} | milgo.`,
     description: data.aciklama || `${data.name} — Milgo özel paketi. Birden fazla ürünü bir arada, indirimli fiyatla alın.`,

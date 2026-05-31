@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic'
 
 export async function GET() {
   const db = createServerClient()
-  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://milgo.com.tr'
+  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://market.milgo.com.tr'
   const now = new Date().toISOString()
 
   const [

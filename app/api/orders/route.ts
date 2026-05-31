@@ -205,7 +205,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Mail gönder
-  const baseUrl = req.headers.get('origin') || 'https://milgosite.vercel.app'
+  const baseUrl = req.headers.get('origin') || 'https://market.milgo.com.tr'
   if (odeme_yontemi !== 'kart') {
     if (siparis.musteri_email) {
       await mailGonder(siparis.musteri_email, `Siparişiniz Alındı - #${siparis.siparis_no}`, siparisMail(siparis, kalemler), baseUrl)

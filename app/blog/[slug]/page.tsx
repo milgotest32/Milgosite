@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     .eq('slug', slug).single()
   if (!data) return { title: 'Blog Yazısı Bulunamadı' }
 
-  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://milgo.com.tr'
+  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://market.milgo.com.tr'
   const title = data.seo_title || data.baslik
   const description = data.seo_description || data.ozet
   const image = data.gorsel_url || `${base}/icons/og-image.png`
@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function BlogDetayPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const db = createServerClient()
-  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://milgo.com.tr'
+  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://market.milgo.com.tr'
 
   const { data: yazi } = await db.from('site_blog_yazilar')
     .select('*,site_blog_kategoriler(name,slug),site_users(ad,soyad)')

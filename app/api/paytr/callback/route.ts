@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
 
   if (check !== hash) return new NextResponse('FAIL', { status: 400 })
 
-  const baseUrl = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'https://milgosite.vercel.app'
+  const baseUrl = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'https://market.milgo.com.tr'
 
   if (status === 'success') {
     // Siparişi onayla
