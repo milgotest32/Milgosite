@@ -97,6 +97,7 @@ export default function AnaSayfa() {
   const [paketler, setPaketler] = useState<any[]>([])
   const [ic, setIc] = useState<Record<string, string>>(VARSAYILAN)
   const [bultenEmail, setBultenEmail] = useState('')
+  const [satisNoktalari, setSatisNoktalari] = useState<any[]>([])
   const [bultenDurum, setBultenDurum] = useState<'bos' | 'gonderiliyor' | 'basarili' | 'hata'>('bos')
   const [yorumlar, setYorumlar] = useState<any[]>([])
 
@@ -478,6 +479,39 @@ export default function AnaSayfa() {
           </div>
         </div>
       </section>
+
+
+      {/* ===== SATIŞ NOKTALARI ===== */}
+      {satisNoktalari.length > 0 && (
+        <section style={{ padding: 'clamp(40px,6vw,72px) clamp(20px,4vw,48px)', background: '#FFF8FA' }}>
+          <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '32px' }}>
+              <div style={{ height: '2px', flex: 1, background: 'linear-gradient(to right, #E8567A22, transparent)' }} />
+              <h2 style={{ fontFamily: 'var(--font-nunito), Nunito, sans-serif', fontSize: 'clamp(13px,1.5vw,15px)', fontWeight: 800, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#E8567A', margin: 0, whiteSpace: 'nowrap' }}>
+                SATIŞ NOKTALARIMIZ
+              </h2>
+              <div style={{ height: '2px', flex: 1, background: 'linear-gradient(to left, #E8567A22, transparent)' }} />
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center', alignItems: 'center' }}>
+              {satisNoktalari.map((n: any) => (
+                n.link ? (
+                  <a key={n.id} href={n.link} target="_blank" rel="noopener noreferrer"
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '140px', height: '100px', background: '#fff', borderRadius: '16px', border: '1px solid #F0ECF5', padding: '16px', transition: 'all 0.2s', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', textDecoration: 'none' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 24px rgba(232,86,122,0.12)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)' }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(0)' }}>
+                    <img src={n.logo_url} alt={n.ad} style={{ maxWidth: '100%', maxHeight: '68px', objectFit: 'contain' }} />
+                  </a>
+                ) : (
+                  <div key={n.id}
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '140px', height: '100px', background: '#fff', borderRadius: '16px', border: '1px solid #F0ECF5', padding: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                    <img src={n.logo_url} alt={n.ad} style={{ maxWidth: '100%', maxHeight: '68px', objectFit: 'contain' }} />
+                  </div>
+                )
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ===== BÜLTEN ===== */}
       <section style={{ padding: 'clamp(48px,7vw,88px) clamp(20px,4vw,48px)', textAlign: 'center' }}>
