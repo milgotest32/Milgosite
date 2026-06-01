@@ -1,30 +1,51 @@
 import { createClient } from '@supabase/supabase-js'
+import { headers } from 'next/headers'
 import { cookies } from 'next/headers'
 
 export async function requireAdmin(): Promise<{ ok: boolean; error?: string }> {
   try {
+    const serviceClient = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      { auth: { persistSession: false } }
+    )
+
+    // Yöntem 1: Authorization header (fetch ile gönderilirse)
+    const headerStore = await headers()
+    const authHeader = headerStore.get('authorization') || headerStore.get('Authorization')
+    if (authHeader?.startsWith('Bearer ')) {
+      const token = authHeader.slice(7)
+      const { data: { user }, error } = await serviceClient.auth.getUser(token)
+      if (!error && user) {
+        const { data: profile } = await serviceClient
+          .from('site_users').select('role').eq('id', user.id).single()
+        if (profile && ['admin', 'superadmin'].includes(profile.role)) {
+          return { ok: true }
+        }
+      }
+    }
+
+    // Yöntem 2: Cookie'den oku
     const cookieStore = await cookies()
     const allCookies = cookieStore.getAll()
-
-    // Supabase parçalı cookie'leri birleştir (sb-xxx-auth-token.0, .1, ...)
+    
+    // Tüm sb- cookie'lerini logla (debug)
+    const sbCookies = allCookies.filter(c => c.name.startsWith('sb-'))
+    
     const tokenParts: Record<string, string> = {}
     let simpleToken = ''
 
-    for (const cookie of allCookies) {
-      if (!cookie.name.startsWith('sb-') || !cookie.name.includes('auth-token')) continue
-
-      // Parçalı format: sb-xxx-auth-token.0, .1
+    for (const cookie of sbCookies) {
       const partMatch = cookie.name.match(/\.(\d+)$/)
       if (partMatch) {
         tokenParts[partMatch[1]] = cookie.value
-      } else {
+      } else if (cookie.name.includes('auth-token')) {
         simpleToken = cookie.value
       }
     }
 
     let accessToken = ''
 
-    // Parçalı token varsa birleştir
     if (Object.keys(tokenParts).length > 0) {
       const combined = Object.keys(tokenParts)
         .sort((a, b) => Number(a) - Number(b))
@@ -32,51 +53,32 @@ export async function requireAdmin(): Promise<{ ok: boolean; error?: string }> {
         .join('')
       try {
         const decoded = decodeURIComponent(combined)
-        const arr = JSON.parse(decoded)
-        accessToken = Array.isArray(arr) ? arr[0] : arr.access_token || ''
-      } catch {
-        accessToken = combined
-      }
+        const parsed = JSON.parse(decoded)
+        accessToken = Array.isArray(parsed) ? parsed[0] : parsed.access_token || ''
+      } catch { accessToken = combined }
     } else if (simpleToken) {
       try {
         const decoded = decodeURIComponent(simpleToken)
-        if (decoded.startsWith('[')) {
-          const arr = JSON.parse(decoded)
-          accessToken = arr[0] || ''
-        } else if (decoded.startsWith('{')) {
-          const obj = JSON.parse(decoded)
-          accessToken = obj.access_token || ''
-        } else {
-          accessToken = decoded
-        }
-      } catch {
-        accessToken = simpleToken
-      }
+        if (decoded.startsWith('[')) accessToken = JSON.parse(decoded)[0] || ''
+        else if (decoded.startsWith('{')) accessToken = JSON.parse(decoded).access_token || ''
+        else accessToken = decoded
+      } catch { accessToken = simpleToken }
     }
 
-    if (!accessToken) return { ok: false, error: 'Oturum bulunamadı' }
-
-    const serviceClient = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      { auth: { persistSession: false } }
-    )
+    if (!accessToken) return { ok: false, error: `Oturum bulunamadı (${sbCookies.map(c=>c.name).join(',') || 'cookie yok'})` }
 
     const { data: { user }, error: authError } = await serviceClient.auth.getUser(accessToken)
     if (authError || !user) return { ok: false, error: 'Geçersiz oturum' }
 
     const { data: profile } = await serviceClient
-      .from('site_users')
-      .select('role')
-      .eq('id', user.id)
-      .single()
+      .from('site_users').select('role').eq('id', user.id).single()
 
     if (!profile || !['admin', 'superadmin'].includes(profile.role)) {
       return { ok: false, error: 'Admin yetkisi gerekli' }
     }
 
     return { ok: true }
-  } catch (e) {
-    return { ok: false, error: 'Yetkilendirme hatası' }
+  } catch (e: any) {
+    return { ok: false, error: `Hata: ${e?.message}` }
   }
 }

@@ -29,10 +29,16 @@ export default function AdminPage() {
 
   const yukle = () => {
     setLoading(true)
-    fetch('/api/admin/stats')
-      .then(r => r.json())
-      .then(d => { if (!d.error) setStats(d) })
-      .finally(() => setLoading(false))
+    import('@/lib/supabase/client').then(async ({ supabase }) => {
+      const { data: { session } } = await supabase.auth.getSession()
+      const token = session?.access_token || ''
+      fetch('/api/admin/stats', {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+      })
+        .then(r => r.json())
+        .then(d => { if (!d.error) setStats(d); else console.error('Stats error:', d.error) })
+        .finally(() => setLoading(false))
+    })
 
     // Sepet istatistikleri
     import('@/lib/supabase/client').then(({ supabase }) => {
