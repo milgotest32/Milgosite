@@ -29,7 +29,6 @@ const nextConfig: NextConfig = {
     { source: '/collections/tum-urunler', destination: '/urunler', permanent: true },
     { source: '/products/sarimsakli-kekikli', destination: '/urun/sade-surullebilir-peynir', permanent: true },
     { source: '/blogs/tarifler', destination: '/blog', permanent: true },
-    { source: '/blogs/tarifler/milgo-ile-sebzeli-peynirli-quesadilla-tarifi', destination: '/blog/milgo-ile-sebzeli-peynirli-quesadilla-tarifi', permanent: true },
     { source: '/blogs/tarifler/kremali-makarna', destination: '/blog/kremali-makarna', permanent: true },
     { source: '/blogs/tarifler/sarimsakli-kekikli-peynirli-pizza', destination: '/blog/sarimsakli-kekikli-peynirli-pizza', permanent: true },
     { source: '/blogs/tarifler/sarimsakli-kekikli-peynirli-zeytinyagli-kabak', destination: '/blog/sarimsakli-kekikli-peynirli-zeytinyagli-kabak', permanent: true },
@@ -75,6 +74,7 @@ const nextConfig: NextConfig = {
     { source: '/blogs/tarifler/milgo-cig-sut-ile-kremali-sebze-corbasi', destination: '/blog', permanent: true },
     { source: '/blogs/tarifler/milgo-ile-limonlu-cheesecake-tarifi-ferah-hafif-ve-katkisiz-tatli', destination: '/blog', permanent: true },
     { source: '/blogs/tarifler/milgo-ile-firinda-patlican-rulo-tarifi', destination: '/blog', permanent: true },
+    { source: '/blogs/tarifler/milgo-ile-sebzeli-peynirli-quesadilla-tarifi', destination: '/blog', permanent: true },
     ]
   },
 }
