@@ -29,7 +29,6 @@ const nextConfig: NextConfig = {
     { source: '/collections/tum-urunler', destination: '/urunler', permanent: true },
     { source: '/products/sarimsakli-kekikli', destination: '/urun/sade-surullebilir-peynir', permanent: true },
     { source: '/blogs/tarifler', destination: '/blog', permanent: true },
-    { source: '/blogs/tarifler/milgo-cig-sut-ile-kakaolu-muhallebi', destination: '/blog/milgo-cig-sut-ile-kakaolu-muhallebi', permanent: true },
     { source: '/blogs/tarifler/milgo-cig-sut-ile-besamel-soslu-firin-makarna-tarifi', destination: '/blog/milgo-cig-sut-ile-besamel-soslu-firin-makarna-tarifi', permanent: true },
     { source: '/blogs/tarifler/milgo-cig-sut-ile-kremali-sebze-corbasi', destination: '/blog/milgo-cig-sut-ile-kremali-sebze-corbasi', permanent: true },
     { source: '/blogs/tarifler/milgo-ile-limonlu-cheesecake-tarifi-ferah-hafif-ve-katkisiz-tatli', destination: '/blog/milgo-ile-limonlu-cheesecake-tarifi-ferah-hafif-ve-katkisiz-tatli', permanent: true },
@@ -75,6 +74,7 @@ const nextConfig: NextConfig = {
     { source: '/pages/keba-gida-iptal-iade-politikasi', destination: '/iade-politikasi', permanent: true },
     { source: '/blogs/tarifler/lavasli-tereyagli-mini-gozlemee', destination: '/blog', permanent: true },
     { source: '/blogs/tarifler/milgo-cig-sut-ile-sutlac', destination: '/blog', permanent: true },
+    { source: '/blogs/tarifler/milgo-cig-sut-ile-kakaolu-muhallebi', destination: '/blog', permanent: true },
     ]
   },
 }
