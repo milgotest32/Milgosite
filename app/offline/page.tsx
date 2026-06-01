@@ -1,7 +1,4 @@
 'use client'
-import type { Metadata } from 'next'
-export const metadata: Metadata = { robots: { index: false, follow: false } }
-
 export default function OfflinePage() {
   return (
     <div style={{ minHeight: '100vh', background: '#F0EEF8', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px', textAlign: 'center' }}>

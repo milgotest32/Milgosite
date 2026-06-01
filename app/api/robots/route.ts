@@ -29,6 +29,14 @@ Disallow: /sepet
 Disallow: /odeme
 Disallow: /siparis-onay
 Disallow: /siparis-basarisiz
+Disallow: /giris
+Disallow: /kayit
+Disallow: /sifre-sifirla
+Disallow: /sifre-belirle
+Disallow: /favoriler
+Disallow: /arama
+Disallow: /offline
+Disallow: /whatsapp-aydinlatma
 
 Sitemap: ${base}/sitemap.xml`
 

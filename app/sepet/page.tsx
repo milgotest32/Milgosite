@@ -1,7 +1,4 @@
 'use client'
-import type { Metadata } from 'next'
-export const metadata: Metadata = { robots: { index: false, follow: false } }
-
 import { useState } from 'react'
 import Link from 'next/link'
 import { useSepet } from '@/lib/sepet'
