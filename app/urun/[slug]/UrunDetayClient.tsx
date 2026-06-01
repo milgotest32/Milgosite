@@ -227,9 +227,9 @@ export default function UrunDetayClient({ urun, benzerler, sezonBilgisi }: Props
                 <div style={{ flex: 1 }}>
                   <div style={{ background: '#FFF8F0', borderRadius: '14px', padding: '16px 20px', marginBottom: '12px', border: '1px solid #FED7AA' }}>
                     <p style={{ margin: '0 0 4px', fontSize: '15px', fontWeight: 700, color: '#C2410C' }}>🌿 Sezon Dışı</p>
-                    <p style={{ margin: 0, fontSize: '13px', color: '#7C3C1D' }}>{sezon.kapali_mesaj}</p>
+                    <p style={{ margin: 0, fontSize: '13px', color: '#7C3C1D' }}>{sezon?.kapali_mesaj}</p>
                   </div>
-                  {sezon.onkayit_aktif && (
+                  {sezon?.onkayit_aktif && (
                     onkayitDurum === 'tamam' ? (
                       <div style={{ background: '#F0FDF4', borderRadius: '12px', padding: '12px 16px', fontSize: '13px', color: '#166534', fontWeight: 600 }}>
                         ✓ Kaydınız alındı! Sezon açılınca haber vereceğiz.
