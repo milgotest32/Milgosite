@@ -47,6 +47,10 @@ function Icerik() {
   }, [])
 
   useEffect(() => {
+    supabase.from('site_ayarlar').select('deger').eq('grup', 'sezon').eq('anahtar', 'aktif').single().then(({ data }) => {
+      if (data) setSezonAktif(data.deger === '1')
+    })
+
     konumOku()
     window.addEventListener('milgo_konum_degisti', konumOku)
     return () => window.removeEventListener('milgo_konum_degisti', konumOku)

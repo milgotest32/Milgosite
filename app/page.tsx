@@ -99,6 +99,7 @@ export default function AnaSayfa() {
   const [icerikHazir, setIcerikHazir] = useState(false)
   const [bultenEmail, setBultenEmail] = useState('')
   const [satisNoktalari, setSatisNoktalari] = useState<any[]>([])
+  const [sezonAktif, setSezonAktif] = useState(true)
   const [bultenDurum, setBultenDurum] = useState<'bos' | 'gonderiliyor' | 'basarili' | 'hata'>('bos')
   const [yorumlar, setYorumlar] = useState<any[]>([])
 
@@ -146,6 +147,9 @@ export default function AnaSayfa() {
     // Ana sayfa içeriklerini yükle
     supabase.from('site_satis_noktalari').select('*').eq('aktif', true).order('sira').then(({ data }) => {
       setSatisNoktalari(data || [])
+    })
+    supabase.from('site_ayarlar').select('deger').eq('grup', 'sezon').eq('anahtar', 'aktif').single().then(({ data }) => {
+      if (data) setSezonAktif(data.deger === '1')
     })
     supabase.from('site_ayarlar').select('*').eq('grup', 'anasayfa').then(({ data }) => {
       if (data && data.length > 0) {

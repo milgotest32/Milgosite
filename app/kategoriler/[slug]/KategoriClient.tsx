@@ -44,6 +44,10 @@ export default function KategoriClient({ kategori }: { kategori: any }) {
   }, [kategori.id])
 
   useEffect(() => {
+    supabase.from('site_ayarlar').select('deger').eq('grup', 'sezon').eq('anahtar', 'aktif').single().then(({ data }) => {
+      if (data) setSezonAktif(data.deger === '1')
+    })
+
     yukle()
     window.addEventListener('milgo_konum_degisti', yukle)
     return () => window.removeEventListener('milgo_konum_degisti', yukle)
@@ -89,7 +93,7 @@ export default function KategoriClient({ kategori }: { kategori: any }) {
           </div>
         ) : (
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))',gap:'16px'}}>
-            {urunler.map(u=><ProductCard key={u.id} urun={u}/>)}
+            {urunler.map(u=><ProductCard key={u.id} urun={u} sezonDisi={!sezonAktif}/>)}
           </div>
         )}
       </div>

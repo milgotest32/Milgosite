@@ -6,7 +6,7 @@ import { useFavori } from '@/lib/favori'
 import type { Urun } from '@/lib/types'
 import toast from 'react-hot-toast'
 
-export default function ProductCard({ urun }: { urun: Urun }) {
+export default function ProductCard({ urun, sezonDisi }: { urun: Urun; sezonDisi?: boolean }) {
   const ekle = useSepet(s => s.ekle)
   const { toggle, varMi } = useFavori()
   const favori = varMi(urun.id)
@@ -36,6 +36,7 @@ export default function ProductCard({ urun }: { urun: Urun }) {
           {urun.yeni && <span style={{ background: '#5BA4CF', color: '#fff', fontSize: '9px', fontWeight: 800, padding: '3px 10px', borderRadius: '50px', letterSpacing: '.08em' }}>YENİ</span>}
           {indirim > 0 && <span style={{ background: '#E8567A', color: '#fff', fontSize: '9px', fontWeight: 800, padding: '3px 10px', borderRadius: '50px' }}>-%{indirim}</span>}
           {urun.stok_takip && urun.stok <= 0 && <span style={{ background: '#7A6070', color: '#fff', fontSize: '9px', fontWeight: 800, padding: '3px 10px', borderRadius: '50px' }}>TÜKENDI</span>}
+          {sezonDisi && (urun as any).sezon_urun && <span style={{ background: '#C2410C', color: '#fff', fontSize: '9px', fontWeight: 800, padding: '3px 10px', borderRadius: '50px' }}>🌿 SEZON DIŞI</span>}
         </div>
 
         <button onClick={favoriToggle}
