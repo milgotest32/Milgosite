@@ -1,3 +1,6 @@
+import type { Metadata } from 'next'
+export const metadata: Metadata = { robots: { index: false, follow: false } }
+
 import Link from 'next/link'
 import { XCircle } from 'lucide-react'
 export default function SiparisBasarisiz() {

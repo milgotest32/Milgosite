@@ -1,3 +1,6 @@
+import type { Metadata } from 'next'
+export const metadata: Metadata = { robots: { index: false, follow: false } }
+
 export default function WhatsappAydinlatmaPage() {
   return (
     <div style={{background:'#fff', minHeight:'100vh'}}>

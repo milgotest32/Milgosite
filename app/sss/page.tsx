@@ -16,7 +16,20 @@ const SORULAR = [
 ]
 
 export default function SSSPage() {
+
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: SORULAR.map(s => ({
+      '@type': 'Question',
+      name: s.s,
+      acceptedAnswer: { '@type': 'Answer', text: s.c }
+    }))
+  }
+
   return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
     <div style={{minHeight:'100vh',background:'#F0EEF8'}}>
       <div style={{background:'linear-gradient(135deg,#FEF0F4,#EBF7FC)',padding:'48px 24px',textAlign:'center',marginBottom:'0'}}>
         <h1 style={{fontFamily:'"Playfair Display",serif',fontSize:'40px',color:'#1C1B2E',marginBottom:'8px'}}>Sık Sorulan Sorular</h1>
@@ -40,5 +53,6 @@ export default function SSSPage() {
         </div>
       </div>
     </div>
+    </>
   )
 }
