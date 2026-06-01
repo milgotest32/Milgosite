@@ -227,14 +227,33 @@ export default function YonlendirmelerPage() {
                 {r.aktif ? 'Aktif' : 'Pasif'}
               </span>
               <div style={{ display: 'flex', gap: '6px' }}>
-                <button onClick={() => toggle(r.id, r.aktif)} title={r.aktif ? 'Pasife al' : 'Aktife al'}
-                  style={{ padding: '6px', borderRadius: '8px', border: 'none', background: '#F8F7FC', cursor: 'pointer', color: r.aktif ? '#22C55E' : '#9CA3AF', display: 'flex' }}>
-                  {r.aktif ? <ToggleRight size={16} /> : <ToggleLeft size={16} />}
-                </button>
-                <button onClick={() => sil(r.id)} title="Sil"
-                  style={{ padding: '6px', borderRadius: '8px', border: 'none', background: '#FEF2F2', cursor: 'pointer', color: '#EF4444', display: 'flex' }}>
-                  <Trash2 size={16} />
-                </button>
+                {duzenle?.id === r.id ? (
+                  <>
+                    <button onClick={duzenleKaydet} disabled={duzenliyor} title="Kaydet"
+                      style={{ padding: '6px', borderRadius: '8px', border: 'none', background: '#F0FDF4', cursor: 'pointer', color: '#22C55E', display: 'flex' }}>
+                      <Check size={16} />
+                    </button>
+                    <button onClick={() => setDuzenle(null)} title="İptal"
+                      style={{ padding: '6px', borderRadius: '8px', border: 'none', background: '#F8F7FC', cursor: 'pointer', color: '#9CA3AF', display: 'flex' }}>
+                      <X size={16} />
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button onClick={() => setDuzenle({ id: r.id, eski_url: r.eski_url, yeni_url: r.yeni_url })} title="Düzenle"
+                      style={{ padding: '6px', borderRadius: '8px', border: 'none', background: '#EBF7FC', cursor: 'pointer', color: '#3B9FCC', display: 'flex' }}>
+                      <Pencil size={16} />
+                    </button>
+                    <button onClick={() => toggle(r.id, r.aktif)} title={r.aktif ? 'Pasife al' : 'Aktife al'}
+                      style={{ padding: '6px', borderRadius: '8px', border: 'none', background: '#F8F7FC', cursor: 'pointer', color: r.aktif ? '#22C55E' : '#9CA3AF', display: 'flex' }}>
+                      {r.aktif ? <ToggleRight size={16} /> : <ToggleLeft size={16} />}
+                    </button>
+                    <button onClick={() => sil(r.id)} title="Sil"
+                      style={{ padding: '6px', borderRadius: '8px', border: 'none', background: '#FEF2F2', cursor: 'pointer', color: '#EF4444', display: 'flex' }}>
+                      <Trash2 size={16} />
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           ))
