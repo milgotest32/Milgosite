@@ -78,10 +78,23 @@ export default async function UrunDetayPage({ params }: { params: Promise<{ slug
     ...(urun.ortalama_puan && urun.yorum_sayisi ? { aggregateRating: { '@type': 'AggregateRating', ratingValue: String(urun.ortalama_puan), reviewCount: String(urun.yorum_sayisi) } } : {})
   }
 
+  // Sezon kontrolü - server-side
+  let sezonBilgisi = { sezon_aktif: true, kapali_mesaj: '', onkayit_aktif: false }
+  if ((urun as any).sezon_urun) {
+    const { data: sezonAyarlar } = await db.from('site_ayarlar').select('anahtar, deger').eq('grup', 'sezon')
+    const map: Record<string, string> = {}
+    ;(sezonAyarlar || []).forEach((r: any) => { map[r.anahtar] = r.deger })
+    sezonBilgisi = {
+      sezon_aktif: map['aktif'] === '1',
+      kapali_mesaj: map['kapali_mesaj'] || 'Çiğ süt sezonu şu an kapalı.',
+      onkayit_aktif: map['onkayit_aktif'] === '1',
+    }
+  }
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
-      <UrunDetayClient urun={urun as any} benzerler={benzerler as any[] || []} />
+      <UrunDetayClient urun={urun as any} benzerler={benzerler as any[] || []} sezonBilgisi={sezonBilgisi} />
       <PaketPopup urunId={urun.id} />
     </>
   )

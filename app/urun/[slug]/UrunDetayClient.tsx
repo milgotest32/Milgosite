@@ -27,14 +27,15 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
   const [yorumForm, setYorumForm] = useState({ puan: 5, baslik: '', yorum: '' })
   const [yorumGonderiliyor, setYorumGonderiliyor] = useState(false)
   const [kullaniciYorumYapti, setKullaniciYorumYapti] = useState(false)
-  const [sezon, setSezon] = useState<any>(null)
+  // sezonBilgisi server'dan geliyor, client fetch yok
   const [onkayitEmail, setOnkayitEmail] = useState('')
   const [onkayitDurum, setOnkayitDurum] = useState<'bos'|'gonderiliyor'|'tamam'>('bos')
 
   const gorseller = urun.site_product_images || []
   const aktifUrl = gorseller[aktifGorsel]?.url || gorseller[0]?.url || ''
   const indirim = urun.eski_fiyat ? Math.round((1 - urun.fiyat / urun.eski_fiyat) * 100) : 0
-  const sezonDisi = sezon && !sezon.sezon_aktif
+  const sezonDisi = sezonBilgisi && !sezonBilgisi.sezon_aktif
+  const sezon = sezonBilgisi
   const ozellikler = urun.ozellikler && typeof urun.ozellikler === 'object' ? urun.ozellikler : {}
 
   useEffect(() => {
