@@ -24,7 +24,7 @@ export default function SatisNoktalariPage() {
 
   const logoYukle = async (file: File) => {
     if (!file.type.startsWith('image/')) { toast.error('Sadece resim dosyası yüklenebilir'); return }
-    if (file.size > 2 * 1024 * 1024) { toast.error('Dosya 2MB'dan küçük olmalı'); return }
+    if (file.size > 2 * 1024 * 1024) { toast.error('Dosya 2MB dan kucuk olmali'); return }
     setYukleniyor(true)
     const ext = file.name.split('.').pop()
     const path = `satis-noktalari/${Date.now()}.${ext}`
