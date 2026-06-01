@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { Search, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
+import { adminFetch } from '@/lib/adminFetch'
 export const dynamic = 'force-dynamic'
 
 export default function MusterilerPage() {
