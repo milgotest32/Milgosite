@@ -108,9 +108,14 @@ export async function PATCH(req: NextRequest) {
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: 401 })
 
   const db = createServerClient()
-  const { id, aktif } = await req.json()
+  const { id, aktif, eski_url, yeni_url } = await req.json()
 
-  const { error } = await db.from('site_redirects').update({ aktif }).eq('id', id)
+  const guncelleme: any = {}
+  if (aktif !== undefined) guncelleme.aktif = aktif
+  if (eski_url) guncelleme.eski_url = eski_url
+  if (yeni_url) guncelleme.yeni_url = yeni_url
+
+  const { error } = await db.from('site_redirects').update(guncelleme).eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   const { data: tumRedirektler } = await db.from('site_redirects').select('eski_url,yeni_url').eq('aktif', true)

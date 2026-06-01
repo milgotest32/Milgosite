@@ -1,7 +1,7 @@
 'use client'
 import { adminFetch } from '@/lib/adminFetch'
 import { useEffect, useState } from 'react'
-import { Plus, Trash2, ToggleLeft, ToggleRight, ExternalLink, RefreshCw, AlertCircle, CheckCircle } from 'lucide-react'
+import { Plus, Trash2, ToggleLeft, ToggleRight, ExternalLink, RefreshCw, AlertCircle, CheckCircle, Pencil, X, Check } from 'lucide-react'
 import toast from 'react-hot-toast'
 export const dynamic = 'force-dynamic'
 
@@ -11,6 +11,8 @@ export default function YonlendirmelerPage() {
   const [deployDurum, setDeployDurum] = useState<'idle'|'deploying'|'done'|'error'>('idle')
   const [form, setForm] = useState({ eski_url: '', yeni_url: '' })
   const [ekleniyor, setEkleniyor] = useState(false)
+  const [duzenle, setDuzenle] = useState<{id: string; eski_url: string; yeni_url: string} | null>(null)
+  const [duzenliyor, setDuzenliyor] = useState(false)
 
   const yukle = async () => {
     setYukleniyor(true)
@@ -55,6 +57,30 @@ export default function YonlendirmelerPage() {
     const d = await r.json()
     if (d.ok) { toast.success('Silindi'); setDeployDurum('done'); yukle() }
     else { toast.error(d.error); setDeployDurum('error') }
+  }
+
+  const duzenleKaydet = async () => {
+    if (!duzenle) return
+    if (!duzenle.eski_url.startsWith('/')) { toast.error('Eski URL / ile başlamalı'); return }
+    if (!duzenle.yeni_url.startsWith('/')) { toast.error('Yeni URL / ile başlamalı'); return }
+    setDuzenliyor(true)
+    setDeployDurum('deploying')
+    const r = await adminFetch('/api/admin/redirects', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: duzenle.id, eski_url: duzenle.eski_url, yeni_url: duzenle.yeni_url })
+    })
+    const d = await r.json()
+    if (d.ok) {
+      toast.success('Güncellendi')
+      setDeployDurum('done')
+      setDuzenle(null)
+      yukle()
+    } else {
+      toast.error(d.error || 'Hata oluştu')
+      setDeployDurum('error')
+    }
+    setDuzenliyor(false)
   }
 
   const toggle = async (id: string, aktif: boolean) => {
@@ -173,15 +199,25 @@ export default function YonlendirmelerPage() {
               background: r.aktif ? '#fff' : '#FAFAFA',
               opacity: r.aktif ? 1 : 0.6
             }}>
-              <code style={{ fontSize: '12px', color: '#EF4444', background: '#FEF2F2', padding: '3px 8px', borderRadius: '6px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>
-                {r.eski_url}
-              </code>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span style={{ fontSize: '12px', color: '#9CA3AF' }}>→</span>
-                <code style={{ fontSize: '12px', color: '#22C55E', background: '#F0FDF4', padding: '3px 8px', borderRadius: '6px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>
-                  {r.yeni_url}
+              {duzenle?.id === r.id ? (
+                <input value={duzenle.eski_url} onChange={e => setDuzenle(d => d ? {...d, eski_url: e.target.value} : null)}
+                  style={{ fontSize: '12px', color: '#EF4444', background: '#FEF2F2', padding: '3px 8px', borderRadius: '6px', border: '1.5px solid #EF4444', outline: 'none', fontFamily: 'monospace', width: '100%' }} />
+              ) : (
+                <code style={{ fontSize: '12px', color: '#EF4444', background: '#FEF2F2', padding: '3px 8px', borderRadius: '6px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>
+                  {r.eski_url}
                 </code>
-              </div>
+              )}
+              {duzenle?.id === r.id ? (
+                <input value={duzenle.yeni_url} onChange={e => setDuzenle(d => d ? {...d, yeni_url: e.target.value} : null)}
+                  style={{ fontSize: '12px', color: '#22C55E', background: '#F0FDF4', padding: '3px 8px', borderRadius: '6px', border: '1.5px solid #22C55E', outline: 'none', fontFamily: 'monospace', width: '100%' }} />
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ fontSize: '12px', color: '#9CA3AF' }}>→</span>
+                  <code style={{ fontSize: '12px', color: '#22C55E', background: '#F0FDF4', padding: '3px 8px', borderRadius: '6px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>
+                    {r.yeni_url}
+                  </code>
+                </div>
+              )}
               <span style={{
                 fontSize: '11px', fontWeight: 700, padding: '3px 10px', borderRadius: '50px',
                 background: r.aktif ? '#F0FDF4' : '#F3F4F6',
