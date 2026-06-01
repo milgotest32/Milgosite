@@ -200,7 +200,7 @@ export default function YonlendirmelerPage() {
               opacity: r.aktif ? 1 : 0.6
             }}>
               {duzenle?.id === r.id ? (
-                <input value={duzenle.eski_url} onChange={e => setDuzenle(d => d ? {...d, eski_url: e.target.value} : null)}
+                <input value={duzenle?.eski_url ?? ''} onChange={e => setDuzenle(d => d ? {...d, eski_url: e.target.value} : null)}
                   style={{ fontSize: '12px', color: '#EF4444', background: '#FEF2F2', padding: '3px 8px', borderRadius: '6px', border: '1.5px solid #EF4444', outline: 'none', fontFamily: 'monospace', width: '100%' }} />
               ) : (
                 <code style={{ fontSize: '12px', color: '#EF4444', background: '#FEF2F2', padding: '3px 8px', borderRadius: '6px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>
@@ -208,7 +208,7 @@ export default function YonlendirmelerPage() {
                 </code>
               )}
               {duzenle?.id === r.id ? (
-                <input value={duzenle.yeni_url} onChange={e => setDuzenle(d => d ? {...d, yeni_url: e.target.value} : null)}
+                <input value={duzenle?.yeni_url ?? ''} onChange={e => setDuzenle(d => d ? {...d, yeni_url: e.target.value} : null)}
                   style={{ fontSize: '12px', color: '#22C55E', background: '#F0FDF4', padding: '3px 8px', borderRadius: '6px', border: '1.5px solid #22C55E', outline: 'none', fontFamily: 'monospace', width: '100%' }} />
               ) : (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
