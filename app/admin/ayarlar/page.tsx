@@ -84,6 +84,7 @@ export default function AyarlarPage() {
     {k:'guvenlik',ad:'🔒 Güvenlik'},
     {k:'webhook',ad:'🔗 Webhook'},
     {k:'kapasite',ad:'📊 Kapasite Fiyatlama'},
+    {k:'sezon',ad:'🌿 Sezon Yönetimi'},
   ]
 
   const inp = (label:string, grup:string, k:string, type='text', placeholder='') => (
@@ -486,6 +487,66 @@ export default function AyarlarPage() {
                 </label>
               </div>
             )}
+
+            {aktifTab==='sezon' && (
+              <div style={{display:'flex',flexDirection:'column',gap:'24px'}}>
+                <div>
+                  <h2 style={{fontSize:'16px',fontWeight:700,color:'#1C1B2E',marginBottom:'4px'}}>Çiğ Süt Sezon Yönetimi</h2>
+                  <p style={{fontSize:'13px',color:'#6B7280',margin:'0 0 20px'}}>Sezon kapalıyken çiğ süt ürünleri sipariş edilemez, abonelik sayfası ön kayıt ekranına döner.</p>
+                </div>
+
+                {/* Sezon Toggle */}
+                <div style={{background:'#F8F7FC',borderRadius:'16px',padding:'20px',border:'1px solid #F0ECF5'}}>
+                  <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                    <div>
+                      <p style={{margin:0,fontSize:'14px',fontWeight:700,color:'#1C1B2E'}}>Sezon Açık</p>
+                      <p style={{margin:'4px 0 0',fontSize:'12px',color:'#6B7280'}}>Kapatınca çiğ süt siparişe kapanır, ön kayıt ekranı açılır</p>
+                    </div>
+                    <label style={{position:'relative',display:'inline-block',width:'48px',height:'28px',cursor:'pointer'}}>
+                      <input type="checkbox" checked={get('sezon','aktif')==='1'} onChange={e=>set('sezon','aktif',e.target.checked?'1':'0')} style={{opacity:0,width:0,height:0}}/>
+                      <span style={{position:'absolute',inset:0,background:get('sezon','aktif')==='1'?'#22C55E':'#D1D5DB',borderRadius:'24px',transition:'0.2s'}}>
+                        <span style={{position:'absolute',left:get('sezon','aktif')==='1'?'22px':'2px',top:'2px',width:'20px',height:'20px',background:'#fff',borderRadius:'50%',transition:'0.2s',boxShadow:'0 1px 4px rgba(0,0,0,0.2)'}}/>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Kapalı Mesaj */}
+                <div>
+                  {inp('Kapalı Dönem Mesajı','sezon','kapali_mesaj','text','Çiğ süt sezonu şu an kapalı. Yakında görüşürüz!')}
+                </div>
+
+                {/* Bitiş Tarihi */}
+                <div>
+                  {inp('Sezon Açılış Tarihi (opsiyonel)','sezon','bitis_tarihi','date','')}
+                  <p style={{fontSize:'11px',color:'#9CA3AF',marginTop:'4px'}}>Doldurunca müşterilere "X tarihinde açılıyor" mesajı gösterilir</p>
+                </div>
+
+                {/* Ön Kayıt Toggle */}
+                <div style={{background:'#F8F7FC',borderRadius:'16px',padding:'20px',border:'1px solid #F0ECF5'}}>
+                  <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                    <div>
+                      <p style={{margin:0,fontSize:'14px',fontWeight:700,color:'#1C1B2E'}}>Ön Kayıt Formu</p>
+                      <p style={{margin:'4px 0 0',fontSize:'12px',color:'#6B7280'}}>Sezon kapalıyken müşteriler email bırakabilsin</p>
+                    </div>
+                    <label style={{position:'relative',display:'inline-block',width:'48px',height:'28px',cursor:'pointer'}}>
+                      <input type="checkbox" checked={get('sezon','onkayit_aktif')==='1'} onChange={e=>set('sezon','onkayit_aktif',e.target.checked?'1':'0')} style={{opacity:0,width:0,height:0}}/>
+                      <span style={{position:'absolute',inset:0,background:get('sezon','onkayit_aktif')==='1'?'#E07090':'#D1D5DB',borderRadius:'24px',transition:'0.2s'}}>
+                        <span style={{position:'absolute',left:get('sezon','onkayit_aktif')==='1'?'22px':'2px',top:'2px',width:'20px',height:'20px',background:'#fff',borderRadius:'50%',transition:'0.2s',boxShadow:'0 1px 4px rgba(0,0,0,0.2)'}}/>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                {get('sezon','aktif')!=='1' && (
+                  <div style={{background:'#FFF8F0',borderRadius:'12px',padding:'14px 16px',fontSize:'13px',color:'#C2410C',display:'flex',alignItems:'flex-start',gap:'10px',border:'1px solid #FED7AA'}}>
+                    <span style={{fontSize:'16px'}}>⚠️</span>
+                    <p style={{margin:0}}>Sezon şu an <strong>kapalı</strong>. Çiğ süt ürünleri sipariş edilemiyor, abonelik sayfası ön kayıt ekranı gösteriyor.</p>
+                  </div>
+                )}
+              </div>
+            )}
+
 
             {aktifTab==='kapasite' && (
               <div style={{display:'flex',flexDirection:'column',gap:'24px'}}>

@@ -27,10 +27,14 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
   const [yorumForm, setYorumForm] = useState({ puan: 5, baslik: '', yorum: '' })
   const [yorumGonderiliyor, setYorumGonderiliyor] = useState(false)
   const [kullaniciYorumYapti, setKullaniciYorumYapti] = useState(false)
+  const [sezon, setSezon] = useState<any>(null)
+  const [onkayitEmail, setOnkayitEmail] = useState('')
+  const [onkayitDurum, setOnkayitDurum] = useState<'bos'|'gonderiliyor'|'tamam'>('bos')
 
   const gorseller = urun.site_product_images || []
   const aktifUrl = gorseller[aktifGorsel]?.url || gorseller[0]?.url || ''
   const indirim = urun.eski_fiyat ? Math.round((1 - urun.fiyat / urun.eski_fiyat) * 100) : 0
+  const sezonDisi = sezon && !sezon.sezon_aktif
   const ozellikler = urun.ozellikler && typeof urun.ozellikler === 'object' ? urun.ozellikler : {}
 
   useEffect(() => {
@@ -79,6 +83,19 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
     window.addEventListener('milgo_konum_degisti', kontrol)
     return () => window.removeEventListener('milgo_konum_degisti', kontrol)
   }, [urun])
+
+  const onkayitGonder = async () => {
+    if (!onkayitEmail || !onkayitEmail.includes('@')) return
+    setOnkayitDurum('gonderiliyor')
+    const r = await fetch('/api/sezon-onkayit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: onkayitEmail })
+    })
+    const d = await r.json()
+    if (d.ok) setOnkayitDurum('tamam')
+    else setOnkayitDurum('bos')
+  }
 
   const sepeteEkle = () => {
     if (urun.stok_takip && urun.stok <= 0) { toast.error('Stok tükendi'); return }
@@ -204,6 +221,30 @@ export default function UrunDetayClient({ urun, benzerler }: Props) {
               {bolgdeVar === 'yok' ? (
                 <div style={{ flex: 1, minWidth: '180px', height: '44px', borderRadius: '50px', background: '#FEF2F2', border: '1px solid #FECACA', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontSize: '13px', fontWeight: 700, color: '#EF4444' }}>
                   <MapPin size={15} />Bu bölgede mevcut değil
+                </div>
+              ) : sezonDisi ? (
+                <div style={{ flex: 1 }}>
+                  <div style={{ background: '#FFF8F0', borderRadius: '14px', padding: '16px 20px', marginBottom: '12px', border: '1px solid #FED7AA' }}>
+                    <p style={{ margin: '0 0 4px', fontSize: '15px', fontWeight: 700, color: '#C2410C' }}>🌿 Sezon Dışı</p>
+                    <p style={{ margin: 0, fontSize: '13px', color: '#7C3C1D' }}>{sezon.kapali_mesaj}</p>
+                  </div>
+                  {sezon.onkayit_aktif && (
+                    onkayitDurum === 'tamam' ? (
+                      <div style={{ background: '#F0FDF4', borderRadius: '12px', padding: '12px 16px', fontSize: '13px', color: '#166534', fontWeight: 600 }}>
+                        ✓ Kaydınız alındı! Sezon açılınca haber vereceğiz.
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <input value={onkayitEmail} onChange={e => setOnkayitEmail(e.target.value)}
+                          placeholder="E-posta adresiniz"
+                          style={{ flex: 1, background: '#F8F7FC', border: '1px solid #F0ECF5', borderRadius: '50px', padding: '12px 18px', fontSize: '14px', outline: 'none', fontFamily: 'inherit' }} />
+                        <button onClick={onkayitGonder} disabled={onkayitDurum === 'gonderiliyor'}
+                          style={{ background: 'linear-gradient(135deg,#E8567A,#3B9FCC)', color: '#fff', border: 'none', borderRadius: '50px', padding: '12px 20px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' as const }}>
+                          {onkayitDurum === 'gonderiliyor' ? '...' : 'Haber Ver'}
+                        </button>
+                      </div>
+                    )
+                  )}
                 </div>
               ) : (
                 <button onClick={sepeteEkle} disabled={!!(urun.stok_takip && urun.stok <= 0)}

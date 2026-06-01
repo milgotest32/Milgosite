@@ -15,6 +15,9 @@ export default function AbonelikClient() {
   const [secili, setSecili] = useState('aile')
   const [form, setForm] = useState({ ad: '', email: '', telefon: '', adres: '', ilce: '' })
   const [userId, setUserId] = useState<string | null>(null)
+  const [sezon, setSezon] = useState<any>(null)
+  const [onkayitEmail, setOnkayitEmail] = useState('')
+  const [onkayitDurum, setOnkayitDurum] = useState<'bos'|'gonderiliyor'|'tamam'>('bos')
   const [kapasite, setKapasite] = useState<{ aktif: boolean; planlar?: any[] }>({ aktif: false })
 
   useEffect(() => {
@@ -28,6 +31,7 @@ export default function AbonelikClient() {
     })
   }, [])
   useEffect(() => {
+    fetch('/api/sezon').then(r => r.json()).then(setSezon).catch(() => {})
     fetch('/api/kapasite').then(r => r.json()).then(data => setKapasite(data)).catch(() => {})
   }, [])
 
@@ -103,6 +107,53 @@ export default function AbonelikClient() {
     width: '100%', background: 'rgba(26,10,18,0.04)', border: '1.5px solid rgba(26,10,18,0.1)',
     borderRadius: '14px', padding: '13px 16px', fontSize: '14px', color: '#1A0A12',
     outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box'
+  }
+
+  const onkayitGonder = async () => {
+    if (!onkayitEmail || !onkayitEmail.includes('@')) return
+    setOnkayitDurum('gonderiliyor')
+    const r = await fetch('/api/sezon-onkayit', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: onkayitEmail })
+    })
+    const d = await r.json()
+    if (d.ok) setOnkayitDurum('tamam')
+    else setOnkayitDurum('bos')
+  }
+
+  // Sezon kapalıysa ön kayıt ekranı göster
+  if (sezon && !sezon.sezon_aktif) {
+    return (
+      <div style={{ maxWidth: '560px', margin: '80px auto', padding: '0 20px', textAlign: 'center' }}>
+        <div style={{ fontSize: '64px', marginBottom: '20px' }}>🥛</div>
+        <h1 style={{ fontFamily: 'var(--font-cormorant), Cormorant Garamond, serif', fontSize: 'clamp(28px,5vw,40px)', color: '#1A0A12', marginBottom: '12px' }}>
+          Çiğ Süt Sezonu Kapalı
+        </h1>
+        <p style={{ fontSize: '15px', color: '#7A6070', marginBottom: '32px', lineHeight: 1.6 }}>
+          {sezon.kapali_mesaj}
+        </p>
+        {sezon.onkayit_aktif && (
+          onkayitDurum === 'tamam' ? (
+            <div style={{ background: '#F0FDF4', borderRadius: '16px', padding: '20px', fontSize: '15px', color: '#166534', fontWeight: 600 }}>
+              ✓ Kaydınız alındı! Sezon açılınca size haber vereceğiz.
+            </div>
+          ) : (
+            <div>
+              <p style={{ fontSize: '14px', color: '#7A6070', marginBottom: '12px' }}>Sezon açılınca haber almak ister misiniz?</p>
+              <div style={{ display: 'flex', gap: '8px', maxWidth: '400px', margin: '0 auto' }}>
+                <input value={onkayitEmail} onChange={e => setOnkayitEmail(e.target.value)}
+                  placeholder="E-posta adresiniz"
+                  style={{ flex: 1, background: '#F8F7FC', border: '1px solid #F0ECF5', borderRadius: '50px', padding: '14px 20px', fontSize: '14px', outline: 'none', fontFamily: 'inherit' }} />
+                <button onClick={onkayitGonder} disabled={onkayitDurum === 'gonderiliyor'}
+                  style={{ background: 'linear-gradient(135deg,#E8567A,#3B9FCC)', color: '#fff', border: 'none', borderRadius: '50px', padding: '14px 24px', fontSize: '14px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' as const }}>
+                  {onkayitDurum === 'gonderiliyor' ? '...' : 'Haber Ver'}
+                </button>
+              </div>
+            </div>
+          )
+        )}
+      </div>
+    )
   }
 
   return (
