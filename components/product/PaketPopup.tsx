@@ -9,9 +9,12 @@ import toast from 'react-hot-toast'
 export default function PaketPopup({ urunId }: { urunId: string }) {
   const [paket, setPaket] = useState<any>(null)
   const [kapali, setKapali] = useState(false)
+  const [sezonAktif, setSezonAktif] = useState(true)
   const ekle = useSepet(s => s.ekle)
 
   useEffect(() => {
+    supabase.from('site_ayarlar').select('deger').eq('grup', 'sezon').eq('anahtar', 'aktif').single()
+      .then(({ data }: any) => { if (data) setSezonAktif(data.deger === '1') })
     // Bu ürünü içeren aktif bir paket var mı?
     supabase
       .from('site_paket_urunleri')
@@ -32,6 +35,9 @@ export default function PaketPopup({ urunId }: { urunId: string }) {
   const tasarrufYuzde = Math.round((tasarruf / ayriToplam) * 100)
 
   const sepeteEkle = () => {
+    // Pakette çiğ süt varsa ve sezon kapalıysa engelle
+    const cigSutVar = kalemler.some((k: any) => k.site_products?.sezon_urun)
+    if (cigSutVar && !sezonAktif) { toast.error('🌿 Çiğ süt sezonu kapalı, bu paketi ekleyemezsiniz'); return }
     // Paket indirim oranını hesapla
     const oran = ayriToplam > 0 ? paket.fiyat / ayriToplam : 1
     // Ürünlerin fiyatını paket oranına göre düşür

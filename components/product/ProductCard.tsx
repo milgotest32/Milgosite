@@ -22,6 +22,7 @@ export default function ProductCard({ urun, sezonDisi }: { urun: Urun; sezonDisi
   const sepeteEkle = (e: React.MouseEvent) => {
     e.preventDefault()
     if (urun.stok_takip && urun.stok <= 0) { toast.error('Stok tükendi'); return }
+    if (sezonDisi && (urun as any).sezon_urun) { toast.error('🌿 Çiğ süt sezonu kapalı'); return }
     ekle(urun); toast.success(`${urun.name} sepete eklendi`)
   }
 

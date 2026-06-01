@@ -46,6 +46,17 @@ export async function POST(req: NextRequest) {
   const { items, adres, kupon_kod, notlar, odeme_yontemi, bolge_adi } = body
   const misafir_email: string | null = body.misafir_email || null
 
+  // Sezon kontrolü - çiğ süt varsa ve sezon kapalıysa reddet
+  const { data: sezonAyar } = await db.from('site_ayarlar').select('deger').eq('grup', 'sezon').eq('anahtar', 'aktif').single()
+  if (sezonAyar?.deger !== '1') {
+    const { data: sezonUrunler } = await db.from('site_products').select('id').eq('sezon_urun', true)
+    const sezonUrunIds = (sezonUrunler || []).map((u: any) => u.id)
+    const sezonluItem = (items || []).find((item: any) => sezonUrunIds.includes(item.product_id))
+    if (sezonluItem) {
+      return NextResponse.json({ error: 'Çiğ süt sezonu şu an kapalı, bu ürünü sipariş edemezsiniz.' }, { status: 400 })
+    }
+  }
+
   let musteri_id: string | null = null
   try {
     const { data: { user } } = await db.auth.getUser()
