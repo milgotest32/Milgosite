@@ -1,5 +1,5 @@
-import { adminFetch } from '@/lib/adminFetch'
 'use client'
+import { adminFetch } from '@/lib/adminFetch'
 import { useEffect, useState } from 'react'
 import { Plus, Trash2, ToggleLeft, ToggleRight, ExternalLink, RefreshCw, AlertCircle, CheckCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
