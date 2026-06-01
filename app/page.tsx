@@ -143,6 +143,9 @@ export default function AnaSayfa() {
 
   useEffect(() => {
     // Ana sayfa içeriklerini yükle
+    supabase.from('site_satis_noktalari').select('*').eq('aktif', true).order('sira').then(({ data }) => {
+      setSatisNoktalari(data || [])
+    })
     supabase.from('site_ayarlar').select('*').eq('grup', 'anasayfa').then(({ data }) => {
       if (data && data.length > 0) {
         const icerik: Record<string, string> = { ...VARSAYILAN }
