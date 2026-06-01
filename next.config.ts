@@ -68,13 +68,13 @@ const nextConfig: NextConfig = {
     { source: '/pages/contact-1', destination: '/iletisim', permanent: true },
     { source: '/pages/abonelik', destination: '/abonelik', permanent: true },
     { source: '/pages/kullanim-kosullari', destination: '/', permanent: true },
-    { source: '/pages/kvkk', destination: '/', permanent: true },
     { source: '/pages/uyelik-sozlesmesi', destination: '/', permanent: true },
     { source: '/pages/gizlilik-politikasi', destination: '/', permanent: true },
     { source: '/pages/mesafeli-satis-sozlesmesi', destination: '/', permanent: true },
     { source: '/pages/keba-gida-iptal-iade-politikasi', destination: '/', permanent: true },
     { source: '/collections/surulebilir-peynir-cesitleri', destination: '/kategoriler/peynir', permanent: true },
     { source: '/collections/tereyag', destination: '/kategoriler/tereyagi', permanent: true },
+    { source: '/pages/kvkk', destination: '/kvkk', permanent: true },
     ]
   },
 }
