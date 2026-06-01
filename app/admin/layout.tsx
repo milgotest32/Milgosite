@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 import {
   LayoutDashboard, Package, Tag, ShoppingBag, ShoppingCart, Users, Percent, FileText,
-  Image, Globe, Map, Settings, BarChart2, LogOut, ChevronRight, Bell, Shield, Info, ArrowLeftRight, Store, Gift, Mail,
+  Image, Globe, Map, Settings, BarChart2, LogOut, ChevronRight, Bell, Shield, Info, ArrowLeftRight, Store, Gift, Mail, Inbox,
   Star, MessageSquare, MapPin, RefreshCw
 } from 'lucide-react'
 
