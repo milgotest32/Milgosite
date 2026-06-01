@@ -26,6 +26,7 @@ const nextConfig: NextConfig = {
     { source: '/collections/cig-sut', destination: '/kategoriler/cig-sut', permanent: true },
     { source: '/collections/peynir', destination: '/kategoriler/peynir', permanent: true },
     { source: '/collections/tereyagi', destination: '/kategoriler/tereyagi', permanent: true },
+    { source: '/collections/tum-urunler', destination: '/urunler', permanent: true },
     { source: '/products/sarimsakli-kekikli', destination: '/urun/sade-surullebilir-peynir', permanent: true },
     { source: '/blogs/tarifler', destination: '/blog', permanent: true },
     { source: '/blogs/tarifler/lavasli-tereyagli-mini-gozlemee', destination: '/blog/lavasli-tereyagli-mini-gozlemee', permanent: true },
