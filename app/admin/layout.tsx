@@ -48,6 +48,7 @@ const MENU = [
     { href: '/admin/bolge-bildirimler', icon: <Bell size={16}/>, ad: 'Bölge Bildirimleri' },
     { href: '/admin/roller', icon: <Shield size={16}/>, ad: 'Rol & Yetkiler' },
     { href: '/admin/satis-noktalari', icon: <Store size={16}/>, ad: 'Satış Noktaları' },
+    { href: '/admin/onkayit', icon: <Inbox size={16}/>, ad: 'Sezon Ön Kayıt' },
     { href: '/admin/ayarlar', icon: <Settings size={16}/>, ad: 'Ayarlar' },
   ]},
 ]
