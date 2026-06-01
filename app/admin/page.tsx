@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { adminFetch } from '@/lib/adminFetch'
 import { ShoppingBag, Package, Users, TrendingUp, ArrowUpRight, Clock, RefreshCw, AlertCircle, Star } from 'lucide-react'
 export const dynamic = 'force-dynamic'
 
@@ -29,16 +30,10 @@ export default function AdminPage() {
 
   const yukle = () => {
     setLoading(true)
-    import('@/lib/supabase/client').then(async ({ supabase }) => {
-      const { data: { session } } = await supabase.auth.getSession()
-      const token = session?.access_token || ''
-      fetch('/api/admin/stats', {
-        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-      })
-        .then(r => r.json())
-        .then(d => { if (!d.error) setStats(d); else console.error('Stats error:', d.error) })
-        .finally(() => setLoading(false))
-    })
+    adminFetch('/api/admin/stats')
+      .then(r => r.json())
+      .then(d => { if (!d.error) setStats(d); else console.error('Stats error:', d.error) })
+      .finally(() => setLoading(false))
 
 
   }

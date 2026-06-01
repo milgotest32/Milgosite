@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import { Shield, UserCheck, UserX, Search } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { adminFetch } from '@/lib/adminFetch'
 export const dynamic = 'force-dynamic'
 
 export default function RollerPage() {
@@ -12,7 +13,7 @@ export default function RollerPage() {
   const [degistirilen, setDegistirilen] = useState<string | null>(null)
 
   const yukle = () => {
-    fetch('/api/admin/users')
+    adminFetch('/api/admin/users')
       .then(r => r.json())
       .then(d => { setKullanicilar(d.data || []); setLoading(false) })
   }

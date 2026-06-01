@@ -1,3 +1,4 @@
+import { adminFetch } from '@/lib/adminFetch'
 'use client'
 import { useEffect, useState } from 'react'
 import { Plus, Trash2, ToggleLeft, ToggleRight, ExternalLink, RefreshCw, AlertCircle, CheckCircle } from 'lucide-react'
@@ -13,7 +14,7 @@ export default function YonlendirmelerPage() {
 
   const yukle = async () => {
     setYukleniyor(true)
-    const r = await fetch('/api/admin/redirects')
+    const r = await adminFetch('/api/admin/redirects')
     const { data } = await r.json()
     setListe(data || [])
     setYukleniyor(false)
@@ -27,7 +28,7 @@ export default function YonlendirmelerPage() {
     if (!form.yeni_url.startsWith('/')) { toast.error('Yeni URL / ile başlamalı (örn: /urun/urun-adi)'); return }
     setEkleniyor(true)
     setDeployDurum('deploying')
-    const r = await fetch('/api/admin/redirects', {
+    const r = await adminFetch('/api/admin/redirects', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form)
     })
@@ -47,7 +48,7 @@ export default function YonlendirmelerPage() {
   const sil = async (id: string) => {
     if (!confirm('Bu yönlendirmeyi silmek istediğinize emin misiniz?')) return
     setDeployDurum('deploying')
-    const r = await fetch('/api/admin/redirects', {
+    const r = await adminFetch('/api/admin/redirects', {
       method: 'DELETE', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id })
     })
@@ -58,7 +59,7 @@ export default function YonlendirmelerPage() {
 
   const toggle = async (id: string, aktif: boolean) => {
     setDeployDurum('deploying')
-    const r = await fetch('/api/admin/redirects', {
+    const r = await adminFetch('/api/admin/redirects', {
       method: 'PATCH', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id, aktif: !aktif })
     })

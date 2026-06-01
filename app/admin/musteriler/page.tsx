@@ -17,7 +17,7 @@ export default function MusterilerPage() {
     setTestYukleniyor(true)
     setBaglantiTest(null)
     try {
-      const r = await fetch('/api/admin/shopify-sync', { credentials: 'include' })
+      const r = await adminFetch('/api/admin/shopify-sync')
       const d = await r.json()
       setBaglantiTest(d)
     } catch (e: any) {
@@ -30,7 +30,7 @@ export default function MusterilerPage() {
     setSyncing(true)
     setSyncSonuc(null)
     try {
-      const r = await fetch('/api/admin/shopify-sync', {
+      const r = await adminFetch('/api/admin/shopify-sync', {
         method: 'POST',
         credentials: 'include',
         headers: {'Content-Type': 'application/json'},
@@ -44,7 +44,7 @@ export default function MusterilerPage() {
           ? `${d.siparisSynced} sipariş, ${d.kalemSynced} kalem aktarıldı!`
           : `${d.musteriSynced} müşteri, ${d.siparisSynced} sipariş aktarıldı!`
         setSyncSonuc({ ok: true, msg })
-        fetch('/api/admin/users', { credentials: 'include' }).then(r=>r.json()).then(d=>setMusteriler(d.data||[]))
+        adminFetch('/api/admin/users').then(r=>r.json()).then(d=>setMusteriler(d.data||[]))
       } else {
         setSyncSonuc({ ok: false, msg: d.error || 'Bilinmeyen hata' })
       }
@@ -55,7 +55,7 @@ export default function MusterilerPage() {
   }
 
   useEffect(() => {
-    fetch('/api/admin/users', { credentials: 'include' })
+    adminFetch('/api/admin/users')
       .then(r => r.json())
       .then(d => { setMusteriler(d.data || []); setLoading(false) })
       .catch(() => setLoading(false))
