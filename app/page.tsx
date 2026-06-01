@@ -95,7 +95,8 @@ const VARSAYILAN: Record<string, string> = {
 export default function AnaSayfa() {
   const [urunler, setUrunler] = useState<Urun[]>([])
   const [paketler, setPaketler] = useState<any[]>([])
-  const [ic, setIc] = useState<Record<string, string>>(VARSAYILAN)
+  const [ic, setIc] = useState<Record<string, string>>({})
+  const [icerikHazir, setIcerikHazir] = useState(false)
   const [bultenEmail, setBultenEmail] = useState('')
   const [satisNoktalari, setSatisNoktalari] = useState<any[]>([])
   const [bultenDurum, setBultenDurum] = useState<'bos' | 'gonderiliyor' | 'basarili' | 'hata'>('bos')
@@ -151,7 +152,10 @@ export default function AnaSayfa() {
         const icerik: Record<string, string> = { ...VARSAYILAN }
         data.forEach((row: any) => { icerik[row.anahtar] = row.deger || '' })
         setIc(icerik)
+      } else {
+        setIc({ ...VARSAYILAN })
       }
+      setIcerikHazir(true)
     })
 
     urunleriYukle()
@@ -181,7 +185,7 @@ export default function AnaSayfa() {
   const goster = featured.length ? featured : urunler.slice(0, 4)
 
   return (
-    <div style={{ background: '#FDFBF9', overflowX: 'hidden' }}>
+    <div style={{ background: '#FDFBF9', overflowX: 'hidden', opacity: icerikHazir ? 1 : 0, transition: 'opacity 0.15s ease' }}>
 
       {/* ===== HERO ===== */}
       <section style={{ position: 'relative', overflow: 'hidden' }}>
