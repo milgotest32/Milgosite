@@ -9,9 +9,9 @@ import { ShoppingBag, Heart, Star, Truck, ShieldCheck, Plus, Minus, Check, Chevr
 import ProductCard from '@/components/product/ProductCard'
 import toast from 'react-hot-toast'
 
-interface Props { urun: Urun; benzerler: Urun[] }
+interface Props { urun: Urun; benzerler: Urun[]; sezonBilgisi?: { sezon_aktif: boolean; kapali_mesaj: string; onkayit_aktif: boolean } }
 
-export default function UrunDetayClient({ urun, benzerler }: Props) {
+export default function UrunDetayClient({ urun, benzerler, sezonBilgisi }: Props) {
   const [aktifGorsel, setAktifGorsel] = useState(0)
   const [adet, setAdet] = useState(1)
   const [eklendi, setEklendi] = useState(false)
