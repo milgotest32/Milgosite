@@ -18,7 +18,7 @@ export default function PaketPopup({ urunId }: { urunId: string }) {
     // Bu ürünü içeren aktif bir paket var mı?
     supabase
       .from('site_paket_urunleri')
-      .select('paket_id, site_paketler(*, site_paket_urunleri(adet, site_products(id,name,slug,fiyat,site_product_images(*))))')
+      .select('paket_id, site_paketler(*, site_paket_urunleri(adet, site_products(id,name,slug,fiyat,sezon_urun,site_product_images(*))))')
       .eq('product_id', urunId)
       .then(({ data }) => {
         const bulunan = data?.find((d: any) => d.site_paketler?.aktif)
