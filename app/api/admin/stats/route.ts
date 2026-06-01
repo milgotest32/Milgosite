@@ -24,6 +24,7 @@ export async function GET() {
     { data: siparisler },
     { data: urunler },
     { data: kalemler },
+    { count: aktifAbonelik },
   ] = await Promise.all([
     db.from('site_siparisler').select('*', { count: 'exact', head: true }),
     db.from('site_products').select('*', { count: 'exact', head: true }).eq('durum', 'active'),
@@ -31,6 +32,7 @@ export async function GET() {
     db.from('site_siparisler').select('toplam, durum, created_at, siparis_no, musteri_ad, musteri_email').order('created_at', { ascending: false }).limit(200),
     db.from('site_products').select('id, name, stok').eq('durum', 'active').lt('stok', 10).order('stok', { ascending: true }).limit(5),
     db.from('site_siparis_kalemleri').select('urun_ad, adet, toplam').limit(1000),
+    db.from('site_abonelikler').select('*', { count: 'exact', head: true }).eq('aktif', true),
   ])
 
   const bugun = new Date()
@@ -54,7 +56,7 @@ export async function GET() {
     hafta_gelir: haftaGelir,
     bekleyen_siparis: tumSiparisler.filter(s => s.durum === 'bekliyor').length,
     bugun_siparis: tumSiparisler.filter(s => new Date(s.created_at) >= bugun).length,
-    aktif_abonelik: 0,
+    aktif_abonelik: aktifAbonelik || 0,
     son_siparisler: tumSiparisler.slice(0, 8),
     dusuk_stok: urunler || [],
     en_cok_satanlar: (() => {
@@ -67,7 +69,7 @@ export async function GET() {
       return Object.entries(grouped)
         .sort((a, b) => b[1].adet - a[1].adet)
         .slice(0, 5)
-        .map(([ad, d]) => ({ ad, ...d }))
+        .map(([ad, d]) => ({ urun_ad: ad, toplam_adet: d.adet, toplam_gelir: d.gelir }))
     })(),
   })
 }
