@@ -11,6 +11,7 @@ export default function KategoriClient({ kategori }: { kategori: any }) {
   const [loading, setLoading] = useState(true)
   const [hizmetYok, setHizmetYok] = useState(false)
   const [bolgeAd, setBolgeAd] = useState<string|null>(null)
+  const [sezonAktif, setSezonAktif] = useState(true)
 
   const yukle = useCallback(async () => {
     setLoading(true)
