@@ -25,6 +25,7 @@ export async function GET() {
     { data: urunler },
     { data: kalemler },
     { count: aktifAbonelik },
+    { data: sepetler },
   ] = await Promise.all([
     db.from('site_siparisler').select('*', { count: 'exact', head: true }),
     db.from('site_products').select('*', { count: 'exact', head: true }).eq('durum', 'active'),
@@ -33,6 +34,7 @@ export async function GET() {
     db.from('site_products').select('id, name, stok').eq('durum', 'active').lt('stok', 10).order('stok', { ascending: true }).limit(5),
     db.from('site_siparis_kalemleri').select('urun_ad, adet, toplam').limit(1000),
     db.from('site_abonelikler').select('*', { count: 'exact', head: true }).eq('aktif', true),
+    db.from('site_sepetler').select('id, user_id, updated_at, site_sepet_kalemleri(urun_ad, adet, fiyat), site_users(ad, soyad, email)').order('updated_at', { ascending: false }).limit(20),
   ])
 
   const bugun = new Date()
@@ -57,6 +59,12 @@ export async function GET() {
     bekleyen_siparis: tumSiparisler.filter(s => s.durum === 'bekliyor').length,
     bugun_siparis: tumSiparisler.filter(s => new Date(s.created_at) >= bugun).length,
     aktif_abonelik: aktifAbonelik || 0,
+    aktif_sepetler: sepetler || [],
+    sepet_ozet: {
+      toplam: (sepetler || []).length,
+      urun_bekleyen: (sepetler || []).reduce((t: number, s: any) => t + (s.site_sepet_kalemleri?.length || 0), 0),
+      musteri_sayisi: (sepetler || []).filter((s: any) => s.user_id).length,
+    },
     son_siparisler: tumSiparisler.slice(0, 8),
     dusuk_stok: urunler || [],
     en_cok_satanlar: (() => {

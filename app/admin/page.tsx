@@ -40,25 +40,7 @@ export default function AdminPage() {
         .finally(() => setLoading(false))
     })
 
-    // Sepet istatistikleri
-    import('@/lib/supabase/client').then(({ supabase }) => {
-      supabase.from('site_sepetler')
-        .select('*, site_sepet_kalemleri(urun_ad, adet, fiyat), site_users(ad, soyad, email)')
-        .order('updated_at', { ascending: false })
-        .limit(20)
-        .then(({ data }) => {
-          const sepetler = data || []
-          setStats((p: any) => ({
-            ...p,
-            aktif_sepetler: sepetler,
-            sepet_ozet: {
-              toplam: sepetler.length,
-              urun_bekleyen: sepetler.reduce((t, s: any) => t + (s.site_sepet_kalemleri?.length || 0), 0),
-              musteri_sayisi: sepetler.filter((s: any) => s.user_id).length,
-            }
-          }))
-        })
-    })
+
   }
 
   useEffect(() => { yukle() }, [])
