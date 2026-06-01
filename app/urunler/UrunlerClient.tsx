@@ -23,6 +23,7 @@ function Icerik() {
   const [bolgeId, setBolgeId] = useState<string | null>(null)
   const [bolgeAd, setBolgeAd] = useState<string | null>(null)
   const [hizmetYok, setHizmetYok] = useState(false)
+  const [sezonAktif, setSezonAktif] = useState(true)
   const arama = params.get('q') || ''
 
   const konumOku = useCallback(() => {
