@@ -22,6 +22,19 @@ export default function UrunDetayClient({ urun, benzerler, sezonBilgisi }: Props
   const [bolgdeVar, setBolgdeVar] = useState<'var' | 'yok' | 'belirsiz'>('belirsiz')
   const ekle = useSepet(s => s.ekle)
 
+  // İlgili tarifler
+  const [tarifler, setTarifler] = useState<any[]>([])
+
+  useEffect(() => {
+    supabase
+      .from('site_tarif_urun')
+      .select('tarif_id, site_blog_yazilar(baslik, slug, ozet, gorsel_url)')
+      .eq('urun_id', urun.id)
+      .then(({ data }) => {
+        if (data) setTarifler(data.map((d: any) => d.site_blog_yazilar).filter(Boolean))
+      })
+  }, [urun.id])
+
   // Yorum formu
   const [user, setUser] = useState<any>(null)
   const [yorumForm, setYorumForm] = useState({ puan: 5, baslik: '', yorum: '' })
@@ -439,6 +452,50 @@ export default function UrunDetayClient({ urun, benzerler, sezonBilgisi }: Props
             </div>
           )}
         </div>
+
+        {/* Bu Ürünle Yapılan Tarifler */}
+        {tarifler.length > 0 && (
+          <div>
+            <div style={{ marginBottom: '24px' }}>
+              <span className="sec-tag">Tarifler</span>
+              <h2 className="sec-h" style={{ marginBottom: 0 }}>Bu Ürünle <em>Neler Yapılır?</em></h2>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '20px' }}>
+              {tarifler.map((t: any) => (
+                <Link key={t.slug} href={`/blog/${t.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <div style={{
+                    background: '#fff',
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    boxShadow: '0 2px 12px rgba(26,10,18,.06)',
+                    transition: 'transform .2s, box-shadow .2s',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(26,10,18,.10)' }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 12px rgba(26,10,18,.06)' }}
+                  >
+                    {t.gorsel_url && (
+                      <div style={{ position: 'relative', paddingTop: '56%', overflow: 'hidden' }}>
+                        <img src={t.gorsel_url} alt={t.baslik}
+                          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                      </div>
+                    )}
+                    <div style={{ padding: '16px' }}>
+                      <h3 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '6px', fontFamily: 'var(--font-nunito),sans-serif', color: '#1A0A12' }}>
+                        {t.baslik}
+                      </h3>
+                      {t.ozet && (
+                        <p style={{ fontSize: '13px', color: '#6B7280', lineHeight: 1.5, margin: 0,
+                          display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any, overflow: 'hidden' }}>
+                          {t.ozet}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Benzer Ürünler */}
         {benzerler.length > 0 && (
